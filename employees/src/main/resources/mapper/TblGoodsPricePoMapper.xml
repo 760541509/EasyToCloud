@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.goods.mapper.TblGoodsPriceMapper">
+
+
+
+    <!-- 添加 -->
+    <insert id="addInfo"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_price
+        (tbl_goods_price.fk_goods_spu_unit_id,tbl_goods_price.price,tbl_goods_price.fk_member_price_shop_id,tbl_goods_price.fk_goods_sku_id,tbl_goods_price.fk_goods_spu_id)
+        VALUES
+        (#{fkGoodsSpuUnitId},#{price},#{fkMemberPriceShopId},#{fkGoodsSkuId},#{fkGoodsSpuId})
+    </insert>
+
+    <!-- 批量添加 -->
+    <insert id="addBatchInfo" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_price
+        (tbl_goods_price.fk_goods_spu_unit_id,
+        tbl_goods_price.price,
+        tbl_goods_price.fk_member_price_shop_id,
+        tbl_goods_price.fk_goods_sku_id,
+        tbl_goods_price.fk_goods_spu_id)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.fkGoodsSpuUnitId},#{item.price},#{item.fkMemberPriceShopId},#{item.fkGoodsSkuId},#{item.fkGoodsSpuId})
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo"  >
+        UPDATE tbl_goods_price
+        SET
+        tbl_goods_price.fk_goods_spu_unit_id=#{fkGoodsSpuUnitId},tbl_goods_price.price=#{price},tbl_goods_price.fk_member_price_shop_id=#{fkMemberPriceShopId}
+        WHERE
+        tbl_goods_price.id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" >
+        DELETE FROM tbl_goods_price
+        WHEN
+        tbl_goods_price.id=#{id}
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="com.yingtongquan.employees.goods.entity.TblGoodsPricePo" >
+        SELECT
+        tbl_goods_price.id  as id,tbl_goods_price.fk_goods_spu_unit_id  as fkGoodsSpuUnitId,tbl_goods_price.price  as price,tbl_goods_price.fk_member_price_shop_id  as fkMemberPriceShopId,tbl_goods_price.fk_goods_sku_id  as fkGoodsSkuId
+        FROM tbl_goods_price
+        WHERE
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+        AND tbl_goods_price.id=#{id}
+        </if>
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="com.yingtongquan.employees.goods.entity.TblGoodsPricePo" >
+        SELECT
+        tbl_goods_price.id as id,
+        tbl_goods_price.fk_goods_spu_unit_id as fkGoodsSpuUnitId,
+        tbl_goods_price.price as price,
+        tbl_goods_price.fk_member_price_shop_id as fkMemberPriceShopId,
+        tbl_goods_price.fk_goods_sku_id as fkGoodsSkuId,
+        tbl_goods_spu_unit.name as unitName,
+        tbl_goods_spu_unit.sup_id as unitSupId,
+        tbl_goods_spu_unit.amount as unitAmount,
+        tbl_member_price_shop.price_name as priceName
+        FROM
+        tbl_goods_price
+        INNER JOIN
+        tbl_goods_spu_unit
+        ON tbl_goods_price.fk_goods_spu_unit_id = tbl_goods_spu_unit.id
+        INNER JOIN
+        tbl_member_price_shop
+        ON tbl_goods_price.fk_member_price_shop_id = tbl_member_price_shop.id
+        WHERE
+        tbl_goods_price.fk_member_price_shop_id = #{fkMemberPriceShopId}
+        <if test="fkGoodsSkuId!=null and fkGoodsSkuId!='' and fkGoodsSkuId!=0">
+            AND tbl_goods_price.fk_goods_sku_id = #{fkGoodsSkuId}
+        </if>
+        <if test="fkGoodsSpuId!=null and fkGoodsSpuId!='' and fkGoodsSpuId!=0">
+            AND tbl_goods_price.fk_goods_spu_id = #{fkGoodsSpuId}
+        </if>
+
+
+    </select>
+
+
+    <!-- 获取商品的价格区间 -->
+    <select id="getPriceRangeByInfo" resultType="com.yingtongquan.employees.goods.pojo.GoodsPricePoCallClient">
+        SELECT
+        MAX(tbl_goods_price.price) as highestPrice,
+        MIN(tbl_goods_price.price) as lowestPrice,
+        tbl_member_price_shop.price_name as priceName
+        FROM
+        tbl_goods_price
+        INNER JOIN
+        tbl_member_price_shop
+        ON tbl_goods_price.fk_member_price_shop_id = tbl_member_price_shop.id
+        WHERE
+        tbl_goods_price.fk_member_price_shop_id = #{fkMemberPriceShopId}
+        AND
+        tbl_goods_price.fk_goods_spu_id = #{fkGoodsSpuId}
+    </select>
+
+    <!-- 获取默认的价格类型id -->
+    <select id="getDefaFkMemberPriceShopId"
+            resultType="java.lang.Integer">
+        SELECT tbl_member_price_shop.id FROM 	tbl_member_price_shop
+        WHERE
+        tbl_member_price_shop.shop_id = 10003
+        AND
+        tbl_member_price_shop.type = 0
+        AND
+        tbl_member_price_shop.sup_id = 0
+    </select>
+
+
+</mapper>

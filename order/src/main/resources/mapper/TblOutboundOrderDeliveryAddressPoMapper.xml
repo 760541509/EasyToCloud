@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.order.outbound.mapper.TblOutboundOrderDeliveryAddressMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.order.outbound.entity.TblOutboundOrderDeliveryAddressPo">
+        <id column="id" property="id" />
+        <result column="outbound_order_id" property="outboundOrderId" />
+        <result column="add_time" property="addTime" />
+        <result column="member_shop_id" property="memberShopId" />
+        <result column="phone" property="phone" />
+        <result column="name" property="name" />
+        <result column="area_id" property="areaId" />
+        <result column="address" property="address" />
+        <result column="is_since" property="isSince" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, outbound_order_id, add_time, member_shop_id, phone, name, area_id, address, is_since
+    </sql>
+    <insert id="addOutboundOrderAddress" parameterType="com.yingtongquan.order.outbound.entity.TblOutboundOrderDeliveryAddressPo">
+        insert into tbl_outbound_order_delivery_address (outbound_order_id, add_time, member_shop_id, phone, name, area_id, address, is_since)
+        values (#{outboundOrderId},#{addTime},#{memberShopId},#{phone},#{name},#{areaId},#{address},#{isSince})
+    </insert>
+    <select id="queryOutboundOrderInformation"
+            resultType="com.yingtongquan.order.outbound.entity.TblOutboundOrderPo">
+        select id,outbound_order_no,outbound_order_status,goods_count,outbound_order_type,outbound_order_channel,add_time,order_no from tbl_outbound_order where outbound_order_no = #{outboundOrderNo}
+    </select>
+    <select id="queryOutboundOrderShippingAddress"
+            resultType="com.yingtongquan.order.outbound.pojo.OutboundOrderAddress">
+        SELECT
+        	tbl_order.id,
+        	tbl_order.order_no,
+        	tbl_order.shop_id,
+        	tbl_order.user_id,
+        	address.phone,
+        	address.name,
+        	address.area_id,
+        	address.address
+        FROM
+        	tbl_order
+        	INNER JOIN tbl_order_delivery_address address ON tbl_order.id = address.order_id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="queryShopMemberInformation" resultType="com.yingtongquan.order.outbound.pojo.ShopMember">
+        select id,member_name,user_id,phone,add_time,head_portrait,shop_id,member_id from tbl_member_shop where user_id = 14 and shop_id = 10001
+    </select>
+
+
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.customer.order.dao.UserOrderDao">
+
+    <select id="queryUserId" resultType="java.lang.Integer">
+        SELECT
+        	tbl_user.id
+        FROM
+	        tbl_user
+        	INNER JOIN tbl_user_wx ON tbl_user_wx.phone = tbl_user.account
+        WHERE
+	        tbl_user_wx.id = #{WXId}
+    </select>
+    <select id="queryUserAllOrder" resultType="com.yingtongquan.customer.order.pojo.Order">
+
+    </select>
+</mapper>

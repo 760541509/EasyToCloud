@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.order.returnGoods.mapper.TblReturnOrderGoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.order.returnGoods.entity.TblReturnOrderGoodsPo">
+        <id column="id" property="id" />
+        <result column="order_goods_id" property="orderGoodsId" />
+        <result column="goods_sku_unit_id" property="goodsSkuUnitId" />
+        <result column="amount" property="amount" />
+        <result column="return_order_id" property="returnOrderId" />
+        <result column="goods_name" property="goodsName" />
+        <result column="image" property="image" />
+        <result column="goods_sku_spec_name" property="goodsSkuSpecName" />
+        <result column="goods_sky_unit_name" property="goodsSkyUnitName" />
+        <result column="price" property="price" />
+        <result column="buy_price" property="buyPrice" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_goods_id, goods_sku_unit_id, amount, return_order_id, goods_name, image, goods_sku_spec_name, goods_sky_unit_name, price, buy_price
+    </sql>
+
+</mapper>

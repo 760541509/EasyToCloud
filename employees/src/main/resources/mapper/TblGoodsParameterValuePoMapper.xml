@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.parameter.mapper.TblGoodsParameterValueMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.parameter.entity.TblGoodsParameterValuePo">
+                <id column="id" property="id" />
+                <result column="name" property="name" />
+                <result column="fk_goods_parameter_id" property="fkGoodsParameterId" />
+    </resultMap>
+
+
+    <!-- 添加的列 -->
+    <sql id="Add_Column_List">
+        (tbl_goods_parameter_value.name,tbl_goods_parameter_value.fk_goods_parameter_id)
+    </sql>
+    <!-- 添加的值 -->
+    <sql id="Add_Value_Column_List">
+        (#{name},#{fkGoodsParameterId})
+    </sql>
+
+
+    <!-- 修改的值 -->
+    <sql id="Update_Value_Column_List">
+        tbl_goods_parameter_value.name=#{name},tbl_goods_parameter_value.fk_goods_parameter_id=#{fkGoodsParameterId}
+    </sql>
+    <!-- 修改的条件 -->
+    <sql id="Update_Conditions_Column_List">
+        tbl_goods_parameter_value.id = #{id}
+    </sql>
+
+
+    <!-- 删除的条件 -->
+    <sql id="DeleteByInfo_Conditions_Column_List">
+        tbl_goods_parameter_value.id=#{id}
+    </sql>
+
+
+    <!-- 条件获取一条数据列 -->
+    <sql id="GetByInfo_Column_List">
+        tbl_goods_parameter_value.id  as id,tbl_goods_parameter_value.name  as name,tbl_goods_parameter_value.fk_goods_parameter_id  as fkGoodsParameterId
+    </sql>
+    <!-- 条件获取一条数据的条件 -->
+    <sql id="GetByInfo_Conditions_Column_List">
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+            AND tbl_goods_parameter_value.id=#{id}
+        </if>
+    </sql>
+
+
+    <!-- 条件获取多条数据列 -->
+    <sql id="GetListByInfo_Column_List">
+        tbl_goods_parameter_value.id as id,tbl_goods_parameter_value.name as name,tbl_goods_parameter_value.fk_goods_parameter_id as fkGoodsParameterId
+    </sql>
+    <!-- 条件获取多条数据的条件 -->
+    <sql id="GetListByInfo_Conditions_Column_List">
+        id > #{currentPageMaxId}
+        <if test="id!=null and id!='' and id!=0">
+            AND tbl_goods_parameter_value.id=#{id}
+        </if>
+        LIMIT #{pagePumber}
+    </sql>
+
+
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="java.util.Map" >
+        INSERT INTO tbl_goods_parameter_value
+        <include refid="Add_Column_List" />
+        VALUES
+        <include refid="Add_Value_Column_List" />
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo" parameterType="java.util.Map">
+        UPDATE tbl_goods_parameter_value
+        SET <include refid="Update_Value_Column_List" />
+        WHERE <include refid="Update_Conditions_Column_List" />
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" parameterType="java.util.Map">
+        DELETE FROM tbl_goods_parameter_value
+        WHEN <include refid="DeleteByInfo_Conditions_Column_List" />
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="java.util.Map">
+        SELECT
+        <include refid="GetByInfo_Column_List" />
+        FROM tbl_goods_parameter_value
+        WHERE
+        <include refid="GetByInfo_Conditions_Column_List" />
+
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="java.util.Map">
+        SELECT
+        <include refid="GetListByInfo_Column_List" />
+        FROM tbl_goods_parameter_value
+        WHERE
+        <include refid="GetListByInfo_Conditions_Column_List" />
+    </select>
+
+
+
+</mapper>

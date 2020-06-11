@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.order.outbound.mapper.TblOutboundOrderStaffMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.order.outbound.entity.TblOutboundOrderStaffPo">
+        <id column="id" property="id" />
+        <result column="staff_id" property="staffId" />
+        <result column="outbound_order_id" property="outboundOrderId" />
+        <result column="add_time" property="addTime" />
+        <result column="commission_amount" property="commissionAmount" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, staff_id, outbound_order_id, add_time, commission_amount
+    </sql>
+    <insert id="addOutboundOrderStaff" parameterType="com.yingtongquan.order.outbound.entity.TblOutboundOrderStaffPo">
+        insert into tbl_outbound_order_staff (staff_id, outbound_order_id, add_time, commission_amount)
+        values (#{staffId},#{outboundOrderId},#{addTime},#{commissionAmount})
+    </insert>
+
+</mapper>

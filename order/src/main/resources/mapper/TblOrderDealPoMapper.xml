@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.order.order.mapper.TblOrderDealMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.order.order.entity.TblOrderDealPo">
+        <id column="id" property="id" />
+        <result column="order_id" property="orderId" />
+        <result column="add_time" property="addTime" />
+        <result column="pay_amount" property="payAmount" />
+        <result column="pay_way" property="payWay" />
+        <result column="serial_no" property="serialNo" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_id, add_time, pay_amount, pay_way, serial_no
+    </sql>
+    <select id="queryHaveToPay" resultType="com.yingtongquan.order.order.entity.TblOrderDealPo">
+        SELECT
+	        tbl_order_deal.*
+        FROM
+	        tbl_order
+	        INNER JOIN tbl_order_deal ON tbl_order_deal.order_id = tbl_order.id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+
+</mapper>

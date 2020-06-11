@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.goods.mapper.TblGoodsSkuSpecValueMapper">
+
+
+
+    <!-- 添加 -->
+    <insert id="addInfo"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_sku_spec_value
+        (tbl_goods_sku_spec_value.fk_goods_sku_id,tbl_goods_sku_spec_value.fk_spec_value_id)
+        VALUES
+        (#{fkGoodsSkuId},#{fkSpecValueId})
+    </insert>
+
+    <!-- 批量添加 -->
+    <insert id="addBatchInfo" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_sku_spec_value
+        (tbl_goods_sku_spec_value.fk_goods_sku_id,tbl_goods_sku_spec_value.fk_spec_value_id)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.fkGoodsSkuId},#{item.fkSpecValueId})
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo"  >
+        UPDATE tbl_goods_sku_spec_value
+        SET
+        tbl_goods_sku_spec_value.fk_goods_sku_id=#{fkGoodsSkuId},tbl_goods_sku_spec_value.fk_spec_value_id=#{fkSpecValueId}
+        WHERE
+        tbl_goods_sku_spec_value.id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" >
+        DELETE FROM tbl_goods_sku_spec_value
+        WHEN
+        tbl_goods_sku_spec_value.id=#{id}
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="com.yingtongquan.employees.goods.entity.TblGoodsSkuSpecValuePo" >
+        SELECT
+        tbl_goods_sku_spec_value.id  as id,tbl_goods_sku_spec_value.fk_goods_sku_id  as fkGoodsSkuId,tbl_goods_sku_spec_value.fk_spec_value_id  as fkSpecValueId
+        FROM tbl_goods_sku_spec_value
+        WHERE
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+        AND tbl_goods_sku_spec_value.id=#{id}
+        </if>
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="com.yingtongquan.employees.goods.entity.TblGoodsSkuSpecValuePo" >
+        SELECT
+        tbl_goods_sku_spec_value.id as id,tbl_goods_sku_spec_value.fk_goods_sku_id as fkGoodsSkuId,tbl_goods_sku_spec_value.fk_spec_value_id as fkSpecValueId
+        FROM tbl_goods_sku_spec_value
+        WHERE
+        id > #{currentPageMaxId}
+        <if test="keyword!=null and keyword!=''">
+            AND tbl_goods_sku_spec_value.keyword  LIKE concat('%',#{keyword},'%')
+        </if>
+        LIMIT #{pagePumber}
+    </select>
+
+
+
+</mapper>

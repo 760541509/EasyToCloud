@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.shop.mapper.TblFareTemplateMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.shop.entity.TblFareTemplatePo">
+                <id column="id" property="id" />
+                <result column="template_name" property="templateName" />
+                <result column="area_id" property="areaId" />
+                <result column="dispatch_time" property="dispatchTime" />
+                <result column="is_incl_postage" property="isInclPostage" />
+                <result column="valuation_model" property="valuationModel" />
+                <result column="is_incl_postage_byif" property="isInclPostageByif" />
+    </resultMap>
+
+
+    <!-- 条件获取多条数据列 -->
+    <sql id="GetListByInfo_Column_List">
+        tbl_fare_template.id as id,tbl_fare_template.template_name as templateName,tbl_fare_template.area_id as areaId,tbl_fare_template.dispatch_time as dispatchTime,tbl_fare_template.is_incl_postage as isInclPostage,tbl_fare_template.valuation_model as valuationModel,tbl_fare_template.is_incl_postage_byif as isInclPostageByif
+    </sql>
+    <!-- 条件获取多条数据的条件 -->
+    <sql id="GetListByInfo_Conditions_Column_List">
+        id > #{currentPageMaxId}
+        <if test="id!=null and id!='' and id!=0">
+            AND tbl_fare_template.id=#{id}
+        </if>
+        LIMIT #{pagePumber}
+    </sql>
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="java.util.Map">
+        SELECT
+        <include refid="GetListByInfo_Column_List" />
+        FROM tbl_fare_template
+        WHERE
+        <include refid="GetListByInfo_Conditions_Column_List" />
+    </select>
+
+
+
+</mapper>

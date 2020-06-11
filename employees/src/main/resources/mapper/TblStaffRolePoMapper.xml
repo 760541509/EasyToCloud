@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.staff.mapper.TblStaffRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.staff.entity.TblStaffRolePo">
+        <id column="id" property="id"/>
+        <result column="role_name" property="roleName"/>
+        <result column="resources" property="resources"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="staff_commission_rate" property="staffCommissionRate"/>
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, role_name, resources,shop_id,staff_commission_rate
+    </sql>
+    <insert id="addRoleInformation" parameterType="com.yingtongquan.employees.staff.entity.TblStaffRolePo">
+        insert into tbl_staff_role (role_name, resources,shop_id,staff_commission_rate) values (#{roleName},#{resources},#{shopId},#{staffCommissionRate})
+    </insert>
+    <insert id="addUserInforamtion" parameterType="com.yingtongquan.employees.staff.pojo.UserInformation"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_user (account,password,salt_value,username,date_birth,head_portrait,sex,email,area_id,address,add_time,phone,mac)
+        values (#{account},#{password},#{saltValue},#{username},#{dateBirth},#{headPortrait},#{sex},#{email},#{areaId},#{address},#{addTime},#{phone},#{mac})
+    </insert>
+    <insert id="addStaffInformation" parameterType="com.yingtongquan.employees.staff.entity.TblStaffPo">
+        insert into tbl_staff (staff_name,staff_phone,area_id,address,shop_id,staff_role_id,user_id)
+        values (#{staffName},#{staffPhone},#{areaId},#{address},#{shopId},#{staffRoleId},#{userId})
+    </insert>
+    <update id="updateStaffRole" parameterType="com.yingtongquan.employees.staff.entity.TblStaffRolePo">
+        update tbl_staff_role set role_name = #{roleName}, resources = #{resources}, shop_id = #{shopId}, staff_commission_rate = #{staffCommissionRate} where id = #{id}
+    </update>
+    <delete id="deleteStaff">
+        delete from tbl_staff where id = #{staffId}
+    </delete>
+    <delete id="deleteStaffRole">
+        delete from tbl_staff_role wher id = #{roleId}
+    </delete>
+    <select id="queryUserInformation" resultType="com.yingtongquan.employees.staff.pojo.UserInformation">
+        select id,account,password,salt_value,username,date_birth,head_portrait,sex,email,area_id,address,add_time,phone,mac from tbl_user where phone = #{phone}
+    </select>
+    <select id="queryAllStaffInformation" resultType="com.yingtongquan.employees.staff.entity.TblStaffPo">
+        select id,staff_name,staff_phone,area_id,address,shop_id,staff_role_id,user_id from tbl_staff where shop_id = #{shopId}
+    </select>
+    <select id="queryShopAllStaffRole" resultType="com.yingtongquan.employees.staff.entity.TblStaffRolePo">
+        select id, role_name, resources,shop_id,staff_commission_rate from tbl_staff_role where shop_id = #{shopId}
+    </select>
+    <select id="queryBossId" resultType="java.lang.Integer">
+        select id from tbl_staff_role where role_name = "老板" and shop_id = #{shopId}
+    </select>
+
+
+</mapper>

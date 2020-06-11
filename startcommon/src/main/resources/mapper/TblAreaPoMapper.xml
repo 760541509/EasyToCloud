@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.startcommon.address.mapper.TblAreaMapper">
+
+    <select id="queryAllProvincial" resultType="com.yingtongquan.startcommon.address.entity.TblAreaPo">
+        select area_id,area_code,area_name,area_level,city_code,center,parent_id from tbl_area where area_level = 1
+    </select>
+    <select id="queryAllCitiesBelowTheProvincialLevel" parameterType="java.lang.Integer"
+            resultType="com.yingtongquan.startcommon.address.entity.TblAreaPo">
+        select area_id,area_code,area_name,area_level,city_code,center,parent_id from tbl_area where area_level = 2 and parent_id = #{parentId}
+    </select>
+    <select id="queryAllDistrictsBelowCityLevel" parameterType="java.lang.Integer"
+            resultType="com.yingtongquan.startcommon.address.entity.TblAreaPo">
+        select area_id,area_code,area_name,area_level,city_code,center,parent_id from tbl_area where area_level = 3 and parent_id = #{parentId}
+    </select>
+    <select id="queryCityAndProvincial" resultType="com.yingtongquan.startcommon.address.pojo.Address">
+        SELECT
+        	t1.area_id,
+        	t1.area_name area,
+        	t2.area_name city,
+        	t3.area_name province
+        FROM
+        	tbl_area t1
+        	INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
+        	INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
+        WHERE
+	        t1.area_id = #{areaId}
+    </select>
+</mapper>

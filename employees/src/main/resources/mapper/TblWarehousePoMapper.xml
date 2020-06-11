@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.warehouse.mapper.TblWarehouseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.warehouse.entity.TblWarehousePo">
+        <id column="id" property="id"/>
+        <result column="warehouse_name" property="warehouseName"/>
+        <result column="area_id" property="areaId"/>
+        <result column="address" property="address"/>
+        <result column="latitude" property="latitude"/>
+        <result column="longitude" property="longitude"/>
+        <result column="user_id" property="userId"/>
+        <result column="phone" property="phone"/>
+        <result column="telephone" property="telephone"/>
+        <result column="add_time" property="addTime"/>
+        <result column="dont_allow" property="dontAllow"/>
+    </resultMap>
+
+
+    <!-- 条件获取多条数据列 -->
+    <sql id="GetListByInfo_Column_List">
+        id,warehouse_name,area_id,address,latitude,longitude,user_id,phone,telephone,add_time,dont_allow
+    </sql>
+    <insert id="addShopWarehouse" useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_warehouse (warehouse_name,area_id,address,latitude,longitude,user_id,phone,telephone,add_time,dont_allow)
+        values (#{warehouseName},#{areaId},#{address},#{latitude},#{longitude},#{userId},#{phone},#{telephone},#{addTime},#{dontAllow})
+    </insert>
+    <update id="updateShopWarehouse" parameterType="com.yingtongquan.employees.warehouse.entity.TblWarehousePo">
+        update tbl_warehouse set warehouse_name = #{warehouseName},area_id = #{areaId},address = #{address},latitude = #{latitude},longitude = #{longitude},phone = #{phone},telephone = #{telephone},add_time = #{addTime} where id = #{id}
+    </update>
+    <delete id="deleteShopWarehouse">
+        delete from tbl_warehouse where id = #{id} and dont_allow = 1
+    </delete>
+    <select id="queryShopAllWarehouse" resultType="com.yingtongquan.employees.warehouse.pojo.ShopWarehouseGoodsArea">
+        SELECT
+        	tbl_warehouse.id as warehouseId,
+        	tbl_warehouse.warehouse_name,
+        	tbl_warehouse.area_id,
+	        tbl_warehouse.address,
+        	tbl_warehouse.latitude,
+	        tbl_warehouse.longitude,
+	        tbl_warehouse.phone,
+	        tbl_warehouse.telephone,
+	        tbl_warehouse.add_time
+        FROM
+            tbl_warehouse
+        	INNER JOIN tbl_warehouse_and_shop ON tbl_warehouse.id = tbl_warehouse_and_shop.warehouse_id
+        WHERE
+	        tbl_warehouse_and_shop.shop_id = #{shopId}
+    </select>
+    <select id="queryWarehouseInformation"
+            resultType="com.yingtongquan.employees.warehouse.entity.TblWarehousePo">
+        select id,warehouse_name,area_id,address,latitude,longitude,user_id,phone,telephone,add_time,dont_allow from tbl_warehouse where id = #{id}
+    </select>
+
+
+</mapper>

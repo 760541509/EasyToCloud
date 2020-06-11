@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.system.user.mapper.TblUserMapper">
+    <insert id="addUserInformation">
+        insert into tbl_user (account, password, salt_value, username, date_birth, head_portrait, sex, email, area_id, address, add_time, phone, mac)
+        values (#{account},#{password},#{saltValue},#{username},#{dateBirth},#{headPortrait},#{sex},#{email},#{areaId},#{address},#{addTime},#{phone},#{mac})
+    </insert>
+    <insert id="addUserAndShopRelationshipBetween" parameterType="com.yingtongquan.system.user.entity.TblUserAndShopPo">
+        insert into tbl_user_and_shop(user_id,shop_id,is_default) values (#{userId},#{shopId},#{isDefault})
+    </insert>
+    <update id="updateUserMAC">
+        update tbl_user set mac = #{mac} where account = #{account}
+    </update>
+    <update id="updateUserPassword">
+        update tbl_user set password = #{password} where account = #{account}
+    </update>
+    <update id="updateUserAndShopRelationshipBetween">
+        update tbl_user_and_shop set is_default = 0 where user_id = #{userId} And is_default = 1
+    </update>
+
+    <select id="queryUserInformation" resultType="com.yingtongquan.system.user.entity.TblUserPo">
+        select * from tbl_user where account = #{account}
+    </select>
+
+    <select id="checkIfTheAccountExists" resultType="com.yingtongquan.system.user.entity.TblUserPo">
+        select * from tbl_user where account = #{account}
+    </select>
+    <select id="queryUserId" resultType="java.lang.Integer">
+        SELECT
+        	tbl_user.id
+        FROM
+	        tbl_user
+        	INNER JOIN tbl_user_wx ON tbl_user_wx.phone = tbl_user.account
+        WHERE
+	        tbl_user_wx.id = #{WXId}
+    </select>
+    <select id="queryUser" resultType="com.yingtongquan.system.user.entity.TblUserPo">
+        select * from tbl_user where id = #{userId}
+    </select>
+    <select id="queryShopInformation" resultType="com.yingtongquan.system.user.pojo.ShopInfromation">
+        select * from tbl_shop where id = #{shopId}
+    </select>
+
+
+</mapper>

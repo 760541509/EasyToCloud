@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.order.outbound.mapper.TblOutboundOrderLogisticsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.order.outbound.entity.TblOutboundOrderLogisticsPo">
+        <id column="id" property="id" />
+        <result column="outbound_order_id" property="outboundOrderId" />
+        <result column="add_time" property="addTime" />
+        <result column="name" property="name" />
+        <result column="logistics_no" property="logisticsNo" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, outbound_order_id, add_time, name, logistics_no
+    </sql>
+    <insert id="addOutboundOrderShippingAddress" parameterType="com.yingtongquan.order.outbound.entity.TblOutboundOrderLogisticsPo">
+        insert into tbl_outbound_order_logistics (outbound_order_id, add_time, name, logistics_no)
+        values (#{outboundOrderId},#{addTime},#{name},#{logisticsNo})
+    </insert>
+
+    <select id="queryOutboundOrderInformation"
+            resultType="com.yingtongquan.order.outbound.entity.TblOutboundOrderPo">
+        select id,outbound_order_no,outbound_order_status,goods_count,outbound_order_type,outbound_order_channel,add_time,order_no from tbl_outbound_order where outbound_order_no = #{outboundOrderNo}
+    </select>
+
+</mapper>

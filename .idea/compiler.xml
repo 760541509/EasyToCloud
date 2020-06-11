@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="employees" />
+        <module name="zuul" />
+        <module name="order" />
+        <module name="customer" />
+        <module name="system" />
+        <module name="eureka" />
+        <module name="checkstand" />
+        <module name="fegin" />
+        <module name="startcommon" />
+        <module name="EasyToCloud" />
+        <module name="client" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="checkstand" target="1.8" />
+      <module name="client" target="1.8" />
+      <module name="common" target="1.8" />
+      <module name="customer" target="1.8" />
+      <module name="EasyToCloud" target="1.8" />
+      <module name="easytocloud" target="1.8" />
+      <module name="employees" target="1.8" />
+      <module name="eureka" target="1.8" />
+      <module name="Eureka" target="1.8" />
+      <module name="fegin" target="1.8" />
+      <module name="order" target="1.8" />
+      <module name="startcommon" target="1.8" />
+      <module name="system" target="1.8" />
+      <module name="zuul" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="EasyToCloud" options="-parameters" />
+      <module name="Eureka" options="-parameters" />
+      <module name="checkstand" options="-parameters" />
+      <module name="client" options="-parameters" />
+      <module name="common" options="-parameters" />
+      <module name="customer" options="-parameters" />
+      <module name="employees" options="-parameters" />
+      <module name="eureka" options="-parameters" />
+      <module name="fegin" options="-parameters" />
+      <module name="order" options="-parameters" />
+      <module name="startcommon" options="-parameters" />
+      <module name="system" options="-parameters" />
+      <module name="zuul" options="-parameters" />
+    </option>
+  </component>
+</project>

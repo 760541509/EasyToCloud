@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.shop.mapper.TblShopDeliveryAddressMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.shop.entity.TblShopDeliveryAddressPo">
+        <id column="id" property="id"/>
+        <result column="add_time" property="addTime"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="phone" property="phone"/>
+        <result column="name" property="name"/>
+        <result column="area_id" property="areaId"/>
+        <result column="address" property="address"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="latitude" property="latitude"/>
+        <result column="longitude" property="longitude"/>
+    </resultMap>
+
+
+    <!-- 条件获取多条数据列 -->
+    <sql id="GetListByInfo_Column_List">
+        id,add_time,shop_id,phone,name,area_id,address,is_default,latitude,longitude
+    </sql>
+    <insert id="addShopShippingAddress" parameterType="com.yingtongquan.employees.shop.entity.TblShopDeliveryAddressPo">
+        insert into tbl_shop_delivery_address (add_time,shop_id,phone,name,area_id,address,is_default,latitude,longitude)
+        values (#{addTime},#{shopId},#{phone},#{name},#{areaId},#{address},#{isDefault},#{latitude},#{longitude})
+    </insert>
+    <update id="updateShopShippingAddress" parameterType="com.yingtongquan.employees.shop.pojo.ShopShippingAddress">
+        update tbl_shop_delivery_address set phone = #{phone},name = #{name}, area_id = #{areaId}, address = #{address},is_default = #{isDefault},latitude = #{latitude}, longitude = #{longitude} where id = #{id}
+    </update>
+    <delete id="deleteShopShippingAddress">
+        delete from tbl_shop_delivery_address where id = #{id}
+    </delete>
+    <update id="deleteTheOriginalDefaultAddress">
+        update tbl_shop_delivery_address set is_default = 0 where shop_id = #{shopId} and is_default = 1;
+    </update>
+    <update id="setTheAddressToTheDefaultShippingAddress">
+        update tbl_shop_delivery_address set is_default = 1 where shop_id = #{shopId} and id = #{id};
+    </update>
+    <select id="queryShopAllShippingAddress"
+            resultType="com.yingtongquan.employees.shop.pojo.ShopShippingAddress">
+        select add_time,phone,name,area_id,address,is_default from tbl_shop_delivery_address where shop_id = #{shopId}
+    </select>
+    <select id="queryShopShippingAddress"
+            resultType="com.yingtongquan.employees.shop.pojo.ShopShippingAddress">
+         select add_time,phone,name,area_id,address,is_default from tbl_shop_delivery_address where id = #{id}
+    </select>
+
+
+</mapper>

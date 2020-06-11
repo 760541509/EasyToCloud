@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.staff.mapper.TblStaffMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.staff.entity.TblStaffPo">
+        <id column="id" property="id"/>
+        <result column="staff_name" property="staffName"/>
+        <result column="staff_phone" property="staffPhone"/>
+        <result column="area_id" property="areaId"/>
+        <result column="address" property="address"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="staff_role_id" property="staffRoleId"/>
+        <result column="user_id" property="userId"/>
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, staff_name, staff_phone, area_id, address, shop_id, staff_role_id, user_id
+    </sql>
+    <insert id="addShopStaff" parameterType="com.yingtongquan.employees.staff.entity.TblStaffPo">
+        insert into tbl_staff(staff_name, staff_phone, area_id, address, shop_id, staff_role_id, user_id)
+        values (#{staffName},#{staffPhone},#{areaId},#{address},#{shopId},#{staffRoleId},#{userId})
+    </insert>
+    <insert id="addOutboundGoods" parameterType="com.yingtongquan.employees.outbound.entity.OutboundOrderGoodsPo">
+        insert into tbl_outbound_order_goods(order_goods_id,amount,outbound_order_id) values (#{orderGoodsId},#{amount},#{outboundOrderId})
+    </insert>
+    <select id="queryUser" resultType="com.yingtongquan.employees.staff.pojo.UserInformation">
+        select * from tbl_user where id = #{userId}
+    </select>
+    <select id="theEmployeeQueriesTheOrderByStatus"
+            resultType="com.yingtongquan.employees.staff.pojo.OrderInfromation">
+        SELECT
+	        tbl_order.id,
+        	tbl_order.order_no,
+	        tbl_order.order_status,
+	        tbl_order.order_status_vice,
+	        tbl_order.goods_count,
+	        tbl_order.add_time,
+	        tbl_order.order_type,
+	        tbl_order.order_channel,
+	        tbl_order.note,
+	        tbl_order.order_amount_total,
+	        address.area_id,
+	        address.address,
+	        tbl_member_shop.member_name,
+	        tbl_member_shop.id memberId,
+	        tbl_user.head_portrait,
+	        t1.area_name area,
+	        t2.area_name city,
+	        t3.area_name province
+        FROM
+	        tbl_order
+	        INNER JOIN tbl_order_delivery_address address ON address.order_id = tbl_order.id
+	        INNER JOIN tbl_member_shop ON tbl_order.user_id = tbl_member_shop.user_id
+	        INNER JOIN tbl_user ON tbl_order.user_id = tbl_user.id
+	        INNER JOIN tbl_area t1 ON address.area_id = t1.area_id
+	        INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
+	        INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
+        WHERE
+	        tbl_order.order_status = #{status}
+	        AND tbl_order.shop_id = #{shopId}
+    </select>
+    <select id="queryOrderGoodsName" resultType="java.lang.String">
+        SELECT
+        	tbl_order_goods.order_goods_name
+        FROM
+	        tbl_order
+	        INNER JOIN tbl_order_goods ON tbl_order.id = tbl_order_goods.order_id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="queryGoodsInfo" resultType="com.yingtongquan.employees.outbound.entity.OutboundOrderGoodsPo">
+        SELECT
+	        tbl_order_goods.shop_goods_id orderGoodsId,
+	        tbl_order_goods.amount
+        FROM
+	        tbl_order
+	        INNER JOIN tbl_order_goods ON tbl_order.id = tbl_order_goods.order_id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="queryOutboundInfo" resultType="com.yingtongquan.employees.outbound.entity.OutboundOrderPo">
+        select * from tbl_outbound_order where outbound_order_no = #{outboundNo}
+    </select>
+    <select id="queryOrderPayAmount" resultType="java.lang.Integer">
+        SELECT
+	        tbl_order_deal.pay_amount
+        FROM
+	        tbl_order
+	        INNER JOIN tbl_order_deal ON tbl_order_deal.order_id = tbl_order.id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+</mapper>

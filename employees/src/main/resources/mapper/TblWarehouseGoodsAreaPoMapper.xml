@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.warehouse.mapper.TblWarehouseGoodsAreaMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.warehouse.entity.TblWarehouseGoodsAreaPo">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="icon" property="icon"/>
+        <result column="sup_id" property="supId"/>
+        <result column="fk_warehouse_id" property="fkWarehouseId"/>
+        <result column="sort_index" property="sortIndex"/>
+    </resultMap>
+
+
+    <!-- 条件获取多条数据列 -->
+    <sql id="GetListByInfo_Column_List">
+        id,name,icon,sup_id,fk_warehouse_id,sort_index
+    </sql>
+
+    <insert id="addWarehouseGoodsArea"
+            parameterType="com.yingtongquan.employees.warehouse.entity.TblWarehouseGoodsAreaPo">
+        insert into tbl_warehouse_goods_area (name,icon,sup_id,fk_warehouse_id,sort_index) values (#{name},#{icon},#{supId},#{fkWarehouseId},#{sortIndex})
+    </insert>
+
+    <update id="updateWarehouseGoodsArea"
+            parameterType="com.yingtongquan.employees.warehouse.pojo.WarehouseArea">
+        update tbl_warehouse_goods_area set name = #{name},icon = #{icon},sup_id = #{supId},fk_warehouse_id = #{fkWarehouseId},sort_index = #{sortIndex} where id = #{id}
+    </update>
+
+    <delete id="deleteWarehouseGoodsArea">
+        delete from tbl_warehouse_goods_area where id = #{id}
+    </delete>
+    <select id="queryAllWarehouseGoodsArea"
+            resultType="com.yingtongquan.employees.warehouse.pojo.WarehouseArea">
+        select id,name,icon,sup_id,fk_warehouse_id,sort_index from tbl_warehouse_goods_area where fk_warehouse_id = #{warehouseId}
+    </select>
+
+
+</mapper>

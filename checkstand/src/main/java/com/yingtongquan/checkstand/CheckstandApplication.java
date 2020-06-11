@@ -1,0 +1,15 @@
+package com.yingtongquan.checkstand;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+
+@SpringBootApplication
+@EnableEurekaClient
+public class CheckstandApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(CheckstandApplication.class, args);
+    }
+
+}

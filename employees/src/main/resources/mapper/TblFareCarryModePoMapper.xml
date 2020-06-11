@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.com.yingtongquan.employees.shop.mapper.TblFareCarryModeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.shop.entity.TblFareCarryModePo">
+                <id column="id" property="id" />
+                <result column="fare_template_id" property="fareTemplateId" />
+                <result column="first_piece" property="firstPiece" />
+                <result column="first_weight" property="firstWeight" />
+                <result column="first_bulk" property="firstBulk" />
+                <result column="first_amount" property="firstAmount" />
+                <result column="second_piece" property="secondPiece" />
+                <result column="second_weight" property="secondWeight" />
+                <result column="second_bulk" property="secondBulk" />
+                <result column="second_amount" property="secondAmount" />
+                <result column="logistics_company" property="logisticsCompany" />
+                <result column="is_default" property="isDefault" />
+    </resultMap>
+
+
+    <!-- 条件获取多条数据列 -->
+    <sql id="GetListByInfo_Column_List">
+        tbl_fare_carry_mode.id as id,tbl_fare_carry_mode.fare_template_id as fareTemplateId,tbl_fare_carry_mode.first_piece as firstPiece,tbl_fare_carry_mode.first_weight as firstWeight,tbl_fare_carry_mode.first_bulk as firstBulk,tbl_fare_carry_mode.first_amount as firstAmount,tbl_fare_carry_mode.second_piece as secondPiece,tbl_fare_carry_mode.second_weight as secondWeight,tbl_fare_carry_mode.second_bulk as secondBulk,tbl_fare_carry_mode.second_amount as secondAmount,tbl_fare_carry_mode.logistics_company as logisticsCompany,tbl_fare_carry_mode.is_default as isDefault
+    </sql>
+    <!-- 条件获取多条数据的条件 -->
+    <sql id="GetListByInfo_Conditions_Column_List">
+        id > #{currentPageMaxId}
+        <if test="id!=null and id!='' and id!=0">
+            AND tbl_fare_carry_mode.id=#{id}
+        </if>
+        LIMIT #{pagePumber}
+    </sql>
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="java.util.Map">
+        SELECT
+        <include refid="GetListByInfo_Column_List" />
+        FROM tbl_fare_carry_mode
+        WHERE
+        <include refid="GetListByInfo_Conditions_Column_List" />
+    </select>
+
+
+
+</mapper>

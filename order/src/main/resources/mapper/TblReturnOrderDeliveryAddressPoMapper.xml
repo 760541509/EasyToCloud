@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.order.returnGoods.mapper.TblReturnOrderDeliveryAddressMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.order.returnGoods.entity.TblReturnOrderDeliveryAddressPo">
+        <id column="id" property="id" />
+        <result column="return_order_id" property="returnOrderId" />
+        <result column="add_time" property="addTime" />
+        <result column="shop_delivery_address_id" property="shopDeliveryAddressId" />
+        <result column="phone" property="phone" />
+        <result column="name" property="name" />
+        <result column="area_id" property="areaId" />
+        <result column="address" property="address" />
+        <result column="is_since" property="isSince" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, return_order_id, add_time, shop_delivery_address_id, phone, name, area_id, address, is_since
+    </sql>
+
+</mapper>

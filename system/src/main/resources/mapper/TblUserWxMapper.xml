@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.system.user.mapper.TblUserWxMapper">
+
+    <resultMap id="BaseResultMap" type="com.yingtongquan.system.user.entity.TblUserWxPo">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="head_portrait" property="headPortrait"/>
+        <result column="open_id" property="openId"/>
+        <result column="session_key" property="sessionKey"/>
+        <result column="phone" property="phone"/>
+    </resultMap>
+    <insert id="addWXUserInformation" parameterType="com.yingtongquan.system.user.entity.TblUserWxPo">
+        insert into tbl_user_wx (name,head_portrait,open_id,session_key,phone) values (#{name},#{headPortrait},#{openId},#{sessionKey},#{phone})
+    </insert>
+    <update id="addWeChatUserPhone">
+        UPDATE tbl_user_wx SET phone = #{phone} WHERE open_id = #{openId} AND session_key = #{sessionKey}
+    </update>
+    <update id="modifyTheUserSessionKey">
+        UPDATE tbl_user_wx SET session_key = #{sessionKey} WHERE open_id = #{openId}
+    </update>
+
+    <select id="queryTheUserWithOPENID" resultType="com.yingtongquan.system.user.entity.TblUserWxPo">
+        select id,name,head_portrait,open_id,session_key,phone from tbl_user_wx where open_id = #{openId}
+    </select>
+    <select id="theUserIDIsQueriedByTheMobilePhoneNumber"
+            resultType="com.yingtongquan.system.user.pojo.WXUserInformation">
+        SELECT
+        	tbl_user.id,
+        	wx.name,
+        	wx.head_portrait,
+        	wx.open_id,
+        	wx.session_key,
+        	wx.phone,
+        	tbl_user.account,
+        	tbl_user.password,
+        	tbl_user.salt_value,
+        	tbl_user.add_time
+        FROM
+        	tbl_user_wx wx
+        	INNER JOIN tbl_user ON wx.phone = tbl_user.phone
+        WHERE
+        	wx.phone = #{phone}
+    </select>
+    <select id="queryWXUserInformation" resultType="com.yingtongquan.system.user.entity.TblUserWxPo">
+        select id,name,head_portrait,open_id,session_key,phone from tbl_user_wx where id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.spec.mapper.TblGoodsSpecValueMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.spec.entity.TblGoodsSpecValuePo">
+                <id column="id" property="id" />
+                <result column="name" property="name" />
+                <result column="fk_goods_spec_name_id" property="fkGoodsSpecNameId" />
+    </resultMap>
+
+
+    <!-- 添加的列 -->
+    <sql id="Add_Column_List">
+        (tbl_goods_spec_value.name,tbl_goods_spec_value.fk_goods_spec_name_id)
+    </sql>
+    <!-- 添加的值 -->
+    <sql id="Add_Value_Column_List">
+        (#{name},#{fkGoodsSpecNameId})
+    </sql>
+
+
+    <!-- 修改的值 -->
+    <sql id="Update_Value_Column_List">
+        tbl_goods_spec_value.name=#{name},tbl_goods_spec_value.fk_goods_spec_name_id=#{fkGoodsSpecNameId}
+    </sql>
+    <!-- 修改的条件 -->
+    <sql id="Update_Conditions_Column_List">
+        tbl_goods_spec_value.id = #{id}
+    </sql>
+
+
+    <!-- 删除的条件 -->
+    <sql id="DeleteByInfo_Conditions_Column_List">
+        tbl_goods_spec_value.id=#{id}
+    </sql>
+
+
+    <!-- 条件获取一条数据列 -->
+    <sql id="GetByInfo_Column_List">
+        tbl_goods_spec_value.id  as id,tbl_goods_spec_value.name  as name,tbl_goods_spec_value.fk_goods_spec_name_id  as fkGoodsSpecNameId
+    </sql>
+    <!-- 条件获取一条数据的条件 -->
+    <sql id="GetByInfo_Conditions_Column_List">
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+            AND tbl_goods_spec_value.id=#{id}
+        </if>
+    </sql>
+
+
+    <!-- 条件获取多条数据列 -->
+    <sql id="GetListByInfo_Column_List">
+        tbl_goods_spec_value.id as id,tbl_goods_spec_value.name as name,tbl_goods_spec_value.fk_goods_spec_name_id as fkGoodsSpecNameId
+    </sql>
+    <!-- 条件获取多条数据的条件 -->
+    <sql id="GetListByInfo_Conditions_Column_List">
+        id > #{currentPageMaxId}
+        <if test="id!=null and id!='' and id!=0">
+            AND tbl_goods_spec_value.id=#{id}
+        </if>
+        LIMIT #{pagePumber}
+    </sql>
+
+
+
+    <!-- 添加 -->
+    <insert id="add" parameterType="java.util.Map" >
+        INSERT INTO tbl_goods_spec_value
+        <include refid="Add_Column_List" />
+        VALUES
+        <include refid="Add_Value_Column_List" />
+    </insert>
+
+    <!-- 批量添加 -->
+    <insert id="addBatchInfo" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_spec_value
+        <include refid="Add_Column_List" />
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.name},#{item.fkGoodsSpecNameId})
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo" parameterType="java.util.Map">
+        UPDATE tbl_goods_spec_value
+        SET <include refid="Update_Value_Column_List" />
+        WHERE <include refid="Update_Conditions_Column_List" />
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" parameterType="java.util.Map">
+        DELETE FROM tbl_goods_spec_value
+        WHEN <include refid="DeleteByInfo_Conditions_Column_List" />
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="java.util.Map">
+        SELECT
+        <include refid="GetByInfo_Column_List" />
+        FROM tbl_goods_spec_value
+        WHERE
+        <include refid="GetByInfo_Conditions_Column_List" />
+
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="java.util.Map">
+        SELECT
+        <include refid="GetListByInfo_Column_List" />
+        FROM tbl_goods_spec_value
+        WHERE
+        <include refid="GetListByInfo_Conditions_Column_List" />
+    </select>
+
+    <select id="getListByIds" resultType="com.yingtongquan.employees.spec.entity.TblGoodsSpecValuePo" parameterType="java.util.List">
+    SELECT
+     tbl_goods_spec_name.id as specNameId,
+     tbl_goods_spec_name.name as specNameName,
+     tbl_goods_spec_value.id as specValueId,
+     tbl_goods_spec_value.name as specValueName
+     FROM tbl_goods_spec_value
+     LEFT JOIN tbl_goods_spec_name ON tbl_goods_spec_name.id = tbl_goods_spec_value.fk_goods_spec_name_id
+     WHERE
+     <foreach item="item" collection="list" separator="or"  index="index">
+         tbl_goods_spec_value.id = #{item}
+     </foreach>
+    </select>
+
+    <select id="getListByFkGoodsSpecNameId"
+            resultType="com.yingtongquan.employees.spec.entity.TblGoodsSpecValuePo">
+        SELECT
+        <include refid="GetListByInfo_Column_List" />
+        FROM tbl_goods_spec_value
+        WHERE
+        tbl_goods_spec_value.fk_goods_spec_name_id = #{fkGoodsSpecNameId}
+    </select>
+
+
+</mapper>

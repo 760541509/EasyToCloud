@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.member.mapper.TblMemberDeliveryAddressShopMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.member.entity.TblMemberDeliveryAddressShopPo">
+                <id column="id" property="id" />
+                <result column="member_shop_id" property="memberShopId" />
+                <result column="phone" property="phone" />
+                <result column="area_id" property="areaId" />
+                <result column="address" property="address" />
+                <result column="latitude" property="latitude" />
+                <result column="longitude" property="longitude" />
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, member_shop_id, phone, area_id, address, latitude, longitude
+    </sql>
+
+
+</mapper>

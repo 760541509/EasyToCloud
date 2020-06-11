@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.coupons.mapper.TblCouponsPeriodOfValidityMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.coupons.entity.TblCouponsPeriodOfValidityPo">
+                <id column="id" property="id" />
+                <result column="effect_of_time" property="effectOfTime" />
+                <result column="end_of_time" property="endOfTime" />
+                <result column="on_the_day" property="onTheDay" />
+                <result column="the_next_day" property="theNextDay" />
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, effect_of_time, end_of_time, on_the_day, the_next_day
+    </sql>
+
+
+</mapper>

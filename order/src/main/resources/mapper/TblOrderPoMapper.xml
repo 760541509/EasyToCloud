@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.order.order.mapper.TblOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.order.order.entity.TblOrderPo">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="member_shop_id" property="memberShopId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="order_status_vice" property="orderStatusVice"/>
+        <result column="goods_count" property="goodsCount"/>
+        <result column="goods_amount_total" property="goodsAmountTotal"/>
+        <result column="order_amount_total" property="orderAmountTotal"/>
+        <result column="logistics_fee" property="logisticsFee"/>
+        <result column="order_type" property="orderType"/>
+        <result column="order_channel" property="orderChannel"/>
+        <result column="add_time" property="addTime"/>
+        <result column="user_id" property="userId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_no, member_shop_id, shop_id, order_status, order_status_vice, goods_count, goods_amount_total, order_amount_total, logistics_fee, order_type, order_channel, add_time,user_id
+    </sql>
+
+
+    <update id="modifyThePriceAndQuantityInTheOrder"
+            parameterType="com.yingtongquan.order.order.pojo.UpdateOrderInformation">
+        update tbl_order set goods_count = #{goodsCount},goods_amount_total = #{goodsAmountTotal},order_amount_total = #{orderAmountTotal} where order_no = #{orderNo}
+    </update>
+
+
+    <select id="queryOrderInformation" resultType="com.yingtongquan.order.order.entity.TblOrderPo">
+        select id, order_no, member_shop_id, shop_id, order_status, order_status_vice, goods_count, goods_amount_total, order_amount_total, logistics_fee, order_type, order_channel, add_time,user_id from tbl_order where order_no = #{orderNo}
+    </select>
+
+    <select id="queryShopMemberInfromation"
+            parameterType="java.lang.Integer" resultType="com.yingtongquan.order.order.pojo.MemberInformation">
+        SELECT
+        	shop.id,
+        	shop.member_name,
+        	shop.phone,
+        	shop.add_time,
+	        shop.head_portrait,
+	        shop.member_id,
+	        shop.shop_id,
+        	price.price_name
+        FROM
+        	tbl_member_shop shop
+        	INNER JOIN tbl_member_price_shop price ON shop.member_id = price.id
+        WHERE
+	        shop.user_id = #{userId}
+	        AND shop.shop_id = #{shopId}
+    </select>
+
+    <select id="queryUserInformation" resultType="com.yingtongquan.order.order.pojo.UserPojo">
+        select * from tbl_user where id = #{userId}
+    </select>
+
+    <select id="queryShopMemberPrice" resultType="com.yingtongquan.order.order.pojo.ShopMemberPrice">
+        select id, price_name, shop_id from tbl_member_price_shop where shop_id = #{shopId} and price_name = "零售价"
+    </select>
+
+    <select id="queryGoodsIndividualTravelerPrice" resultType="com.yingtongquan.order.order.pojo.GoodsShopPrice">
+        SELECT
+	        fk_goods_spu_unit_id AS goodsSkuUnitId,
+	        price,
+	        fk_member_price_shop_id AS memberPriceShopId
+        FROM
+	        tbl_goods_price
+        WHERE
+	        fk_goods_spu_unit_id = #{goodsSkuUnitId}
+	        AND fk_member_price_shop_id = #{memberPriceShopId}
+	        AND fk_goods_sku_id = #{goodsSkuId}
+	</select>
+
+    <select id="queryUserAllOrderInformation" resultType="com.yingtongquan.order.order.pojo.OrderInformation">
+        SELECT
+        	tbl_order.order_no,
+        	tbl_order.order_status,
+        	tbl_order.order_status_vice,
+        	tbl_order.goods_count,
+        	tbl_order.goods_amount_total,
+        	tbl_order.order_amount_total,
+        	tbl_order.logistics_fee,
+        	tbl_order.order_type,
+        	tbl_order.order_channel,
+        	tbl_order.add_time,
+	        orderAddress.phone,
+        	orderAddress.name,
+        	orderAddress.area_id,
+        	orderAddress.address,
+	        tbl_shop.store_name
+        FROM
+        	tbl_order
+        	INNER JOIN tbl_order_delivery_address orderAddress ON tbl_order.id = orderAddress.order_id
+        	INNER JOIN tbl_shop ON tbl_order.shop_id = tbl_shop.id
+        WHERE
+	        tbl_order.user_id = #{userId}
+    </select>
+    <select id="queryOrderAllGoods" resultType="com.yingtongquan.order.order.pojo.OrderGoods">
+        SELECT
+	        orderGoods.order_goods_name,
+	        orderGoods.image,
+	        orderGoods.goods_sku_unit_id,
+	        tbl_goods_spu_unit.name goodsSkuUnitName,
+	        orderGoods.goods_sku_id,
+	        orderGoods.price,
+	        orderGoods.original_price,
+	        orderGoods.amount
+        FROM
+	        tbl_order
+	        INNER JOIN tbl_order_goods orderGoods ON tbl_order.id = orderGoods.order_id
+	        INNER JOIN tbl_goods_spu_unit ON orderGoods.goods_sku_id = tbl_goods_spu_unit.id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="queryOrderBasicInformation" resultType="com.yingtongquan.order.order.pojo.OrderInformation">
+        SELECT
+        	tbl_order.order_no,
+        	tbl_order.order_status,
+        	tbl_order.order_status_vice,
+        	tbl_order.goods_count,
+        	tbl_order.goods_amount_total,
+        	tbl_order.order_amount_total,
+        	tbl_order.logistics_fee,
+        	tbl_order.order_type,
+        	tbl_order.order_channel,
+        	tbl_order.add_time,
+	        tbl_order.user_id,
+	        orderAddress.phone,
+        	orderAddress.name,
+        	orderAddress.area_id,
+        	orderAddress.address,
+	        tbl_shop.store_name
+        FROM
+        	tbl_order
+        	INNER JOIN tbl_order_delivery_address orderAddress ON tbl_order.id = orderAddress.order_id
+        	INNER JOIN tbl_shop ON tbl_order.shop_id = tbl_shop.id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="theUserIDIsQueriedByTheMobilePhoneNumber"
+            resultType="com.yingtongquan.order.order.pojo.WXUserInformation">
+        SELECT
+        tbl_user.id,
+        wx.name,
+        wx.head_portrait,
+        wx.open_id,
+        wx.session_key,
+        wx.phone,
+        tbl_user.account,
+        tbl_user.password,
+        tbl_user.salt_value,
+        tbl_user.add_time
+        FROM
+        tbl_user_wx wx
+        INNER JOIN tbl_user ON wx.phone = tbl_user.phone
+        <where>
+            <if test="WXUserId!=null">
+                wx.id = #{WXUserId}
+            </if>
+            <if test="UserId!=null">
+                tbl_user.id = #{UserId}
+            </if>
+        </where>
+    </select>
+    <select id="queryUserId" resultType="java.lang.Integer">
+        SELECT
+        	tbl_user.id
+        FROM
+	        tbl_user
+        	INNER JOIN tbl_user_wx ON tbl_user_wx.phone = tbl_user.account
+        WHERE
+	        tbl_user_wx.id = #{WXId}
+    </select>
+    <select id="queryUser" resultType="java.lang.Integer">
+        SELECT
+        	tbl_user.id
+        FROM
+        	tbl_user
+        	INNER JOIN tbl_member_shop ON tbl_member_shop.phone = tbl_user.phone
+        WHERE
+	        tbl_member_shop.id = #{memberId}
+    </select>
+    <select id="queryGoodsMemberPrice" resultType="com.yingtongquan.order.order.pojo.GoodsShopPrice">
+        SELECT
+	        fk_goods_spu_unit_id AS goodsSkuUnitId,
+	        price,
+	        fk_member_price_shop_id AS memberPriceShopId
+        FROM
+	        tbl_goods_price
+        WHERE
+	        fk_goods_spu_unit_id = #{goodsSkuUnitId}
+	        AND fk_member_price_shop_id = ( SELECT member_id FROM tbl_member_shop WHERE id = #{memberId} )
+	        AND fk_goods_sku_id = #{goodsSkuId}
+    </select>
+    <select id="queryOrderId" resultType="java.lang.Integer">
+        select id from tbl_order where order_no = #{orderNo}
+    </select>
+    <select id="queryOrderInfo" resultType="com.yingtongquan.order.order.entity.TblOrderPo">
+        select * from tbl_order where order_no = #{orderNo}
+    </select>
+    <select id="queryMemberInfo" resultType="com.yingtongquan.order.order.pojo.MemberInformation">
+        SELECT
+	        tbl_member_shop.id,
+	        tbl_member_shop.member_name,
+	        tbl_member_shop.user_id,
+	        tbl_member_shop.phone,
+	        tbl_member_shop.add_time,
+	        tbl_member_shop.shop_id,
+	        tbl_member_shop.member_id,
+	        tbl_user.head_portrait
+        FROM
+	        tbl_member_shop
+	        INNER JOIN tbl_user ON tbl_member_shop.user_id = tbl_user.id
+        WHERE
+	        tbl_member_shop.user_id = #{userId}
+	        AND tbl_member_shop.shop_id = #{shopId}
+    </select>
+    <select id="querygoodsSkuName" resultType="java.lang.String">
+        SELECT
+	        tbl.specValue
+        FROM
+	        tbl_goods_sku
+	        INNER JOIN (
+        SELECT
+	        tbl.fkGoodsSkuId,
+	        tbl.fkGoodsSpuId,
+	        GROUP_CONCAT( tbl.specName SEPARATOR ';' ) AS specName,
+            GROUP_CONCAT( tbl.specValue SEPARATOR ';' ) AS specValue
+        FROM
+	        (
+        SELECT
+	        tbl_goods_sku.id AS fkGoodsSkuId,
+	        tbl_goods_sku.fk_goods_spu_id AS fkGoodsSpuId,
+	        tbl_goods_spec_name.NAME AS specName,
+	        tbl_goods_spec_value.NAME AS specValue
+        FROM
+	        ( SELECT tbl_goods_sku.id, tbl_goods_sku.fk_goods_spu_id FROM tbl_goods_sku WHERE tbl_goods_sku.id = #{goodsSkuId} ) AS tbl_goods_sku
+	        INNER JOIN tbl_goods_sku_spec_value ON tbl_goods_sku.id = tbl_goods_sku_spec_value.fk_goods_sku_id
+	        INNER JOIN tbl_goods_spec_value ON tbl_goods_sku_spec_value.fk_spec_value_id = tbl_goods_spec_value.id
+	        INNER JOIN tbl_goods_spec_name ON tbl_goods_spec_value.fk_goods_spec_name_id = tbl_goods_spec_name.id
+	        ) AS tbl
+        GROUP BY
+	        tbl.fkGoodsSkuId
+	        ) AS tbl ON tbl.fkGoodsSkuId = tbl_goods_sku.id
+    </select>
+    <select id="queryAddressInfo" resultType="com.yingtongquan.order.order.pojo.Address">
+        SELECT
+        	t1.area_id,
+        	t1.area_name area,
+        	t2.area_name city,
+        	t3.area_name province
+        FROM
+        	tbl_area t1
+        	INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
+        	INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
+        WHERE
+	        t1.area_id = #{areaId}
+    </select>
+    <select id="queryShopAllOrder" resultType="com.yingtongquan.order.order.pojo.OrderInformation">
+        SELECT
+        	tbl_order.order_no,
+        	tbl_order.order_status,
+        	tbl_order.order_status_vice,
+        	tbl_order.goods_count,
+        	tbl_order.goods_amount_total,
+        	tbl_order.order_amount_total,
+        	tbl_order.logistics_fee,
+        	tbl_order.order_type,
+        	tbl_order.order_channel,
+        	tbl_order.add_time,
+	        tbl_order.user_id,
+	        orderAddress.phone,
+        	orderAddress.name,
+        	orderAddress.area_id,
+        	orderAddress.address,
+	        tbl_shop.store_name
+        FROM
+        	tbl_order
+        	INNER JOIN tbl_order_delivery_address orderAddress ON tbl_order.id = orderAddress.order_id
+        	INNER JOIN tbl_shop ON tbl_order.shop_id = tbl_shop.id
+        WHERE
+	        tbl_order.shop_id = #{shopId}
+    </select>
+    <insert id="addShopMemberInfromation" parameterType="com.yingtongquan.order.order.pojo.MemberPojo"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_member_shop (member_name, user_id, phone, add_time, head_portrait,shop_id) values (#{memberName},#{userId},#{phone},#{addTime},#{headPortrait},#{shopId})
+    </insert>
+    <insert id="addOrderInfromation" parameterType="com.yingtongquan.order.order.entity.TblOrderPo">
+        INSERT INTO tbl_order (order_no, member_shop_id, shop_id, order_status, order_status_vice, goods_count, goods_amount_total, order_amount_total, logistics_fee, order_type, order_channel, add_time,user_id)
+        values (#{orderNo},#{memberShopId},#{shopId},#{orderStatus},#{orderStatusVice},#{goodsCount},#{goodsAmountTotal},#{orderAmountTotal},#{logisticsFee},#{orderType},#{orderChannel},#{addTime},#{userId})
+    </insert>
+    <insert id="addOrderInformation" parameterType="com.yingtongquan.order.order.entity.TblOrderPo"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_order(order_no,member_shop_id,shop_id,order_status,order_status_vice,goods_count,goods_amount_total,order_amount_total,logistics_fee,order_type,order_channel,add_time,user_id)
+        values (#{orderNo},#{memberShopId},#{shopId},#{orderStatus},#{orderStatusVice},#{goodsCount},#{goodsAmountTotal},#{orderAmountTotal},#{logisticsFee},#{orderType},#{orderChannel},#{addTime},#{userId})
+    </insert>
+    <insert id="addUserLotteryNumber">
+        UPDATE tbl_user_lottery_number
+        SET lottery_number = ( lottery_number + 1 )
+        WHERE
+	        user_id = #{userId}
+    </insert>
+    <insert id="bindCouponsAndOrder">
+        insert into tbl_order_coupons(order_no,coupon_id) values (#{orderNo},#{couponsId})
+    </insert>
+    <insert id="addUserInformation">
+        insert into tbl_user (account, password, salt_value, username, date_birth, head_portrait, sex, email, area_id, address, add_time, phone, mac)
+        values (#{account},#{password},#{saltValue},#{username},#{dateBirth},#{headPortrait},#{sex},#{email},#{areaId},#{address},#{addTime},#{phone},#{mac})
+    </insert>
+    <insert id="addOutboundOrder">
+        insert into tbl_outbound_order(outbound_order_no,outbound_order_status,goods_count,outbound_order_type,outbound_order_channel,add_time,order_no)
+        values (#{outboundOrderNo},#{outboundOrderStatus},#{goodsCount},#{outboundOrderType},#{outboundOrderChannel},#{addTime},#{orderNo})
+    </insert>
+
+
+</mapper>

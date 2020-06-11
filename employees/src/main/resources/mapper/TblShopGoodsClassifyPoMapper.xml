@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.goodsShopClassify.mapper.TblShopGoodsClassifyMapper">
+
+
+
+    <!-- 添加 -->
+    <insert id="addInfo"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_shop_goods_classify
+        (tbl_shop_goods_classify.name,tbl_shop_goods_classify.icon,tbl_shop_goods_classify.sup_id,tbl_shop_goods_classify.fk_shop_id,tbl_shop_goods_classify.fk_goods_cp_id,tbl_shop_goods_classify.sort_index)
+        VALUES
+        (#{name},#{icon},#{supId},#{fkShopId},#{fkGoodsCpId},#{sortIndex})
+    </insert>
+
+    <!-- 批量添加 -->
+    <insert id="addBatchInfo" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_shop_goods_classify
+        (tbl_shop_goods_classify.name,tbl_shop_goods_classify.icon,tbl_shop_goods_classify.sup_id,tbl_shop_goods_classify.fk_shop_id,tbl_shop_goods_classify.fk_goods_cp_id,tbl_shop_goods_classify.sort_index)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.name},#{item.icon},#{item.supId},#{item.fkShopId},#{item.fkGoodsCpId},#{item.sortIndex})
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo"  >
+        UPDATE tbl_shop_goods_classify
+        SET
+        tbl_shop_goods_classify.name=#{name},tbl_shop_goods_classify.icon=#{icon},tbl_shop_goods_classify.sup_id=#{supId},tbl_shop_goods_classify.fk_shop_id=#{fkShopId},tbl_shop_goods_classify.fk_goods_cp_id=#{fkGoodsCpId},tbl_shop_goods_classify.sort_index=#{sortIndex}
+        WHERE
+        tbl_shop_goods_classify.id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" >
+        DELETE FROM tbl_shop_goods_classify
+        WHEN
+        tbl_shop_goods_classify.id=#{id}
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="com.yingtongquan.employees.goodsShopClassify.entity.TblShopGoodsClassifyPo" >
+        SELECT
+        tbl_shop_goods_classify.id  as id,tbl_shop_goods_classify.name  as name,tbl_shop_goods_classify.icon  as icon,tbl_shop_goods_classify.sup_id  as supId,tbl_shop_goods_classify.fk_shop_id  as fkShopId,tbl_shop_goods_classify.fk_goods_cp_id  as fkGoodsCpId,tbl_shop_goods_classify.sort_index  as sortIndex
+        FROM tbl_shop_goods_classify
+        WHERE
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+        AND tbl_shop_goods_classify.id=#{id}
+        </if>
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="com.yingtongquan.employees.goodsShopClassify.entity.TblShopGoodsClassifyPo" >
+        SELECT
+        tbl_shop_goods_classify.id as id,tbl_shop_goods_classify.name as name,tbl_shop_goods_classify.icon as icon,tbl_shop_goods_classify.sup_id as supId,tbl_shop_goods_classify.fk_shop_id as fkShopId,tbl_shop_goods_classify.fk_goods_cp_id as fkGoodsCpId,tbl_shop_goods_classify.sort_index as sortIndex
+        FROM tbl_shop_goods_classify
+        WHERE
+        id > #{currentPageMaxId}
+        <if test="keyword!=null and keyword!=''">
+            AND tbl_shop_goods_classify.keyword  LIKE concat('%',#{keyword},'%')
+        </if>
+        LIMIT #{pagePumber}
+    </select>
+
+
+    <!-- 查询一级分类 -->
+    <select id="getListPrimaryClassification"
+            resultType="com.yingtongquan.employees.goodsShopClassify.entity.TblShopGoodsClassifyPo">
+
+        SELECT
+        tbl_shop_goods_classify.id as id,tbl_shop_goods_classify.name as name,tbl_shop_goods_classify.icon as icon,tbl_shop_goods_classify.sup_id as supId,tbl_shop_goods_classify.sort_index as sortIndex
+        FROM tbl_shop_goods_classify
+        WHERE
+        tbl_shop_goods_classify.fk_shop_id=#{fkShopId}
+        AND
+        tbl_shop_goods_classify.sup_id = 0
+        ORDER BY tbl_shop_goods_classify.sort_index DESC
+    </select>
+
+    <!-- 根据一级分类id，查询二级分类 -->
+    <select id="getListSecondClassification"
+            resultType="com.yingtongquan.employees.goodsShopClassify.entity.TblShopGoodsClassifyPo">
+        SELECT
+        tbl_shop_goods_classify.id as id,tbl_shop_goods_classify.name as name,tbl_shop_goods_classify.icon as icon,tbl_shop_goods_classify.sup_id as supId,tbl_shop_goods_classify.sort_index as sortIndex
+        FROM tbl_shop_goods_classify
+        WHERE
+        tbl_shop_goods_classify.sup_id = #{primaryId} ORDER BY tbl_shop_goods_classify.sort_index DESC
+    </select>
+
+    <!-- 根据二级分类id，查询三级分类 -->
+    <select id="getListThreeClassification"
+            resultType="com.yingtongquan.employees.goodsShopClassify.entity.TblShopGoodsClassifyPo">
+
+        SELECT
+        tbl_shop_goods_classify.id as id,tbl_shop_goods_classify.name as name,tbl_shop_goods_classify.icon as icon,tbl_shop_goods_classify.sup_id as supId,tbl_shop_goods_classify.sort_index as sortIndex
+        FROM tbl_shop_goods_classify
+        WHERE
+        tbl_shop_goods_classify.sup_id
+        in
+        <foreach item="item" collection="list" separator="," open="(" close=")"  index="index">
+            #{item}
+        </foreach>
+
+        ORDER BY tbl_shop_goods_classify.sort_index DESC
+
+    </select>
+
+
+</mapper>

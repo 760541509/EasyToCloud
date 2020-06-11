@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.shop.mapper.TblShopMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.shop.entity.TblShopPo">
+        <id column="id" property="id"/>
+        <result column="store_name" property="storeName"/>
+        <result column="store_icon" property="storeIcon"/>
+        <result column="images" property="images"/>
+        <result column="area_id" property="areaId"/>
+        <result column="address" property="address"/>
+        <result column="latitude" property="latitude"/>
+        <result column="longitude" property="longitude"/>
+        <result column="user_id" property="userId"/>
+        <result column="phone" property="phone"/>
+        <result column="telephone" property="telephone"/>
+        <result column="add_time" property="addTime"/>
+    </resultMap>
+
+
+    <!-- 条件获取多条数据列 -->
+    <sql id="GetListByInfo_Column_List">
+        id,store_name,store_icon,images,area_id,address,latitude,longitude,user_id,phone,telephone,add_time,status
+    </sql>
+    <insert id="addShopInformation" parameterType="com.yingtongquan.employees.shop.entity.TblShopPo" useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_shop (store_name,store_icon,images,area_id,address,latitude,longitude,user_id,phone,telephone,add_time,status)
+        values (#{storeName},#{storeIcon},#{images},#{areaId},#{address},#{latitude},#{longitude},#{userId},#{phone},#{telephone},#{addTime},#{status})
+    </insert>
+    <update id="updateShopInformation" parameterType="com.yingtongquan.employees.shop.entity.TblShopPo">
+        update tbl_shop set store_name = #{storeName},store_icon = #{storeIcon},images = #{images},area_id = #{areaId},address = #{address},latitude = #{latitude},longitude = #{longitude},phone = #{phone},telephone = #{telephone} where id = #{id}
+    </update>
+    <delete id="deleteShop">
+        delete from tbl_shop where id = #{shopId}
+    </delete>
+
+    <select id="queryCityAndProvincial" resultType="com.yingtongquan.startcommon.address.pojo.Address">
+        SELECT
+        	t1.area_id,
+        	t1.area_name area,
+        	t2.area_name city,
+        	t3.area_name province
+        FROM
+        	tbl_area t1
+        	INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
+        	INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
+        WHERE
+	        t1.area_id = #{areaId}
+    </select>
+
+    <select id="queryUserId" resultType="java.lang.Integer">
+        SELECT tbl_user.id FROM tbl_user_wx INNER JOIN tbl_user ON tbl_user_wx.phone = tbl_user.phone WHERE tbl_user_wx.id = #{WXUserId}
+    </select>
+
+    <select id="queryUserAllShopInformation" resultType="com.yingtongquan.employees.shop.pojo.ShopInformation">
+        select id,store_name,store_icon,images,area_id,address,phone,telephone,add_time from tbl_shop where user_id = #{userId}
+    </select>
+
+    <select id="queryShopInformation" resultType="com.yingtongquan.employees.shop.pojo.ShopInformation">
+        select id,store_name,store_icon,images,area_id,address,phone,telephone,add_time from tbl_shop where id = #{shopId}
+    </select>
+
+    <select id="queryAllShopInformation" resultType="com.yingtongquan.employees.shop.pojo.ShopInformation">
+        select id,store_name,store_icon,images,area_id,address,phone,telephone,add_time from tbl_shop where id &lt;= #{id} limit #{pageNumber}
+    </select>
+
+    <select id="queryStoreInformation" resultType="com.yingtongquan.employees.shop.entity.TblShopPo">
+        select id,store_name,store_icon,images,area_id,address,latitude,longitude,user_id,phone,telephone,add_time from tbl_shop where id = #{shopId}
+    </select>
+
+
+</mapper>

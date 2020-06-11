@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.order.coupons.mapper.TblCouponsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.order.coupons.entity.TblCouponsPo">
+                <id column="id" property="id" />
+                <result column="coupon_name" property="couponName" />
+                <result column="total_number" property="totalNumber" />
+                <result column="specify_the_amount" property="specifyTheAmount" />
+                <result column="discount" property="discount" />
+                <result column="conditions_of_use" property="conditionsOfUse" />
+                <result column="member_level_id" property="memberLevelId" />
+                <result column="get_the_number" property="getTheNumber" />
+                <result column="period_of_validity_id" property="periodOfValidityId" />
+                <result column="using_range_id" property="usingRangeId" />
+                <result column="directions_for_use" property="directionsForUse" />
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, coupon_name, total_number, specify_the_amount, discount, conditions_of_use, member_level_id, get_the_number, period_of_validity_id, using_range_id, directions_for_use
+    </sql>
+    <select id="queryCouponInformation" resultType="com.yingtongquan.order.coupons.pojo.Coupons">
+        SELECT
+			tbl_coupons.id,
+			tbl_coupons_user.user_id,
+			tbl_coupons_user.is_late,
+			tbl_coupons_user.get_the_time,
+			tbl_coupons.coupon_name,
+			tbl_coupons.meet,
+			tbl_coupons.reduce,
+			tbl_coupons.discount,
+			tbl_coupons.total_number,
+			tbl_coupons.conditions_of_use,
+			tbl_coupons.member_level_id,
+			tbl_coupons.get_the_number,
+			tbl_coupons.directions_for_use,
+			tbl_coupons_period_of_validity.effect_of_time,
+			tbl_coupons_period_of_validity.end_of_time,
+			tbl_coupons_period_of_validity.on_the_day,
+			tbl_coupons_period_of_validity.the_next_day,
+			tbl_coupons_using_range.shop_all_goods,
+			tbl_coupons_using_range.specify_the_commodity,
+			tbl_coupons_using_range.certain_category
+		FROM
+			tbl_coupons_user
+			INNER JOIN tbl_coupons ON tbl_coupons_user.coupons_id = tbl_coupons.id
+			INNER JOIN tbl_coupons_period_of_validity ON tbl_coupons.period_of_validity_id = tbl_coupons_period_of_validity.id
+			INNER JOIN tbl_coupons_using_range ON tbl_coupons.using_range_id = tbl_coupons_using_range.id
+		WHERE
+			tbl_coupons_user.coupons_id = #{couponId}
+    </select>
+
+
+</mapper>

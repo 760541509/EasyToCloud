@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.brand.mapper.TblGoodsBrandMapper">
+
+
+
+    <!-- 添加 -->
+    <insert id="addInfo"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_brand
+        (tbl_goods_brand.name,tbl_goods_brand.icon,tbl_goods_brand.sort_index)
+        VALUES
+        (#{name},#{icon},#{sortIndex})
+    </insert>
+
+    <!-- 批量添加 -->
+    <insert id="addBatchInfo" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_brand
+        (tbl_goods_brand.name,tbl_goods_brand.icon,tbl_goods_brand.sort_index)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.name},#{item.icon},#{item.sortIndex})
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo"  >
+        UPDATE tbl_goods_brand
+        SET
+        tbl_goods_brand.name=#{name},tbl_goods_brand.icon=#{icon},tbl_goods_brand.sort_index=#{sortIndex}
+        WHERE
+        tbl_goods_brand.id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" >
+        DELETE FROM tbl_goods_brand
+        WHEN
+        tbl_goods_brand.id=#{id}
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="com.yingtongquan.employees.brand.entity.TblGoodsBrandPo" >
+        SELECT
+        tbl_goods_brand.id  as id,tbl_goods_brand.name  as name,tbl_goods_brand.icon  as icon,tbl_goods_brand.sort_index  as sortIndex
+        FROM tbl_goods_brand
+        WHERE
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+        AND tbl_goods_brand.id=#{id}
+        </if>
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="com.yingtongquan.employees.brand.entity.TblGoodsBrandPo" >
+        SELECT
+        tbl_goods_brand.id as id,tbl_goods_brand.name as name,tbl_goods_brand.icon as icon
+        FROM tbl_goods_brand
+        WHERE
+        id > #{currentPageMaxId}
+        <if test="keyword!=null and keyword!=''">
+            AND tbl_goods_brand.keyword=#{keyword}
+        </if>
+        LIMIT #{pagePumber}
+    </select>
+
+    <!-- 获取门店的所有品牌 -->
+    <select id="getListByShopId" resultType="com.yingtongquan.employees.brand.entity.TblGoodsBrandPo">
+        SELECT
+        tbl_goods_brand.id AS id,tbl_goods_brand.`name` AS name,tbl_goods_brand.icon AS icon  FROM tbl_goods_brand
+        INNER JOIN
+        (SELECT DISTINCT tbl_goods_spu.fk_goods_brand_id
+        FROM
+        tbl_shop_goods_spu
+        INNER JOIN
+        tbl_goods_spu ON tbl_shop_goods_spu.fk_goods_spu_id = tbl_goods_spu.id
+        WHERE tbl_shop_goods_spu.fk_shop_id = #{fkShopId}) as tbl_ids
+        ON tbl_goods_brand.id = tbl_ids.fk_goods_brand_id
+        ORDER BY  tbl_goods_brand.sort_index
+    </select>
+
+
+</mapper>

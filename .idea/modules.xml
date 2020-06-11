@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/checkstand/checkstand.iml" filepath="$PROJECT_DIR$/checkstand/checkstand.iml" />
+      <module fileurl="file://$PROJECT_DIR$/client/client.iml" filepath="$PROJECT_DIR$/client/client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/customer/customer.iml" filepath="$PROJECT_DIR$/customer/customer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easytocloud.iml" filepath="$PROJECT_DIR$/easytocloud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/employees/employees.iml" filepath="$PROJECT_DIR$/employees/employees.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eureka/eureka.iml" filepath="$PROJECT_DIR$/eureka/eureka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fegin/fegin.iml" filepath="$PROJECT_DIR$/fegin/fegin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/order/order.iml" filepath="$PROJECT_DIR$/order/order.iml" />
+      <module fileurl="file://$PROJECT_DIR$/startcommon/startcommon.iml" filepath="$PROJECT_DIR$/startcommon/startcommon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/system/system.iml" filepath="$PROJECT_DIR$/system/system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/zuul/zuul.iml" filepath="$PROJECT_DIR$/zuul/zuul.iml" />
+    </modules>
+  </component>
+</project>

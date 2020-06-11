@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.order.returnGoods.mapper.TblReturnOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.order.returnGoods.entity.TblReturnOrderPo">
+        <id column="id" property="id"/>
+        <result column="return_order_no" property="returnOrderNo"/>
+        <result column="member_shop_id" property="memberShopId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="return_order_status" property="returnOrderStatus"/>
+        <result column="goods_count" property="goodsCount"/>
+        <result column="goods_amount_total" property="goodsAmountTotal"/>
+        <result column="return_order_amount_total" property="returnOrderAmountTotal"/>
+        <result column="return_order_type" property="returnOrderType"/>
+        <result column="return_order_channel" property="returnOrderChannel"/>
+        <result column="add_time" property="addTime"/>
+        <result column="order_no" property="orderNo"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, return_order_no, member_shop_id, shop_id, return_order_status, goods_count, goods_amount_total, return_order_amount_total, return_order_type, return_order_channel, add_time,order_no
+    </sql>
+
+    <insert id="addReturnOrderInformation" parameterType="com.yingtongquan.order.returnGoods.entity.TblReturnOrderPo">
+        insert into tbl_return_order (return_order_no, member_shop_id, shop_id, return_order_status, goods_count, goods_amount_total, return_order_amount_total, return_order_type, return_order_channel, add_time,order_no)
+        values (#{returnOrderNo},#{memberShopId},#{shopId},#{returnOrderStatus},#{goodsCount},#{goodsAmountTotal},#{returnOrderAmountTotal},#{returnOrderType},#{returnOrderChannel},#{addTime},#{orderNo})
+    </insert>
+
+    <insert id="addLogisticsInformation"
+            parameterType="com.yingtongquan.order.returnGoods.entity.TblReturnOrderLogisticsPo">
+        insert into tbl_return_order_logistics (return_order_id,add_time,name,logistics_no) values (#{returnOrderId},#{addTime},#{name},#{logisticsNo})
+    </insert>
+
+    <insert id="addReturnAddress"
+            parameterType="com.yingtongquan.order.returnGoods.entity.TblReturnOrderDeliveryAddressPo">
+        insert into tbl_return_order_delivery_address (return_order_id,add_time,shop_delivery_address_id,phone,name,area_id,address,is_since)
+        values (#{returnOrderId},#{addTime},#{shopDeliveryAddressId},#{phone},#{name},#{areaId},#{address},#{isSince})
+    </insert>
+
+    <insert id="addItemsInTheReturnForm"
+            parameterType="com.yingtongquan.order.returnGoods.entity.TblReturnOrderGoodsPo">
+        insert into tbl_return_order_goods (order_goods_id,goods_sku_unit_id,amount,return_order_id,price,buy_price) values (#{orderGoodsId},#{goodsSkuUnitId},#{amount},#{returnOrderId},#{price},#{buyPrice})
+    </insert>
+    <update id="modifyTheReturnStatus">
+        update tbl_return_order set return_order_status = 1 where return_order_no = #{returnOrderNo}
+    </update>
+    <update id="completeTheReturnForm">
+        update tbl_return_order set return_order_status = 2,refund_id = #{refundId} where return_order_no = #{outOrderNo}
+    </update>
+
+    <select id="queryOrderInformation" resultType="com.yingtongquan.order.returnGoods.pojo.OrderInformation">
+        select order_no,shop_id,order_status,order_amount_total,user_id from tbl_order where order_no = #{orderNo}
+    </select>
+
+    <select id="queryOrderAllGoodsInformation"
+            resultType="com.yingtongquan.order.returnGoods.pojo.OrderGoodsInformation">
+        SELECT
+	        tbl_order.order_no,
+	        tbl_order.shop_id,
+	        tbl_order.order_status,
+	        tbl_order.order_amount_total,
+	        orderGoods.order_goods_name,
+	        orderGoods.shop_goods_id,
+	        orderGoods.goods_sku_unit_id,
+	        orderGoods.price,
+	        orderGoods.amount
+        FROM
+	        tbl_order
+	        INNER JOIN tbl_order_goods orderGoods ON tbl_order.id = orderGoods.order_id
+        WHERE
+	        tbl_order.order_no = #{orderNo} and orderGoods.shop_goods_id = #{shopGoodsId}
+    </select>
+
+    <select id="queryShopMemberInformation"
+            resultType="com.yingtongquan.order.returnGoods.pojo.MemberInformation">
+        select id,member_name,user_id,phone,add_time,head_portrait,shop_id,member_id from tbl_member_shop where user_id = #{userId} and shop_id = #{shopId}
+    </select>
+
+    <select id="queryReturnOrderInformation"
+            resultType="com.yingtongquan.order.returnGoods.entity.TblReturnOrderPo">
+        select id, return_order_no, member_shop_id, shop_id, return_order_status, goods_count, goods_amount_total, return_order_amount_total, return_order_type, return_order_channel, add_time,order_no from tbl_return_order where return_order_no = #{returnOrderNo}
+    </select>
+
+    <select id="queryTheMembershipNumberAccordingToTheWeChatUserID"
+            resultType="com.yingtongquan.order.returnGoods.pojo.MemberInformation">
+        SELECT
+        	id,
+        	member_name,
+        	user_id,
+        	phone,
+        	add_time,
+	        head_portrait,
+        	shop_id,
+	        member_id
+        FROM
+	        tbl_member_shop
+        WHERE
+	        user_id = ( SELECT tbl_user.id FROM tbl_user_wx INNER JOIN tbl_user ON tbl_user_wx.phone = tbl_user.phone WHERE tbl_user_wx.id = #{WXUserId} )
+	        AND shop_id = #{shopId}
+    </select>
+    <select id="queryShopShippingAddress"
+            resultType="com.yingtongquan.order.returnGoods.pojo.ShopDeliveryAddress">
+        select add_time,shop_id,phone,name,area_id,address,is_default,latitude,longitude from tbl_shop_delivery_address where id = #{id}
+    </select>
+    <select id="queryAllShopReturnToApplyFor"
+            resultType="com.yingtongquan.order.returnGoods.entity.TblReturnOrderPo">
+        select * from tbl_return_order where shop_id = #{shopId}
+    </select>
+
+</mapper>

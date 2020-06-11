@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.goods.mapper.TblGoodsSpuMapper">
+
+
+
+    <!-- 添加 -->
+    <insert id="addInfo"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_spu
+        (tbl_goods_spu.name,tbl_goods_spu.add_time,tbl_goods_spu.up_time,tbl_goods_spu.carousel_image,tbl_goods_spu.details,tbl_goods_spu.status,tbl_goods_spu.fk_goods_brand_id,tbl_goods_spu.fk_goods_cp_id,tbl_goods_spu.fk_parameter_value_ids,tbl_goods_spu.lowest_price,tbl_goods_spu.highest_price,tbl_goods_spu.fk_staff_id,tbl_goods_spu.total_store,tbl_goods_spu.monthly_sales)
+        VALUES
+        (#{name},#{addTime},#{upTime},#{carouselImage},#{details},#{status},#{fkGoodsBrandId},#{fkGoodsCpId},#{fkParameterValueIds},#{lowestPrice},#{highestPrice},#{fkStaffId},#{totalStore},#{monthlySales})
+    </insert>
+
+    <!-- 批量添加 -->
+    <insert id="addBatchInfo" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_spu
+        (tbl_goods_spu.name,tbl_goods_spu.add_time,tbl_goods_spu.up_time,tbl_goods_spu.carousel_image,tbl_goods_spu.details,tbl_goods_spu.status,tbl_goods_spu.fk_goods_brand_id,tbl_goods_spu.fk_goods_cp_id,tbl_goods_spu.fk_parameter_value_ids,tbl_goods_spu.lowest_price,tbl_goods_spu.highest_price,tbl_goods_spu.fk_staff_id,tbl_goods_spu.total_store,tbl_goods_spu.monthly_sales)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.name},#{item.addTime},#{item.upTime},#{item.carouselImage},#{item.details},#{item.status},#{item.fkGoodsBrandId},#{item.fkGoodsCpId},#{item.fkParameterValueIds},#{item.lowestPrice},#{item.highestPrice},#{item.fkStaffId},#{item.totalStore},#{item.monthlySales})
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo"  >
+        UPDATE tbl_goods_spu
+        SET
+        tbl_goods_spu.name=#{name},tbl_goods_spu.add_time=#{addTime},tbl_goods_spu.up_time=#{upTime},tbl_goods_spu.carousel_image=#{carouselImage},tbl_goods_spu.details=#{details},tbl_goods_spu.status=#{status},tbl_goods_spu.fk_goods_brand_id=#{fkGoodsBrandId},tbl_goods_spu.fk_goods_cp_id=#{fkGoodsCpId},tbl_goods_spu.fk_parameter_value_ids=#{fkParameterValueIds},tbl_goods_spu.lowest_price=#{lowestPrice},tbl_goods_spu.highest_price=#{highestPrice},tbl_goods_spu.fk_staff_id=#{fkStaffId},tbl_goods_spu.total_store=#{totalStore},tbl_goods_spu.monthly_sales=#{monthlySales}
+        WHERE
+        tbl_goods_spu.id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" >
+        DELETE FROM tbl_goods_spu
+        WHEN
+        tbl_goods_spu.id=#{id}
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="com.yingtongquan.employees.goods.entity.TblGoodsSpuPoCall" >
+        SELECT
+        tbl_shop_goods.id,
+        tbl_shop_goods.fkGoodsSpuId,
+        tbl_shop_goods.fkGoodsCsId,
+        tbl_goods_spu.fk_goods_brand_id as fkGoodsBrandId,
+        tbl_goods_spu.name as name,
+        tbl_goods_spu.carousel_image as carouselImage,
+        tbl_goods_spu.status as status,
+        tbl_goods_spu.lowest_price as lowestPrice,
+        tbl_goods_spu.highest_price as highestPrice,
+        tbl_goods_spu.total_store as totalStore,
+        tbl_goods_spu.monthly_sales as monthlySales,
+        tbl_goods_spu.up_time as upTime
+        FROM
+        (
+        SELECT
+        tbl_shop_goods.id as id,tbl_shop_goods.fk_goods_spu_id as fkGoodsSpuId,tbl_shop_goods.fk_goods_cs_id as fkGoodsCsId
+        FROM tbl_shop_goods
+        WHERE
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+            AND tbl_shop_goods.id=#{id}
+        </if>
+        <if test="fkGoodsSpuId!=null and fkGoodsSpuId!='' and fkGoodsSpuId!=0">
+            AND tbl_shop_goods.fk_goods_spu_id=#{fkGoodsSpuId}
+        </if>
+        ) as tbl_shop_goods
+        INNER JOIN
+        tbl_goods_spu ON tbl_shop_goods.fkGoodsSpuId = tbl_goods_spu.id
+
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="com.yingtongquan.employees.goods.entity.TblGoodsSpuPoCallList" >
+        SELECT
+        tbl_shop_goods.id,
+        tbl_shop_goods.fkGoodsSpuId,
+        tbl_goods_spu.name as name,
+        tbl_goods_spu.carousel_image as carouselImage,
+        tbl_goods_spu.status as status,
+        tbl_goods_spu.lowest_price as lowestPrice,
+        tbl_goods_spu.highest_price as highestPrice,
+        tbl_goods_spu.total_store as totalStore,
+        tbl_goods_spu.monthly_sales as monthlySales,
+        tbl_goods_spu.up_time as upTime
+
+        FROM
+        (
+        SELECT
+        tbl_shop_goods.id as id,tbl_shop_goods.fk_goods_spu_id as fkGoodsSpuId,tbl_shop_goods.fk_goods_cs_id as fkGoodsCsId
+        FROM tbl_shop_goods WHERE tbl_shop_goods.fk_shop_id = #{fkShopId}) as tbl_shop_goods
+
+        INNER JOIN
+        tbl_goods_spu ON tbl_shop_goods.fkGoodsSpuId = tbl_goods_spu.id
+
+        WHERE
+        1=1
+        <if test="fkGoodsCsId!=null and fkGoodsCsId!='' and fkGoodsCsId!=0">
+            AND tbl_shop_goods.fkGoodsCsId = #{fkGoodsCsId}
+        </if>
+        <if test="fkGoodsBrandId!=null and fkGoodsBrandId!='' and fkGoodsBrandId!=0">
+            AND tbl_goods_spu.fk_goods_brand_id = #{fkGoodsBrandId}
+        </if>
+
+    </select>
+
+    <!--  获取sku的规格描述  -->
+    <select id="getSpecDec" resultType="com.yingtongquan.employees.goods.entity.TblGoodsSkuPoCallSpecDec">
+        SELECT tbl.fkGoodsSkuId,GROUP_CONCAT(tbl.specName SEPARATOR ';') AS specName,GROUP_CONCAT(tbl.specValue SEPARATOR ';') AS specValue  FROM (
+        SELECT tbl_goods_sku.id as fkGoodsSkuId,tbl_goods_spec_name.name as specName,tbl_goods_spec_value.name as specValue
+        FROM (SELECT tbl_goods_sku.id FROM tbl_goods_sku WHERE tbl_goods_sku.fk_goods_spu_id = #{fkGoodsSpuId} LIMIT 8 ) as tbl_goods_sku
+        INNER JOIN tbl_goods_sku_spec_value
+        ON tbl_goods_sku.id=tbl_goods_sku_spec_value.fk_goods_sku_id
+        INNER JOIN tbl_goods_spec_value
+        ON tbl_goods_sku_spec_value.fk_spec_value_id=tbl_goods_spec_value.id
+        INNER JOIN tbl_goods_spec_name
+        ON tbl_goods_spec_value.fk_goods_spec_name_id=tbl_goods_spec_name.id
+        ) as tbl
+        GROUP BY tbl.fkGoodsSkuId
+    </select>
+
+
+
+</mapper>

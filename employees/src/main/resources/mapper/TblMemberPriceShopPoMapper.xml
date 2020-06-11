@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.member.mapper.TblMemberPriceShopMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.member.entity.TblMemberPriceShopPo">
+        <id column="id" property="id"/>
+        <result column="price_name" property="priceName"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="status" property="status"/>
+        <result column="type" property="type"/>
+        <result column="sup_id" property="supId"/>
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, price_name, shop_id, status,type,sup_id
+    </sql>
+    <insert id="addMemberPriceShop" parameterType="com.yingtongquan.employees.member.entity.TblMemberPriceShopPo"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_member_price_shop (price_name, shop_id, status,type,sup_id) values (#{priceName},#{shopId},#{status},#{type},#{supId});
+    </insert>
+    <update id="updateMemberPriceShop" parameterType="com.yingtongquan.employees.member.entity.TblMemberPriceShopPo">
+        update tbl_member_price_shop set price_name = #{priceName},shop_id = #{shopId}, status = #{status},type = #{type},sup_id = #{supId} where id = #{id}
+    </update>
+    <update id="updateShopMember">
+        update tbl_member_price_shop set status = 0
+    </update>
+    <select id="queryMemberPriceShop"
+            resultType="com.yingtongquan.employees.member.entity.TblMemberPriceShopPo">
+        select id,price_name,shop_id,status,type,sup_id from tbl_member_price_shop where id = #{id}
+    </select>
+    <select id="queryAllOpenMembershipPricesInTheStore"
+            resultType="com.yingtongquan.employees.member.entity.TblMemberPriceShopPo">
+        select id,price_name,shop_id,status,type,sup_id from tbl_member_price_shop where status = 1 and shop_id = #{shopId}
+    </select>
+    <select id="queryAllMembershipPricesInTheStore"
+            resultType="com.yingtongquan.employees.member.entity.TblMemberPriceShopPo">
+       select id,price_name,shop_id,status,type,sup_id from tbl_member_price_shop where shop_id = #{shopId}
+    </select>
+
+
+</mapper>

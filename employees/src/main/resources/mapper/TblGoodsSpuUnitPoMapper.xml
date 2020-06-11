@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.goods.mapper.TblGoodsSpuUnitMapper">
+
+
+
+    <!-- 添加 -->
+    <insert id="addInfo"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_spu_unit
+        (tbl_goods_spu_unit.fk_goods_spu_id,tbl_goods_spu_unit.name,tbl_goods_spu_unit.sup_id,tbl_goods_spu_unit.amount,tbl_goods_spu_unit.price)
+        VALUES
+        (#{fkGoodsSpuId},#{name},#{supId},#{amount},#{price})
+    </insert>
+
+    <!-- 批量添加 -->
+    <insert id="addBatchInfo" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_spu_unit
+        (tbl_goods_spu_unit.fk_goods_spu_id,tbl_goods_spu_unit.name,tbl_goods_spu_unit.sup_id,tbl_goods_spu_unit.amount,tbl_goods_spu_unit.price)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.fkGoodsSpuId},#{item.name},#{item.supId},#{item.amount},#{item.price})
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo"  >
+        UPDATE tbl_goods_spu_unit
+        SET
+        tbl_goods_spu_unit.fk_goods_spu_id=#{fkGoodsSpuId},tbl_goods_spu_unit.name=#{name},tbl_goods_spu_unit.sup_id=#{supId},tbl_goods_spu_unit.amount=#{amount},tbl_goods_spu_unit.price=#{price}
+        WHERE
+        tbl_goods_spu_unit.id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" >
+        DELETE FROM tbl_goods_spu_unit
+        WHEN
+        tbl_goods_spu_unit.id=#{id}
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="com.yingtongquan.employees.goods.entity.TblGoodsSpuUnitPo" >
+        SELECT
+        tbl_goods_spu_unit.id  as id,tbl_goods_spu_unit.fk_goods_spu_id  as fkGoodsSpuId,tbl_goods_spu_unit.name  as name,tbl_goods_spu_unit.sup_id  as supId,tbl_goods_spu_unit.amount  as amount,tbl_goods_spu_unit.price  as price
+        FROM tbl_goods_spu_unit
+        WHERE
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+        AND tbl_goods_spu_unit.id=#{id}
+        </if>
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="com.yingtongquan.employees.goods.entity.TblGoodsSpuUnitPo" >
+        SELECT
+        tbl_goods_spu_unit.id as id,tbl_goods_spu_unit.fk_goods_spu_id as fkGoodsSpuId,tbl_goods_spu_unit.name as name,tbl_goods_spu_unit.sup_id as supId,tbl_goods_spu_unit.amount as amount
+        FROM tbl_goods_spu_unit
+        WHERE
+        tbl_goods_spu_unit.fk_goods_spu_id = #{fkGoodsSpuId}
+    </select>
+
+
+
+</mapper>

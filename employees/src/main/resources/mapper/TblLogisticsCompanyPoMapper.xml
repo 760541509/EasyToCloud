@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.shop.mapper.TblLogisticsCompanyMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.shop.entity.TblLogisticsCompanyPo">
+        <id column="id" property="id"/>
+        <result column="logistics_name" property="logisticsName"/>
+        <result column="contact_name" property="contactName"/>
+        <result column="contact_phone" property="contactPhone"/>
+        <result column="price" property="price"/>
+        <result column="shop_id" property="shopId"/>
+    </resultMap>
+
+
+    <!-- 条件获取多条数据列 -->
+    <sql id="GetListByInfo_Column_List">
+        id,logistics_name,contact_name,contact_phone,price,shop_id
+    </sql>
+
+    <insert id="addShopLogisticsCompany" parameterType="com.yingtongquan.employees.shop.entity.TblLogisticsCompanyPo">
+        insert into tbl_logistics_company (logistics_name,contact_name,contact_phone,price,shop_id)
+        values (#{logisticsName},#{contactName},#{contactPhone},#{price},#{shopId})
+    </insert>
+    <update id="updateShopLogisticsCompany"
+            parameterType="com.yingtongquan.employees.shop.entity.TblLogisticsCompanyPo">
+        update tbl_logistics_company set logistics_name = #{logisticsName},contact_name = #{contactName},contact_phone = #{contactPhone},price = #{price},shop_id = #{shopId} where id = #{id}
+    </update>
+    <delete id="deleteShopLogisticsCompany">
+        delete from tbl_logistics_company where id = #{id}
+    </delete>
+    <select id="queryAllShopLogisticsCompany"
+            resultType="com.yingtongquan.employees.shop.entity.TblLogisticsCompanyPo">
+        select id,logistics_name,contact_name,contact_phone,price,shop_id from tbl_logistics_company where shop_id = #{shopId}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.goods.mapper.TblShopGoodsMapper">
+
+
+
+    <!-- 添加 -->
+    <insert id="addInfo"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_shop_goods
+        (tbl_shop_goods.fk_goods_spu_id,tbl_shop_goods.fk_goods_cs_id,tbl_shop_goods.fk_fare_template_id,tbl_shop_goods.fk_shop_id,tbl_shop_goods.staff_commission_rate,tbl_shop_goods.distributor_commission_rate)
+        VALUES
+        (#{fkGoodsSpuId},#{fkGoodsCsId},#{fkFareTemplateId},#{fkShopId},#{staffCommissionRate},#{distributorCommissionRate})
+    </insert>
+
+    <!-- 批量添加 -->
+    <insert id="addBatchInfo" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_shop_goods
+        (tbl_shop_goods.fk_goods_spu_id,tbl_shop_goods.fk_goods_cs_id,tbl_shop_goods.fk_fare_template_id,tbl_shop_goods.fk_shop_id,tbl_shop_goods.staff_commission_rate,tbl_shop_goods.distributor_commission_rate)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.fkGoodsSpuId},#{item.fkGoodsCsId},#{item.fkFareTemplateId},#{item.fkShopId},#{item.staffCommissionRate},#{item.distributorCommissionRate})
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo"  >
+        UPDATE tbl_shop_goods
+        SET
+        tbl_shop_goods.fk_goods_spu_id=#{fkGoodsSpuId},tbl_shop_goods.fk_goods_cs_id=#{fkGoodsCsId},tbl_shop_goods.fk_fare_template_id=#{fkFareTemplateId},tbl_shop_goods.fk_shop_id=#{fkShopId},tbl_shop_goods.staff_commission_rate=#{staffCommissionRate},tbl_shop_goods.distributor_commission_rate=#{distributorCommissionRate}
+        WHERE
+        tbl_shop_goods.id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" >
+        DELETE FROM tbl_shop_goods
+        WHEN
+        tbl_shop_goods.id=#{id}
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="com.yingtongquan.employees.goods.entity.TblShopGoodsPo" >
+        SELECT
+        tbl_shop_goods.id  as id,tbl_shop_goods.fk_goods_spu_id  as fkGoodsSpuId,tbl_shop_goods.fk_goods_cs_id  as fkGoodsCsId,tbl_shop_goods.fk_fare_template_id  as fkFareTemplateId,tbl_shop_goods.fk_shop_id  as fkShopId,tbl_shop_goods.staff_commission_rate  as staffCommissionRate,tbl_shop_goods.distributor_commission_rate  as distributorCommissionRate
+        FROM tbl_shop_goods
+        WHERE
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+        AND tbl_shop_goods.id=#{id}
+        </if>
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="com.yingtongquan.employees.goods.entity.TblShopGoodsPo" >
+        SELECT
+        tbl_shop_goods.id as id,tbl_shop_goods.fk_goods_spu_id as fkGoodsSpuId,tbl_shop_goods.fk_goods_cs_id as fkGoodsCsId,tbl_shop_goods.fk_fare_template_id as fkFareTemplateId,tbl_shop_goods.fk_shop_id as fkShopId,tbl_shop_goods.staff_commission_rate as staffCommissionRate,tbl_shop_goods.distributor_commission_rate as distributorCommissionRate
+        FROM tbl_shop_goods
+        WHERE
+        id > #{currentPageMaxId}
+        <if test="keyword!=null and keyword!=''">
+            AND tbl_shop_goods.keyword  LIKE concat('%',#{keyword},'%')
+        </if>
+        LIMIT #{pagePumber}
+    </select>
+
+
+
+</mapper>

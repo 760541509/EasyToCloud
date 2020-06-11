@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.order.outbound.mapper.TblOutboundOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.order.outbound.entity.TblOutboundOrderPo">
+        <id column="id" property="id"/>
+        <result column="outbound_order_no" property="outboundOrderNo"/>
+        <result column="outbound_order_status" property="outboundOrderStatus"/>
+        <result column="goods_count" property="goodsCount"/>
+        <result column="outbound_order_type" property="outboundOrderType"/>
+        <result column="outbound_order_channel" property="outboundOrderChannel"/>
+        <result column="add_time" property="addTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, outbound_order_no, outbound_order_status, goods_count, outbound_order_type, outbound_order_channel, add_time
+    </sql>
+    <insert id="addOutboundOrder" parameterType="com.yingtongquan.order.outbound.entity.TblOutboundOrderPo">
+        insert into tbl_outbound_order (outbound_order_no,outbound_order_status,goods_count,outbound_order_type,outbound_order_channel,add_time)
+        values (#{outboundOrderNo},#{outboundOrderStatus},#{goodsCount},#{outboundOrderType},#{outboundOrderChannel},#{addTime})
+    </insert>
+    <update id="modifyOrderStatus">
+        update tbl_order set order_status = 2 where order_no = #{orderNo}
+    </update>
+
+    <update id="modifyTheOutboundSingleState">
+        update tbl_outbound_order set outbound_order_status = 1 where outbound_order_no = #{orderNo}
+    </update>
+
+    <select id="queryShopAllOutgoingOrdersAreRequired"
+            resultType="com.yingtongquan.order.order.entity.TblOrderPo">
+        select id,order_no,member_shop_id,shop_id,order_status,order_status_vice,goods_count,goods_amount_total,order_amount_total,logistics_fee,order_type,order_channel,add_time,user_id from tbl_order where order_status = 1 and shop_id = #{shopId}
+    </select>
+    <select id="queryOutboundOrderInformation"
+            resultType="com.yingtongquan.order.outbound.entity.TblOutboundOrderPo">
+        select id,outbound_order_no,outbound_order_status,goods_count,outbound_order_type,outbound_order_channel,add_time,order_no from tbl_outbound_order where outbound_order_no = #{outboundOrderNo}
+    </select>
+    <select id="queryOutboundOrderShippingAddress"
+            resultType="com.yingtongquan.order.outbound.pojo.OutboundOrderAddress">
+        SELECT
+        	tbl_order.id,tbl_order.order_no, address.phone,address.name,address.area_id,address.address
+        FROM
+        	tbl_order
+        	INNER JOIN tbl_order_delivery_address address ON tbl_order.id = address.order_id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="queryByAreaCode" resultType="com.yingtongquan.order.outbound.pojo.Address">
+        SELECT
+        	t1.area_id,
+        	t1.area_name area,
+        	t2.area_name city,
+        	t3.area_name province
+        FROM
+        	tbl_area t1
+	        INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
+	        INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
+        WHERE
+	        t1.area_id = #{addressId}
+    </select>
+    <select id="queryTheOutboundInformation"
+            resultType="com.yingtongquan.order.outbound.pojo.OutboundOrderInformation">
+        SELECT
+	        outbound.id,
+        	outbound.outbound_order_no,
+        	outbound.outbound_order_status,
+        	outbound.goods_count,
+        	outbound.outbound_order_channel,
+        	outbound.add_time,
+        	outbound.order_no,
+        	deliveryAddress.member_shop_id,
+        	deliveryAddress.phone,
+        	deliveryAddress.name,
+	        deliveryAddress.area_id,
+        	deliveryAddress.address,
+        	deliveryAddress.is_since,
+        	logistics.name logisticsName,
+        	logistics.logistics_no,
+        	staff.staff_id,
+	        staff.commission_amount,
+	        staff.add_time staffAddTime
+        FROM
+        	tbl_outbound_order outbound
+        	INNER JOIN tbl_outbound_order_delivery_address deliveryAddress ON outbound.id = deliveryAddress.outbound_order_id
+        	INNER JOIN tbl_outbound_order_logistics logistics ON outbound.id = logistics.outbound_order_id
+        	INNER JOIN tbl_outbound_order_staff staff ON outbound.id = staff.outbound_order_id
+        WHERE
+        	outbound.order_no = #{orderNo}
+    </select>
+    <select id="queryTheCommodityInformationInTheOutboundList"
+            resultType="com.yingtongquan.order.outbound.pojo.OutboundOrderGoods">
+        select order_goods_id,amount from tbl_outbound_order_goods where outbound_order_id = #{outboundOrderId}
+    </select>
+    <select id="queryUserAllOrder" resultType="com.yingtongquan.order.order.entity.TblOrderPo">
+        select id,order_no,member_shop_id,shop_id,order_status,order_status_vice,goods_count,goods_amount_total,order_amount_total,logistics_fee,order_type,order_channel,add_time,user_id from tbl_order where user_id = #{userId}
+    </select>
+    <select id="queryWithWeChatUserID" resultType="com.yingtongquan.order.outbound.pojo.UserInformation">
+        SELECT
+        	tbl_user.id,
+        	tbl_user_wx.name,
+        	tbl_user_wx.head_portrait,
+        	tbl_user_wx.phone,
+        	tbl_user.account,
+        	tbl_user.password,
+        	tbl_user.date_birth,
+        	tbl_user.sex,
+        	tbl_user.email,
+        	tbl_user.area_id,
+        	tbl_user.address,
+        	tbl_user.add_time
+        FROM
+	        tbl_user_wx
+	        INNER JOIN tbl_user ON tbl_user_wx.phone = tbl_user.phone
+        WHERE
+	        tbl_user_wx.id = #{WXUserId}
+    </select>
+
+</mapper>

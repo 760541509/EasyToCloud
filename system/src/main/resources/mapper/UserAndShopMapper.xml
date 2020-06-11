@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.system.user.mapper.UserAndShopMapper">
+    <insert id="addUserAndCoupons" parameterType="com.yingtongquan.system.user.pojo.UserAndCoupons">
+		insert into tbl_coupons_user(coupons_id,product_id,user_id,is_late,get_the_time)
+		values (#{couponsId},#{productId},#{userId},#{isLate},#{getTheTime})
+	</insert>
+
+
+    <select id="queryUserInformation" resultType="com.yingtongquan.system.user.pojo.LoginSuccess">
+        SELECT
+			id,
+			account,
+			head_portrait,
+			add_time,
+			phone,
+			username
+		FROM
+			tbl_user
+		WHERE
+			account = #{account}
+    </select>
+
+    <select id="queryAllLuckyDraw" resultType="com.yingtongquan.system.user.pojo.LuckyDraw">
+		SELECT
+			id,
+			coupon_id,
+			chance,
+			product_id
+		FROM
+			tbl_lucky_draw
+		WHERE
+			shop_id = #{shopId}
+		ORDER BY
+			add_time DESC
+	</select>
+
+    <select id="queryShopConfig" resultType="com.yingtongquan.system.user.pojo.SystemConfig">
+		select * from tbl_config where shop_id = #{shopId}
+	</select>
+
+    <select id="queryCouponInformation" resultType="com.yingtongquan.system.user.pojo.Coupons">
+		select id,coupon_name,total_number,meet,reduce,discount,conditions_of_use,member_level_id,get_the_number,period_of_validity_id,using_range_id,directions_for_use from tbl_coupons where tbl_coupons.id = #{couponId}
+	</select>
+
+    <select id="queryRotaryTableAreaNumber" resultType="com.yingtongquan.system.user.pojo.RotaryTable">
+		select id,area_number,attributable from tbl_rotary_table where attributable = #{dialNumber}
+	</select>
+
+    <select id="queryLuckyDrawGoodsInfromation" resultType="com.yingtongquan.system.user.pojo.Product">
+		select id,goodsName from tbl_lucky_draw_product where id = #{productId}
+	</select>
+    <select id="queryUserId" resultType="java.lang.Integer">
+		SELECT
+        	tbl_user.id
+        FROM
+	        tbl_user
+        	INNER JOIN tbl_user_wx ON tbl_user_wx.phone = tbl_user.account
+        WHERE
+	        tbl_user_wx.id = #{WXId}
+	</select>
+    <select id="queryUserShopId" resultType="java.lang.Integer">
+		SELECT
+			shop_id
+		FROM
+			tbl_user_and_shop
+		WHERE
+			user_id = #{userId}
+			AND is_default = 1
+	</select>
+    <select id="queryShopStoreIcon" resultType="java.lang.String">
+		SELECT
+			store_icon
+		FROM
+			tbl_shop
+		WHERE
+			id = #{shopId}
+	</select>
+    <select id="queryAreaId" resultType="com.yingtongquan.system.user.pojo.AddressInformation">
+		SELECT
+			t1.area_id,
+			t1.area_name district,
+			t2.area_name city,
+			t3.area_name province
+		FROM
+			tbl_area t1
+			INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
+			INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
+		WHERE
+			t1.area_name = #{areaName}
+	</select>
+    <select id="queryUserStaff" resultType="com.yingtongquan.system.user.pojo.LoginSuccess">
+		SELECT
+			tbl_staff.id staffId,
+			tbl_staff.staff_name,
+			tbl_staff.staff_phone,
+			tbl_staff_role.role_name,
+			tbl_staff_role.resources
+		FROM
+			tbl_staff
+			INNER JOIN tbl_staff_role ON tbl_staff.staff_role_id = tbl_staff_role.id
+		WHERE
+			tbl_staff.shop_id = #{shopId}
+			AND tbl_staff.user_id = #{userId}
+	</select>
+</mapper>

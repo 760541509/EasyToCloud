@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: eureka
+
+server:
+  port: 9999
+
+eureka:
+  instance:
+    hostname: localhost  #eureka服务器地址，因为这里是在本地做，所以为localhost
+  client:
+    register-with-eureka: false #是否将自己注册到eureka服务器中，本身就是服务器，因此false
+    fetch-registry: false #是否从eureka服务器中获取注册信息
+    #上面两步主要用来区分谁是服务端与客户端   有这两步的是服务端
+    service-url: #eureka与服务器交换的地址（访问eureka的地址）
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

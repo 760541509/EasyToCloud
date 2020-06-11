@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.order.order.mapper.TblOrderStaffMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.order.order.entity.TblOrderStaffPo">
+        <id column="id" property="id"/>
+        <result column="staff_id" property="staffId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="add_time" property="addTime"/>
+        <result column="commission_amount" property="commissionAmount"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, staff_id, order_id, add_time, commission_amount
+    </sql>
+    <insert id="addStaffAndOrder" parameterType="com.yingtongquan.order.order.entity.TblOrderStaffPo">
+        insert into tbl_order_staff(staff_id,order_id,add_time,commission_amount) values (#{staffId},#{orderId},#{addTime},#{commissionAmount})
+    </insert>
+    <select id="queryStaffCommission" resultType="java.lang.Integer">
+        SELECT
+	        staff_commission_rate
+        FROM
+        	tbl_order_goods
+        WHERE
+	        order_id = ( SELECT id FROM tbl_order WHERE order_no = #{orderNo} )
+    </select>
+
+</mapper>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.goods.mapper.TblGoodsSkuMapper">
+
+
+
+    <!-- 添加 -->
+    <insert id="addInfo"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_sku
+        (tbl_goods_sku.fk_goods_spu_id,tbl_goods_sku.bar_code,tbl_goods_sku.art_no,tbl_goods_sku.image,tbl_goods_sku.store)
+        VALUES
+        (#{fkGoodsSpuId},#{barCode},#{artNo},#{image},#{store})
+    </insert>
+
+    <!-- 批量添加 -->
+    <insert id="addBatchInfo" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_goods_sku
+        (tbl_goods_sku.fk_goods_spu_id,tbl_goods_sku.bar_code,tbl_goods_sku.art_no,tbl_goods_sku.image,tbl_goods_sku.store)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.fkGoodsSpuId},#{item.barCode},#{item.artNo},#{item.image},#{item.store})
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo"  >
+        UPDATE tbl_goods_sku
+        SET
+        tbl_goods_sku.fk_goods_spu_id=#{fkGoodsSpuId},tbl_goods_sku.bar_code=#{barCode},tbl_goods_sku.art_no=#{artNo},tbl_goods_sku.image=#{image},tbl_goods_sku.store=#{store}
+        WHERE
+        tbl_goods_sku.id = #{id}
+    </update>
+
+    <!-- 批量修改库存 -->
+    <update id="updateStoreBatchInfo" parameterType="java.util.List">
+        update tbl_goods_sku
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="store = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.store}
+                </foreach>
+            </trim>
+        </trim>
+        where
+        tbl_goods_sku.id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" >
+        DELETE FROM tbl_goods_sku
+        WHEN
+        tbl_goods_sku.id=#{id}
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="com.yingtongquan.employees.goods.entity.TblGoodsSkuPo" >
+        SELECT
+        tbl_goods_sku.id  as id,tbl_goods_sku.fk_goods_spu_id  as fkGoodsSpuId,tbl_goods_sku.bar_code  as barCode,tbl_goods_sku.art_no  as artNo,tbl_goods_sku.image  as image,tbl_goods_sku.store  as store
+        FROM tbl_goods_sku
+        WHERE
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+        AND tbl_goods_sku.id=#{id}
+        </if>
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="com.yingtongquan.employees.goods.entity.TblGoodsSkuPo" >
+
+        SELECT
+        tbl_goods_sku.id as id,tbl_goods_sku.fk_goods_spu_id as fkGoodsSpuId,tbl_goods_sku.bar_code as barCode,tbl_goods_sku.art_no as artNo,tbl_goods_sku.image as image,tbl_goods_sku.store as store
+        ,tbl.specName,tbl.specValue
+        FROM tbl_goods_sku
+        INNER JOIN
+        (SELECT tbl.fkGoodsSkuId,GROUP_CONCAT(tbl.specName SEPARATOR ';') AS specName,GROUP_CONCAT(tbl.specValue SEPARATOR ';') AS specValue  FROM (
+        SELECT tbl_goods_sku.id as fkGoodsSkuId,tbl_goods_spec_name.name as specName,tbl_goods_spec_value.name as specValue
+        FROM (SELECT tbl_goods_sku.id FROM tbl_goods_sku WHERE tbl_goods_sku.fk_goods_spu_id = #{fkGoodsSpuId} ) as tbl_goods_sku
+        INNER JOIN tbl_goods_sku_spec_value
+        ON tbl_goods_sku.id=tbl_goods_sku_spec_value.fk_goods_sku_id
+        INNER JOIN tbl_goods_spec_value
+        ON tbl_goods_sku_spec_value.fk_spec_value_id=tbl_goods_spec_value.id
+        INNER JOIN tbl_goods_spec_name
+        ON tbl_goods_spec_value.fk_goods_spec_name_id=tbl_goods_spec_name.id
+        ) as tbl
+        GROUP BY tbl.fkGoodsSkuId) as tbl
+        ON tbl.fkGoodsSkuId = tbl_goods_sku.id
+        WHERE
+        tbl_goods_sku.fk_goods_spu_id = #{fkGoodsSpuId}
+
+    </select>
+
+    <select id="getListByGoodsIds" resultType="com.yingtongquan.employees.goods.entity.TblGoodsSkuPo">
+        SELECT
+        tbl_goods_sku.id as id,tbl_goods_sku.fk_goods_spu_id as fkGoodsSpuId,tbl_goods_sku.bar_code as barCode,tbl_goods_sku.art_no as artNo,tbl_goods_sku.image as image ,tbl_goods_sku.store as store
+        FROM tbl_goods_sku
+        WHERE
+        tbl_goods_sku.fk_goods_spu_id
+        IN
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.fkGoodsSpuId}
+        </foreach>
+    </select>
+
+    <!--  统计一个商品有几个sku  -->
+    <select id="countFkGoodsSpuId" resultType="java.lang.Integer">
+        SELECT count(tbl_goods_sku.fk_goods_spu_id) FROM tbl_goods_sku WHERE tbl_goods_sku.fk_goods_spu_id = #{fkGoodsSpuId}
+    </select>
+
+
+    <select id="getListByGoodsSkuIds" resultType="com.yingtongquan.employees.goods.entity.TblGoodsSkuPo">
+        SELECT
+        tbl_goods_sku.id as id,tbl_goods_sku.store as store
+        FROM tbl_goods_sku
+        WHERE
+        tbl_goods_sku.id
+        IN
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <!--  统计一个商品的库存  -->
+    <select id="sumGoodsSkuStore" resultType="java.lang.Integer">
+        SELECT SUM(tbl_goods_sku.store) as totalStore  FROM tbl_goods_sku WHERE tbl_goods_sku.fk_goods_spu_id = #{fkGoodsSpuId}
+    </select>
+
+
+
+
+</mapper>

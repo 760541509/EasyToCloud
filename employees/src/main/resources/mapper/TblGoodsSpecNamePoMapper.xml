@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.spec.mapper.TblGoodsSpecNameMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.employees.spec.entity.TblGoodsSpecNamePo">
+                <id column="id" property="id" />
+                <result column="name" property="name" />
+    </resultMap>
+
+
+    <!-- 添加的列 -->
+    <sql id="Add_Column_List">
+        (tbl_goods_spec_name.name,tbl_goods_spec_name.fk_shop_id,tbl_goods_spec_name.up_time)
+    </sql>
+    <!-- 添加的值 -->
+    <sql id="Add_Value_Column_List">
+        (#{name},#{fkShopId},#{upTime})
+    </sql>
+
+
+    <!-- 修改的值 -->
+    <sql id="Update_Value_Column_List">
+        tbl_goods_spec_name.name=#{name}
+    </sql>
+    <!-- 修改的条件 -->
+    <sql id="Update_Conditions_Column_List">
+        tbl_goods_spec_name.id = #{id}
+    </sql>
+
+
+    <!-- 删除的条件 -->
+    <sql id="DeleteByInfo_Conditions_Column_List">
+        tbl_goods_spec_name.id=#{id}
+    </sql>
+
+
+    <!-- 条件获取一条数据列 -->
+    <sql id="GetByInfo_Column_List">
+        tbl_goods_spec_name.id  as id,tbl_goods_spec_name.name  as name,tbl_goods_spec_name.fk_shop_id  as fkShopId
+    </sql>
+    <!-- 条件获取一条数据的条件 -->
+    <sql id="GetByInfo_Conditions_Column_List">
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+            AND tbl_goods_spec_name.id=#{id}
+        </if>
+        <if test="name!=null and name!=''">
+            AND tbl_goods_spec_name.name=#{name}
+        </if>
+        <if test="fkShopId!=null and fkShopId!=''">
+            AND tbl_goods_spec_name.fk_shop_id=#{fkShopId}
+        </if>
+    </sql>
+
+
+
+    <!-- 添加 -->
+    <insert id="addInfo" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO tbl_goods_spec_name
+        <include refid="Add_Column_List" />
+        VALUES
+        <include refid="Add_Value_Column_List" />
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo" parameterType="java.util.Map">
+        UPDATE tbl_goods_spec_name
+        SET <include refid="Update_Value_Column_List" />
+        WHERE <include refid="Update_Conditions_Column_List" />
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" parameterType="java.util.Map">
+        DELETE FROM tbl_goods_spec_name
+        WHEN <include refid="DeleteByInfo_Conditions_Column_List" />
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="com.yingtongquan.employees.spec.entity.TblGoodsSpecNamePo">
+        SELECT
+        <include refid="GetByInfo_Column_List" />
+        FROM tbl_goods_spec_name
+        WHERE
+        <include refid="GetByInfo_Conditions_Column_List" />
+
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="com.yingtongquan.employees.spec.pojo.SpecByListInfoCall" parameterType="com.yingtongquan.employees.spec.pojo.SpecByListInfoVo">
+
+        SELECT
+        tbl.specNameId,
+		tbl.fkShopId,
+		tbl.fkShopId,
+        tbl.upTime,
+        tbl.specNameName,
+        tbl.specValueNames
+        FROM
+        (SELECT
+        tbl_goods_spec_name.id as specNameId,
+        tbl_goods_spec_name.up_time as upTime,
+		tbl_goods_spec_name.fk_shop_id as fkShopId,
+        tbl_goods_spec_name.name as specNameName,
+        tbl_goods_spec_value.specValueNames,
+        CONCAT(tbl_goods_spec_name.name,tbl_goods_spec_value.specValueNames) as keyword
+        FROM
+        tbl_goods_spec_name
+        LEFT JOIN
+        (SELECT tbl_goods_spec_value.fk_goods_spec_name_id,GROUP_CONCAT(tbl_goods_spec_value.name SEPARATOR ';') as specValueNames  FROM tbl_goods_spec_value GROUP BY tbl_goods_spec_value.fk_goods_spec_name_id) as tbl_goods_spec_value
+        ON tbl_goods_spec_value.fk_goods_spec_name_id=tbl_goods_spec_name.id) as tbl
+        WHERE
+
+        <if test="pageValue!=0">
+            tbl.upTime &lt; #{pageValue}
+        </if>
+        <if test="pageValue==0">
+            tbl.upTime &gt; #{pageValue}
+        </if>
+
+        AND
+        tbl.fkShopId = #{fkShopId}
+        AND
+        tbl.keyword LIKE concat('%',#{keyword},'%')
+        ORDER BY  tbl.upTime  DESC
+        LIMIT
+        #{pagePumber}
+
+    </select>
+
+
+
+</mapper>

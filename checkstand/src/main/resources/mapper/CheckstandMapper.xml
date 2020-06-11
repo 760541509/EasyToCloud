@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.checkstand.dao.CheckstandDao">
+    <insert id="addOrderThoseResponsible" parameterType="com.yingtongquan.checkstand.pojo.OrderStaff">
+        insert into tbl_order_staff (staff_id,order_id,add_time,commission_amount) values (#{staffId},#{orderId},#{addTime},#{commissionAmount})
+    </insert>
+    <insert id="addOrderDeal" parameterType="com.yingtongquan.checkstand.pojo.OrderDeal">
+        insert into tbl_order_deal (order_id,add_time,pay_amount,pay_way,serial_no) values (#{orderId},#{addTime},#{payAmount},#{payWay},#{serialNo})
+    </insert>
+    <update id="updateOrderPaymentStatus">
+        UPDATE tbl_order SET order_status = 1 WHERE order_no = #{orderNo}
+    </update>
+    <update id="updateGoodsInventory">
+        update tbl_warehouse_goods_sku set store = #{goodsQuantity} where fk_goods_sku_id = #{goodsSkuId} and fk_warehouse_goods_spu_id = #{warehouseGoodsSpuId}
+    </update>
+    <update id="updateOrderGoodsStatus">
+        update tbl_order_goods set store_amount = #{storeAmount} where id = #{id}
+    </update>
+    <select id="queryOrder" resultType="com.yingtongquan.checkstand.pojo.OrderInformation">
+        select id,order_no,member_shop_id,shop_id,order_status,order_status_vice,goods_count,goods_amount_total,order_amount_total,logistics_fee,order_type,order_channel,add_time,user_id from tbl_order where order_no = #{orderNo}
+    </select>
+    <select id="queryOrderAllGoodsInformation"
+            resultType="com.yingtongquan.checkstand.pojo.OrderGoodsInformation">
+        select id,order_id,order_goods_name,image,shop_goods_id,goods_sku_unit_id,goods_sku_id,price,original_price,share_coupons_price,amount,staff_commission_rate,distributor_commission_rate from tbl_order_goods where order_id = #{orderId}
+    </select>
+
+    <select id="queryGoodsInventory" resultType="com.yingtongquan.checkstand.pojo.OrderGoodsQuantity">
+        SELECT
+        	goodsSpu.id,
+        	warehouseGoods.fk_warehouse_goods_spu_id,
+        	warehouseGoods.fk_shop_goods_spu_id,
+        	warehouseGoods.state,
+        	goodsSpu.fk_goods_warehouse_area_id,
+        	goodsSpu.fk_goods_spu_id,
+        	goodsSpu.fk_warehouse_id
+        FROM
+	        tbl_shop_and_warehouse_goods warehouseGoods
+        	INNER JOIN tbl_warehouse_goods_spu goodsSpu ON warehouseGoods.fk_warehouse_goods_spu_id = goodsSpu.id
+        WHERE
+	        warehouseGoods.fk_shop_goods_spu_id = #{shopGoodsId}
+	        AND warehouseGoods.state = 1
+    </select>
+    <select id="inquireTheRemainingInventoryOfTheGoods"
+            resultType="com.yingtongquan.checkstand.pojo.WarehouseGoodsInventory">
+        select id,fk_goods_sku_id,fk_warehouse_goods_spu_id,store from tbl_warehouse_goods_sku where fk_goods_sku_id = #{goodsSkuId} and fk_warehouse_goods_spu_id = #{warehouseGoodsSpuId}
+    </select>
+    <select id="queryNumber" resultType="com.yingtongquan.checkstand.pojo.GoodsSpuUnit">
+        select id,fk_goods_spu_id,name,sup_id,amount,price from tbl_goods_spu_unit where id = #{goodsSkuUnitId}
+    </select>
+
+
+</mapper>
