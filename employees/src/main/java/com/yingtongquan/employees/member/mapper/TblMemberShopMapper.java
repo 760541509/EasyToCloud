@@ -26,7 +26,7 @@ public interface TblMemberShopMapper extends BaseMapper<TblMemberShopPo> {
     List<MemberInformation> queryAllShopMember(UseTheQuery useTheQuery);
 
     //按条件查询会员
-    List<MemberInformation> queryByCondition(UseTheQuery useTheQuery);
+//    List<MemberInformation> queryByCondition(UseTheQuery useTheQuery);
 
     //查询最近一次下单时间
     List<Long> checkLastOrderTime(Integer userId);

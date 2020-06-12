@@ -3,6 +3,7 @@ package com.yingtongquan.employees.staff.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yingtongquan.employees.staff.entity.TblStaffPo;
 import com.yingtongquan.employees.staff.pojo.InquireOrderInfor;
+import com.yingtongquan.employees.staff.pojo.Order;
 import com.yingtongquan.employees.staff.pojo.OrderInfromation;
 import com.yingtongquan.employees.staff.pojo.StaffOrderInformation;
 
@@ -37,5 +38,5 @@ public interface TblStaffService extends IService<TblStaffPo> {
      * @Author 胖
      * 员工查询订单详细
      **/
-    StaffOrderInformation queryStaffOrderInformation();
+    StaffOrderInformation queryStaffOrderInformation(Order order);
 }

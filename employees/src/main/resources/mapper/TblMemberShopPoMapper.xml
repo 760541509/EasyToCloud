@@ -47,17 +47,22 @@
     </delete>
     <select id="queryAllShopMember" resultType="com.yingtongquan.employees.member.pojo.MemberInformation">
         SELECT
-	        tbl_member_shop.id,
-	        tbl_member_shop.member_name,
-	        tbl_member_shop.phone,
-	        tbl_member_shop.user_id,
-	        tbl_user.head_portrait
+        tbl_member_shop.id,
+        tbl_member_shop.member_name,
+        tbl_member_shop.phone,
+        tbl_member_shop.user_id,
+        tbl_user.head_portrait
         FROM
-	        tbl_member_shop
-	        INNER JOIN tbl_user ON tbl_member_shop.user_id = tbl_user.id
-        WHERE
-	        tbl_member_shop.shop_id =  #{shopId}
-	        LIMIT #{pageStart},#{pageEnd}
+        tbl_member_shop
+        INNER JOIN tbl_user ON tbl_member_shop.user_id = tbl_user.id
+        <where>
+            <if test="nameAndPhone != null">
+                tbl_member_shop.phone LIKE concat("%",#{nameAndPhone},"%")
+                OR tbl_member_shop.member_name LIKE concat("%",#{nameAndPhone},"%")
+            </if>
+            AND tbl_member_shop.shop_id = #{shopId}
+        </where>
+        LIMIT #{pageStart},#{pageEnd}
     </select>
     <select id="queryMember" resultType="java.lang.String">
         select price_name from tbl_member_price_shop where id = #{memberId}
@@ -65,22 +70,22 @@
     <select id="queryUserInfromation" resultType="com.yingtongquan.employees.staff.pojo.UserInformation">
         select * from tbl_user where account = #{account}
     </select>
-    <select id="queryByCondition" resultType="com.yingtongquan.employees.member.pojo.MemberInformation">
-        SELECT
-	        tbl_member_shop.id,
-	        tbl_member_shop.member_name,
-	        tbl_member_shop.phone,
-	        tbl_member_shop.user_id,
-	        tbl_user.head_portrait
-        FROM
-	        tbl_member_shop
-	        INNER JOIN tbl_user ON tbl_member_shop.user_id = tbl_user.id
-        WHERE
-	        tbl_member_shop.phone LIKE concat("%",#{nameAndPhone},"%"
-	        OR tbl_member_shop.member_name LIKE ("%",#{nameAndPhone},"%")
-	        AND tbl_member_shop.shop_id = #{shopId}
-	        LIMIT #{pageStart},#{pageEnd}
-    </select>
+    <!--    <select id="queryByCondition" resultType="com.yingtongquan.employees.member.pojo.MemberInformation">-->
+    <!--        SELECT-->
+    <!--	        tbl_member_shop.id,-->
+    <!--	        tbl_member_shop.member_name,-->
+    <!--	        tbl_member_shop.phone,-->
+    <!--	        tbl_member_shop.user_id,-->
+    <!--	        tbl_user.head_portrait-->
+    <!--        FROM-->
+    <!--	        tbl_member_shop-->
+    <!--	        INNER JOIN tbl_user ON tbl_member_shop.user_id = tbl_user.id-->
+    <!--        WHERE-->
+    <!--	        tbl_member_shop.phone LIKE concat("%",#{nameAndPhone},"%")-->
+    <!--	        OR tbl_member_shop.member_name LIKE concat("%",#{nameAndPhone},"%")-->
+    <!--	        AND tbl_member_shop.shop_id = #{shopId}-->
+    <!--	        LIMIT #{pageStart},#{pageEnd}-->
+    <!--    </select>-->
     <select id="checkLastOrderTime" resultType="java.lang.Long">
         select add_time from tbl_order where user_id = 17 ORDER BY add_time desc
     </select>

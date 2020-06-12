@@ -56,7 +56,7 @@ public interface TblMemberShopService extends IService<TblMemberShopPo> {
      * @Author 胖
      * 按条件查询会员
      **/
-    List<MemberInformation> queryByConditionMember(UseTheQuery useTheQuery);
+//    List<MemberInformation> queryByConditionMember(UseTheQuery useTheQuery);
 
     /**
      * @Date 2020/6/11 14:42

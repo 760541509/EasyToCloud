@@ -81,4 +81,27 @@ public class TblMemberShopController {
         return ResultVo.successResult(memberPriceShopService.updateShopAllMemberprice(userInformation.getId()));
     }
 
+//    @ApiOperation("按条件查询会员")
+//    @PostMapping("/queryByConditionMember")
+//    public ResultVo queryByConditionMember(@RequestBody UseTheQuery useTheQuery) {
+//        return ResultVo.successResult(memberShopService.queryByConditionMember(useTheQuery));
+//    }
+
+    @ApiOperation("修改会员")
+    @PostMapping("/updateShopMember")
+    public ResultVo updateShopMember(@RequestBody UpdateMemberInformation memberInformation) {
+        return ResultVo.successResult(memberShopService.updateShopMember(memberInformation));
+    }
+
+    @ApiOperation("修改会员地址")
+    @PostMapping("/updateMemberAddress")
+    public ResultVo updateMemberAddress(@RequestBody MemberAddress memberAddress) {
+        return ResultVo.successResult(memberShopService.updateMemberAddress(memberAddress));
+    }
+
+    @ApiOperation("删除会员")
+    @PostMapping("/deleteShopMember")
+    public ResultVo deleteShopMember(@RequestBody ShopMemberInfo ShopMemberInfo) {
+        return ResultVo.successResult(memberShopService.deleteShopMember(ShopMemberInfo.getPhone()));
+    }
 }

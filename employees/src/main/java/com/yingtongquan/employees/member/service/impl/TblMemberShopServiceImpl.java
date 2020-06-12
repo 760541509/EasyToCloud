@@ -54,26 +54,26 @@ public class TblMemberShopServiceImpl extends ServiceImpl<TblMemberShopMapper, T
         return memberInformations;
     }
 
-    @Override
-    public List<MemberInformation> queryByConditionMember(UseTheQuery useTheQuery) {
-        Integer shopId = HttpUtil.getShopId(request.getHeader("token"));
-        useTheQuery.setShopId(shopId);
-        useTheQuery.setPageStart((useTheQuery.getPage() - 1) * useTheQuery.getPageEnd());
-        List<MemberInformation> memberInformations = memberShopMapper.queryByCondition(useTheQuery);
-        for (MemberInformation memberInformation : memberInformations) {
-            List<Long> time = memberShopMapper.checkLastOrderTime(memberInformation.getUserId());
-            for (int i = 0; i < time.size(); i++) {
-                memberInformation.setAddTime(time.get(0));
-            }
-            Integer weChat = memberShopMapper.bindWeChat(memberInformation.getUserId());
-            if (weChat == 0 || weChat == null) {
-                memberInformation.setBindWeChat(false);
-            } else {
-                memberInformation.setBindWeChat(true);
-            }
-        }
-        return memberInformations;
-    }
+//    @Override
+//    public List<MemberInformation> queryByConditionMember(UseTheQuery useTheQuery) {
+//        Integer shopId = HttpUtil.getShopId(request.getHeader("token"));
+//        useTheQuery.setShopId(shopId);
+//        useTheQuery.setPageStart((useTheQuery.getPage() - 1) * useTheQuery.getPageEnd());
+//        List<MemberInformation> memberInformations = memberShopMapper.queryByCondition(useTheQuery);
+//        for (MemberInformation memberInformation : memberInformations) {
+//            List<Long> time = memberShopMapper.checkLastOrderTime(memberInformation.getUserId());
+//            for (int i = 0; i < time.size(); i++) {
+//                memberInformation.setAddTime(time.get(0));
+//            }
+//            Integer weChat = memberShopMapper.bindWeChat(memberInformation.getUserId());
+//            if (weChat == 0 || weChat == null) {
+//                memberInformation.setBindWeChat(false);
+//            } else {
+//                memberInformation.setBindWeChat(true);
+//            }
+//        }
+//        return memberInformations;
+//    }
 
     @Override
     public ShopMemberInfo queryMemberInformation(QueryMemberInformation memberInformation) {

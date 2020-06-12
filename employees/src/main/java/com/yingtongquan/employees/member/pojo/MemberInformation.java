@@ -24,7 +24,7 @@ public class MemberInformation implements Serializable {
     @ApiModelProperty(value = "最近一次下单时间")
     private Long addTime;
 
-    @ApiModelProperty(value = "是否绑定微信")
+    @ApiModelProperty(value = "是否绑定微信(true 已绑定 false 没绑定)")
     private Boolean bindWeChat;
 
     public Integer getId() {
