@@ -53,6 +53,7 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
         String token = request.getHeader("token");
         Integer shopId = HttpUtil.getShopId(token);
         inquireOrderInfor.setShopId(shopId);
+        inquireOrderInfor.setPageStart((inquireOrderInfor.getPage() - 1) * inquireOrderInfor.getPageEnd());
         List<OrderInfromation> orderInfromations = staffMapper.theEmployeeQueriesTheOrderByStatus(inquireOrderInfor);
         for (int i = 0; i < orderInfromations.size(); i++) {
             String name = null;

@@ -8,8 +8,6 @@ import com.yingtongquan.employees.member.mapper.TblMemberShopMapper;
 import com.yingtongquan.employees.member.pojo.*;
 import com.yingtongquan.employees.member.service.TblMemberShopService;
 import com.yingtongquan.employees.staff.pojo.UserInformation;
-import com.yingtongquan.startcommon.address.pojo.Coordinate;
-import com.yingtongquan.startcommon.util.AddressUtil;
 import com.yingtongquan.startcommon.util.HttpUtil;
 import com.yingtongquan.startcommon.util.MD5;
 import org.apache.commons.lang.RandomStringUtils;
@@ -86,13 +84,14 @@ public class TblMemberShopServiceImpl extends ServiceImpl<TblMemberShopMapper, T
 
     @Override
     public Integer addShopMember(AddShopMember addShopMember) {
+        Integer shopId = HttpUtil.getShopId(request.getHeader("token"));
         UserInformation userInformation = memberShopMapper.queryUserInfromation(addShopMember.getAccount());
         TblMemberShopPo memberShopPo = new TblMemberShopPo();
         memberShopPo.setAddTime(System.currentTimeMillis());
         memberShopPo.setMemberId(addShopMember.getMemberPriceId());
         memberShopPo.setMemberName(addShopMember.getName());
         memberShopPo.setPhone(addShopMember.getAccount());
-        memberShopPo.setShopId(addShopMember.getShopId());
+        memberShopPo.setShopId(shopId);
         if (userInformation != null) {
             memberShopPo.setUserId(userInformation.getId());
             memberShopPo.setHeadPortrait(userInformation.getHeadPortrait());
@@ -102,17 +101,11 @@ public class TblMemberShopServiceImpl extends ServiceImpl<TblMemberShopMapper, T
         }
         memberShopMapper.addShopMember(memberShopPo);
         for (MemberAddress memberAddress : addShopMember.getMemberAddresses()) {
-            //地址的拼接
-            String address = memberAddress.getProvince() + memberAddress.getCity() + memberAddress.getArea() + memberAddress.getAddress();
-            //地区编号
-            Integer areaId = memberShopMapper.queryAreaId(memberAddress);
-            //获取经纬度
-            Coordinate coordinate = AddressUtil.coordinate(address);
             TblMemberDeliveryAddressShopPo memberDeliveryAddress = new TblMemberDeliveryAddressShopPo();
             memberDeliveryAddress.setAddress(memberAddress.getAddress());
-            memberDeliveryAddress.setLatitude(coordinate.getLatitude());
-            memberDeliveryAddress.setAreaId(areaId);
-            memberDeliveryAddress.setLongitude(coordinate.getLongitude());
+            memberDeliveryAddress.setLatitude(memberAddress.getLatitude());
+            memberDeliveryAddress.setAreaId(memberAddress.getAreaId());
+            memberDeliveryAddress.setLongitude(memberAddress.getLongitude());
             memberDeliveryAddress.setMemberShopId(memberShopPo.getId());
             memberDeliveryAddress.setPhone(memberAddress.getPhone());
             memberDeliveryAddress.setName(memberAddress.getConsignee());
@@ -128,20 +121,14 @@ public class TblMemberShopServiceImpl extends ServiceImpl<TblMemberShopMapper, T
 
     @Override
     public Boolean updateMemberAddress(MemberAddress memberAddress) {
-        //地址的拼接
-        String address = memberAddress.getProvince() + memberAddress.getCity() + memberAddress.getArea() + memberAddress.getAddress();
-        //地区编号
-        Integer areaId = memberShopMapper.queryAreaId(memberAddress);
-        //获取经纬度
-        Coordinate coordinate = AddressUtil.coordinate(address);
         TblMemberDeliveryAddressShopPo memberDelivery = new TblMemberDeliveryAddressShopPo();
         memberDelivery.setId(memberAddress.getId());
-        memberDelivery.setAreaId(areaId);
+        memberDelivery.setAreaId(memberAddress.getAreaId());
         memberDelivery.setAddress(memberAddress.getAddress());
         memberDelivery.setName(memberAddress.getConsignee());
         memberDelivery.setPhone(memberAddress.getPhone());
-        memberDelivery.setLatitude(coordinate.getLatitude());
-        memberDelivery.setLongitude(coordinate.getLatitude());
+        memberDelivery.setLatitude(memberAddress.getLatitude());
+        memberDelivery.setLongitude(memberAddress.getLatitude());
         return memberShopMapper.updateMemberShippingAddress(memberDelivery);
     }
 

@@ -65,7 +65,16 @@
             </if>
             AND tbl_order.shop_id = #{shopId}
         </where>
-
+        <if test="time != null">
+            ORDER BY tbl_order.add_time
+        </if>
+        <if test="money !=  null">
+            ORDER BY tbl_order.order_amount_total
+        </if>
+        <if test="sorting != null">
+            DESC
+        </if>
+        LIMIT #{pageStart},#{pageEnd}
     </select>
 
     <select id="queryOrderGoodsName" resultType="java.lang.String">

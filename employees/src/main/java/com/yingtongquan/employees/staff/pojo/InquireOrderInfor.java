@@ -33,6 +33,9 @@ public class InquireOrderInfor implements Serializable {
     @ApiModelProperty(value = "每页多少")
     private Integer pageEnd;
 
+    @ApiModelProperty(value = "排序方式")
+    private String sorting;
+
     public Integer getStatus() {
         return status;
     }
@@ -105,6 +108,14 @@ public class InquireOrderInfor implements Serializable {
         this.pageEnd = pageEnd;
     }
 
+    public String getSorting() {
+        return sorting;
+    }
+
+    public void setSorting(String sorting) {
+        this.sorting = sorting;
+    }
+
     @Override
     public String toString() {
         return "InquireOrderInfor{" +
@@ -117,6 +128,7 @@ public class InquireOrderInfor implements Serializable {
                 ", page=" + page +
                 ", pageStart=" + pageStart +
                 ", pageEnd=" + pageEnd +
+                ", sorting='" + sorting + '\'' +
                 '}';
     }
 }

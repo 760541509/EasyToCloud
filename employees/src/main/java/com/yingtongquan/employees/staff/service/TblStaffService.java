@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.yingtongquan.employees.staff.entity.TblStaffPo;
 import com.yingtongquan.employees.staff.pojo.InquireOrderInfor;
 import com.yingtongquan.employees.staff.pojo.OrderInfromation;
+import com.yingtongquan.employees.staff.pojo.StaffOrderInformation;
 
 import java.util.List;
 
@@ -30,4 +31,11 @@ public interface TblStaffService extends IService<TblStaffPo> {
      * 员工按照状态查询订单
      **/
     List<OrderInfromation> theEmployeeQueriesTheOrderByStatus(InquireOrderInfor inquireOrderInfor);
+
+    /**
+     * @Date 2020/6/12 11:37
+     * @Author 胖
+     * 员工查询订单详细
+     **/
+    StaffOrderInformation queryStaffOrderInformation();
 }

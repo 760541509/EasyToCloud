@@ -8,14 +8,8 @@ public class MemberAddress implements Serializable {
 
     private Integer id;
 
-    @ApiModelProperty(value = "省")
-    private String province;
-
-    @ApiModelProperty(value = "市")
-    private String city;
-
-    @ApiModelProperty(value = "区")
-    private String area;
+    @ApiModelProperty(value = "区域ID")
+    private Integer areaId;
 
     @ApiModelProperty(value = "详细地址")
     private String address;
@@ -43,28 +37,12 @@ public class MemberAddress implements Serializable {
         this.id = id;
     }
 
-    public String getProvince() {
-        return province;
+    public Integer getAreaId() {
+        return areaId;
     }
 
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getArea() {
-        return area;
-    }
-
-    public void setArea(String area) {
-        this.area = area;
+    public void setAreaId(Integer areaId) {
+        this.areaId = areaId;
     }
 
     public String getAddress() {
@@ -119,9 +97,7 @@ public class MemberAddress implements Serializable {
     public String toString() {
         return "MemberAddress{" +
                 "id=" + id +
-                ", province='" + province + '\'' +
-                ", city='" + city + '\'' +
-                ", area='" + area + '\'' +
+                ", areaId=" + areaId +
                 ", address='" + address + '\'' +
                 ", consignee='" + consignee + '\'' +
                 ", phone='" + phone + '\'' +

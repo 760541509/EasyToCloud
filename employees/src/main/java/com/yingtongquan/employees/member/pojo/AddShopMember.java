@@ -11,9 +11,6 @@ public class AddShopMember implements Serializable {
     @ApiModelProperty(value = "手机号码")
     private String account;
 
-    @ApiModelProperty(value = "店铺ID")
-    private Integer shopId;
-
     @ApiModelProperty(value = "名字")
     private String name;
 
@@ -29,14 +26,6 @@ public class AddShopMember implements Serializable {
 
     public void setAccount(String account) {
         this.account = account;
-    }
-
-    public Integer getShopId() {
-        return shopId;
-    }
-
-    public void setShopId(Integer shopId) {
-        this.shopId = shopId;
     }
 
     public String getName() {
@@ -67,7 +56,6 @@ public class AddShopMember implements Serializable {
     public String toString() {
         return "AddShopMember{" +
                 "account='" + account + '\'' +
-                ", shopId=" + shopId +
                 ", name='" + name + '\'' +
                 ", memberPriceId=" + memberPriceId +
                 ", memberAddresses=" + memberAddresses +
