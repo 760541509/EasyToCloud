@@ -2,7 +2,6 @@ package com.yingtongquan.employees.member.service.impl;
 
 import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.collect.Lists;
 import com.yingtongquan.employees.member.entity.TblMemberPriceShopPo;
 import com.yingtongquan.employees.member.mapper.TblMemberPriceShopMapper;
 import com.yingtongquan.employees.member.pojo.MemberInformation;
@@ -95,11 +94,12 @@ public class TblMemberPriceShopServiceImpl extends ServiceImpl<TblMemberPriceSho
     }
 
     @Override
-    public List<ShopPrice> queryShopAllMember() {
+    public ShopPrice queryShopAllMember() {
         String token = request.getHeader("token");
         Integer shopId = HttpUtil.getShopId(token);
-        List<ShopPrice> shopPrics = Lists.newArrayList();
-        shopPrics.add(new ShopPrice(memberPriceShopMapper.checkAllRetailMembers(shopId), memberPriceShopMapper.checkAllWholesaleMembers(shopId)));
+        ShopPrice shopPrics = new ShopPrice();
+        shopPrics.setRetailPrice(memberPriceShopMapper.checkAllRetailMembers(shopId));
+        shopPrics.setWholesalePrice(memberPriceShopMapper.checkAllWholesaleMembers(shopId));
         return shopPrics;
     }
 

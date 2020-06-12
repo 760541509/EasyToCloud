@@ -40,9 +40,9 @@ public interface TblMemberPriceShopService extends IService<TblMemberPriceShopPo
     /**
      * @Date 2020/6/9 15:24
      * @Author 胖
-     * 查询门店所有的会见价格
+     * 查询门店所有的会员价格
      **/
-    List<ShopPrice> queryShopAllMember();
+    ShopPrice queryShopAllMember();
 
     /**
      * @Date 2020/6/9 10:50
