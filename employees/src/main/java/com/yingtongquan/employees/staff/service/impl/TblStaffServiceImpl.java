@@ -5,6 +5,7 @@ import com.yingtongquan.employees.staff.entity.TblStaffPo;
 import com.yingtongquan.employees.staff.mapper.TblStaffMapper;
 import com.yingtongquan.employees.staff.pojo.InquireOrderInfor;
 import com.yingtongquan.employees.staff.pojo.OrderInfromation;
+import com.yingtongquan.employees.staff.pojo.StaffOrderInformation;
 import com.yingtongquan.employees.staff.pojo.UserInformation;
 import com.yingtongquan.employees.staff.service.TblStaffRoleService;
 import com.yingtongquan.employees.staff.service.TblStaffService;
@@ -67,4 +68,8 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
         return orderInfromations;
     }
 
+    @Override
+    public StaffOrderInformation queryStaffOrderInformation() {
+        return null;
+    }
 }

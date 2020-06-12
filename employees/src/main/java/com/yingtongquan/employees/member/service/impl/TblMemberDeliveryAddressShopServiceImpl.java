@@ -6,8 +6,6 @@ import com.yingtongquan.employees.member.mapper.TblMemberDeliveryAddressShopMapp
 import com.yingtongquan.employees.member.mapper.TblMemberShopMapper;
 import com.yingtongquan.employees.member.pojo.MemberAddress;
 import com.yingtongquan.employees.member.service.TblMemberDeliveryAddressShopService;
-import com.yingtongquan.startcommon.address.pojo.Coordinate;
-import com.yingtongquan.startcommon.util.AddressUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,14 +26,11 @@ public class TblMemberDeliveryAddressShopServiceImpl extends ServiceImpl<TblMemb
 
     @Override
     public Integer addMemberAddress(MemberAddress memberAddress) {
-        String address = memberAddress.getProvince() + memberAddress.getCity() + memberAddress.getArea() + memberAddress.getAddress();
-        Integer areaId = memberShopMapper.queryAreaId(memberAddress);
-        Coordinate coordinate = AddressUtil.coordinate(address);
         TblMemberDeliveryAddressShopPo memberDeliveryAddress = new TblMemberDeliveryAddressShopPo();
         memberDeliveryAddress.setAddress(memberAddress.getAddress());
-        memberDeliveryAddress.setLatitude(coordinate.getLatitude());
-        memberDeliveryAddress.setAreaId(areaId);
-        memberDeliveryAddress.setLongitude(coordinate.getLongitude());
+        memberDeliveryAddress.setLatitude(memberAddress.getLatitude());
+        memberDeliveryAddress.setAreaId(memberAddress.getAreaId());
+        memberDeliveryAddress.setLongitude(memberAddress.getLongitude());
         memberDeliveryAddress.setMemberShopId(memberAddress.getMemberId());
         memberDeliveryAddress.setPhone(memberAddress.getPhone());
         memberDeliveryAddress.setName(memberAddress.getConsignee());
