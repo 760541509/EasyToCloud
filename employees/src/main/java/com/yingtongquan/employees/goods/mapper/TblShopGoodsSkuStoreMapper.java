@@ -1,16 +1,12 @@
 package com.yingtongquan.employees.goods.mapper;
 
-import com.yingtongquan.employees.goods.entity.TblShopGoodsSkuStorePo;
-import com.yingtongquan.employees.goods.entity.TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa;
-import com.yingtongquan.employees.goods.entity.TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoUpPa;
-import com.yingtongquan.employees.goods.entity.TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoDelPa;
-import com.yingtongquan.employees.goods.entity.TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoGetPa;
-import com.yingtongquan.employees.goods.entity.TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoGetListPa;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.yingtongquan.employees.goods.entity.TblShopGoodsSkuStorePo;
+import com.yingtongquan.employees.goods.entity.TblShopGoodsSkuStorePo.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
-import java.util.Map;
 
 /**
 * <p>

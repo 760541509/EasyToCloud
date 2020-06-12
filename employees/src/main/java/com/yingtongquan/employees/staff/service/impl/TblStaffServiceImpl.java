@@ -3,6 +3,7 @@ package com.yingtongquan.employees.staff.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yingtongquan.employees.staff.entity.TblStaffPo;
 import com.yingtongquan.employees.staff.mapper.TblStaffMapper;
+import com.yingtongquan.employees.staff.pojo.InquireOrderInfor;
 import com.yingtongquan.employees.staff.pojo.OrderInfromation;
 import com.yingtongquan.employees.staff.pojo.UserInformation;
 import com.yingtongquan.employees.staff.service.TblStaffRoleService;
@@ -48,10 +49,11 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
     }
 
     @Override
-    public List<OrderInfromation> theEmployeeQueriesTheOrderByStatus(Integer status) {
+    public List<OrderInfromation> theEmployeeQueriesTheOrderByStatus(InquireOrderInfor inquireOrderInfor) {
         String token = request.getHeader("token");
         Integer shopId = HttpUtil.getShopId(token);
-        List<OrderInfromation> orderInfromations = staffMapper.theEmployeeQueriesTheOrderByStatus(status, shopId);
+        inquireOrderInfor.setShopId(shopId);
+        List<OrderInfromation> orderInfromations = staffMapper.theEmployeeQueriesTheOrderByStatus(inquireOrderInfor);
         for (int i = 0; i < orderInfromations.size(); i++) {
             String name = null;
             List<String> goodsName = staffMapper.queryOrderGoodsName(orderInfromations.get(i).getOrderNo());

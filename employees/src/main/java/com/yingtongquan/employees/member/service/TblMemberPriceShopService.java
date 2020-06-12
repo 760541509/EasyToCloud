@@ -2,6 +2,7 @@ package com.yingtongquan.employees.member.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yingtongquan.employees.member.entity.TblMemberPriceShopPo;
+import com.yingtongquan.employees.member.pojo.ShopPrice;
 
 import java.util.List;
 
@@ -41,12 +42,12 @@ public interface TblMemberPriceShopService extends IService<TblMemberPriceShopPo
      * @Author 胖
      * 查询门店所有的会见价格
      **/
-    List<TblMemberPriceShopPo> queryShopAllMember();
+    List<ShopPrice> queryShopAllMember();
 
     /**
      * @Date 2020/6/9 10:50
      * @Author 胖
-     * 删除门店会员价格表
+     * 关闭门店会员价格表
      **/
     Boolean updateShopAllMemberprice(Integer id);
 }

@@ -213,7 +213,7 @@ public class TblUserController {
     }
 
     @ApiOperation(value = "根据手机号查询信息")
-    @PostMapping("/switchTheStore")
+    @PostMapping("/accordingPhoneQuery")
     public ResultVo latAndLotGetAddress(@RequestBody UserLogin login) {
         return ResultVo.successResult(userService.queryUserInformation(login.getAccount()));
     }

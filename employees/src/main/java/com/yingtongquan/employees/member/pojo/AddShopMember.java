@@ -3,6 +3,8 @@ package com.yingtongquan.employees.member.pojo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddShopMember implements Serializable {
 
@@ -12,8 +14,14 @@ public class AddShopMember implements Serializable {
     @ApiModelProperty(value = "店铺ID")
     private Integer shopId;
 
+    @ApiModelProperty(value = "名字")
+    private String name;
+
     @ApiModelProperty(value = "享受的会员等级ID")
     private Integer memberPriceId;
+
+    @ApiModelProperty(value = "收货地址")
+    private List<MemberAddress> memberAddresses = new ArrayList<>();
 
     public String getAccount() {
         return account;
@@ -31,6 +39,14 @@ public class AddShopMember implements Serializable {
         this.shopId = shopId;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Integer getMemberPriceId() {
         return memberPriceId;
     }
@@ -39,12 +55,22 @@ public class AddShopMember implements Serializable {
         this.memberPriceId = memberPriceId;
     }
 
+    public List<MemberAddress> getMemberAddresses() {
+        return memberAddresses;
+    }
+
+    public void setMemberAddresses(List<MemberAddress> memberAddresses) {
+        this.memberAddresses = memberAddresses;
+    }
+
     @Override
     public String toString() {
         return "AddShopMember{" +
                 "account='" + account + '\'' +
                 ", shopId=" + shopId +
+                ", name='" + name + '\'' +
                 ", memberPriceId=" + memberPriceId +
+                ", memberAddresses=" + memberAddresses +
                 '}';
     }
 }

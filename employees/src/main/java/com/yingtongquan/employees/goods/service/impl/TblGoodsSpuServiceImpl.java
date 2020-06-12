@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
@@ -53,6 +53,10 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
     private TblWarehouseGoodsSkuStoreMapper warehouseGoodsSkuStoreMapper;
     @Resource
     private TblShopGoodsSkuStoreMapper shopGoodsSkuStoreMapper;
+    @Resource
+    private TblShopGoodsSkuStoreSumMapper shopGoodsSkuStoreSumMapper;
+    @Resource
+    private TblWarehouseGoodsSkuStoreSumMapper warehouseGoodsSkuStoreSumMapper;
 
     @Resource
     private HttpServletRequest request;
@@ -81,27 +85,21 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
             Map<Integer, List<TblGoodsPricePo.TblGoodsPricePoAddPa>> unitPriceMapList = new HashMap();
 
 
-            tblGoodsSkuPoAddPa.getUnitPriceList().forEach(new Consumer<TblGoodsPricePo.TblGoodsPricePoAddPa>() {
-                @Override
-                public void accept(TblGoodsPricePo.TblGoodsPricePoAddPa tblGoodsPricePoAddPa) {
-                    List<TblGoodsPricePo.TblGoodsPricePoAddPa> itemV = unitPriceMapList.get(tblGoodsPricePoAddPa.getFkMemberPriceShopId());
-                    if (itemV != null) {
-                        itemV.add(tblGoodsPricePoAddPa);
-                    } else {
-                        itemV = new ArrayList<>();
-                        itemV.add(tblGoodsPricePoAddPa);
-                        unitPriceMapList.put(tblGoodsPricePoAddPa.getFkMemberPriceShopId(), itemV);
-                    }
-
+            tblGoodsSkuPoAddPa.getUnitPriceList().forEach(tblGoodsPricePoAddPa -> {
+                List<TblGoodsPricePo.TblGoodsPricePoAddPa> itemV = unitPriceMapList.get(tblGoodsPricePoAddPa.getFkMemberPriceShopId());
+                if (itemV != null) {
+                    itemV.add(tblGoodsPricePoAddPa);
+                } else {
+                    itemV = new ArrayList<>();
+                    itemV.add(tblGoodsPricePoAddPa);
+                    unitPriceMapList.put(tblGoodsPricePoAddPa.getFkMemberPriceShopId(), itemV);
                 }
+
             });
 
-            unitPriceMapList.forEach(new BiConsumer<Integer, List<TblGoodsPricePo.TblGoodsPricePoAddPa>>() {
-                @Override
-                public void accept(Integer integer, List<TblGoodsPricePo.TblGoodsPricePoAddPa> tblGoodsPricePoAddPas) {
-                    if (info.getUnitList().size() != tblGoodsPricePoAddPas.size()) {
-                        throw new IllegalArgumentException(StrUtil.format("商品对应的价格有误"));
-                    }
+            unitPriceMapList.forEach((integer, tblGoodsPricePoAddPas) -> {
+                if (info.getUnitList().size() != tblGoodsPricePoAddPas.size()) {
+                    throw new IllegalArgumentException(StrUtil.format("商品对应的价格有误"));
                 }
             });
 
@@ -214,8 +212,9 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
             });
             addBatchInfo = shopGoodsSkuStoreMapper.addBatchInfo(info);
 
+            System.out.println("addBatchInfo==入库到门店=="+addBatchInfo);
            if(addBatchInfo){
-               upGoodsSkuStore(null,info);
+               addBatchInfo = upGoodsSkuStore(null,info);
            }
         }
 
@@ -246,8 +245,10 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
 
             addBatchInfo = warehouseGoodsSkuStoreMapper.addBatchInfo(info);
 
+            System.out.println("addBatchInfo==入库到仓库=="+addBatchInfo);
+
             if(addBatchInfo){
-                upGoodsSkuStore(info,null);
+                addBatchInfo = upGoodsSkuStore(info,null);
             }
 
         }
@@ -260,40 +261,161 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
      * @param warehouseGoodsSkuStorePoAddPaList
      * @param shopGoodsSkuStorePoAddPaList
      */
-    private void upGoodsSkuStore(List<TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa> warehouseGoodsSkuStorePoAddPaList,
+    private Boolean upGoodsSkuStore(List<TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa> warehouseGoodsSkuStorePoAddPaList,
                                  List<TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa> shopGoodsSkuStorePoAddPaList){
 
-        List<Integer> ids = new ArrayList<>();
-        Map<Integer,Integer> mapInfo = new HashMap<>();
+        AtomicReference<Boolean> isAdd = new AtomicReference<>(false);
+
+
 
         //仓库
         if(warehouseGoodsSkuStorePoAddPaList!=null){
+
+            //根据仓库id 分组的数据。
+            Map<Integer,List<TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa>> mapData = new HashMap<>();
+
             warehouseGoodsSkuStorePoAddPaList.forEach(tblWarehouseGoodsSkuStorePoAddPa -> {
-                ids.add(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId());
-                mapInfo.put(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId(),tblWarehouseGoodsSkuStorePoAddPa.getStore());
+                mapData.computeIfAbsent(tblWarehouseGoodsSkuStorePoAddPa.getFkWarehouseId(), k -> new ArrayList<>());
+                mapData.get(tblWarehouseGoodsSkuStorePoAddPa.getFkWarehouseId()).add(tblWarehouseGoodsSkuStorePoAddPa);
             });
+
+
+            mapData.forEach((integer, warehouseGoodsSkuStorePoAddPaList1) -> {
+                //要查询的skuId
+                List<Integer> ids = new ArrayList<>();
+                warehouseGoodsSkuStorePoAddPaList1.forEach(tblWarehouseGoodsSkuStorePoAddPa -> ids.add(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId()));
+                List<TblWarehouseGoodsSkuStoreSumPo> tblWarehouseGoodsSkuStoreSumPoList = warehouseGoodsSkuStoreSumMapper.getListByGoodsSkuIds(ids,integer);
+                //判断数据是否一致
+                Map<Integer,TblWarehouseGoodsSkuStoreSumPo> mapWarehouseGoodsSkuStoreSumPo = new HashMap<>();
+                tblWarehouseGoodsSkuStoreSumPoList.forEach(new Consumer<TblWarehouseGoodsSkuStoreSumPo>() {
+                    @Override
+                    public void accept(TblWarehouseGoodsSkuStoreSumPo tblWarehouseGoodsSkuStoreSumPo) {
+                        mapWarehouseGoodsSkuStoreSumPo.put(tblWarehouseGoodsSkuStoreSumPo.getFkGoodsSkuId(),tblWarehouseGoodsSkuStoreSumPo);
+                    }
+                });
+                //分要修改的集合和要新增的集合
+                List<TblWarehouseGoodsSkuStoreSumPo.TblWarehouseGoodsSkuStoreSumPoAddPa> addPasList = new ArrayList<>();
+                List<TblWarehouseGoodsSkuStoreSumPo.TblWarehouseGoodsSkuStoreSumPoUpPa>  upPasList = new ArrayList<>();
+                warehouseGoodsSkuStorePoAddPaList1.forEach(tblWarehouseGoodsSkuStorePoAddPa -> {
+                    if(mapWarehouseGoodsSkuStoreSumPo.get(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId())==null){
+                        TblWarehouseGoodsSkuStoreSumPo.TblWarehouseGoodsSkuStoreSumPoAddPa addPa = new TblWarehouseGoodsSkuStoreSumPo.TblWarehouseGoodsSkuStoreSumPoAddPa();
+                        addPa.setFkGoodsSkuId(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId());
+                        addPa.setFkWarehouseId(tblWarehouseGoodsSkuStorePoAddPa.getFkWarehouseId());
+                        addPa.setStore(tblWarehouseGoodsSkuStorePoAddPa.getStore());
+                        addPasList.add(addPa);
+                    }
+                    else {
+                        TblWarehouseGoodsSkuStoreSumPo.TblWarehouseGoodsSkuStoreSumPoUpPa upPa = new TblWarehouseGoodsSkuStoreSumPo.TblWarehouseGoodsSkuStoreSumPoUpPa();
+                        upPa.setId(mapWarehouseGoodsSkuStoreSumPo.get(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId()).getId());
+                        upPa.setStore(mapWarehouseGoodsSkuStoreSumPo.get(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId()).getStore()+tblWarehouseGoodsSkuStorePoAddPa.getStore());
+                        upPasList.add(upPa);
+                    }
+                });
+
+                System.out.println("addPasList====="+JSON.toJSON(addPasList));
+                System.out.println("upPasList====="+JSON.toJSON(upPasList));
+
+                if(!addPasList.isEmpty()){
+                    isAdd.set(warehouseGoodsSkuStoreSumMapper.addBatchInfo(addPasList));
+                }
+                if(!upPasList.isEmpty()){
+                    isAdd.set(warehouseGoodsSkuStoreSumMapper.updateStoreBatchInfo(upPasList));
+                }
+            });
+
+
         }
         //门店
         else if(shopGoodsSkuStorePoAddPaList!=null){
-            shopGoodsSkuStorePoAddPaList.forEach(tblShopGoodsSkuStorePoAddPa -> {
-                ids.add(tblShopGoodsSkuStorePoAddPa.getFkGoodsSkuId());
-                mapInfo.put(tblShopGoodsSkuStorePoAddPa.getFkGoodsSkuId(),tblShopGoodsSkuStorePoAddPa.getStore());
+            String token = request.getHeader("token");
+            Integer shopId = HttpUtil.getShopId(token);
+
+            System.out.println("shopId====="+shopId);
+
+
+            List<Integer> ids = new ArrayList<>();
+            shopGoodsSkuStorePoAddPaList.forEach(shopGoodsSkuStorePoAddPa -> ids.add(shopGoodsSkuStorePoAddPa.getFkGoodsSkuId()));
+            System.out.println("shopGoodsSkuStorePoAddPaList====="+JSON.toJSON(shopGoodsSkuStorePoAddPaList));
+            List<TblShopGoodsSkuStoreSumPo> shopGoodsSkuStoreSumPoList = shopGoodsSkuStoreSumMapper.getListByGoodsSkuIds(ids,shopId);
+
+            System.out.println("shopGoodsSkuStoreSumPoList====="+JSON.toJSON(shopGoodsSkuStoreSumPoList));
+
+            //判断数据是否一致
+            Map<Integer,TblShopGoodsSkuStoreSumPo> mapShopGoodsSkuStoreSumPo = new HashMap<>();
+            shopGoodsSkuStoreSumPoList.forEach(new Consumer<TblShopGoodsSkuStoreSumPo>() {
+                @Override
+                public void accept(TblShopGoodsSkuStoreSumPo tblShopGoodsSkuStoreSumPo) {
+                    mapShopGoodsSkuStoreSumPo.put(tblShopGoodsSkuStoreSumPo.getFkGoodsSkuId(),tblShopGoodsSkuStoreSumPo);
+                }
             });
+
+            //分要修改的集合和要新增的集合
+            List<TblShopGoodsSkuStoreSumPo.TblShopGoodsSkuStoreSumPoAddPa> addPasList = new ArrayList<>();
+            List<TblShopGoodsSkuStoreSumPo.TblShopGoodsSkuStoreSumPoUpPa>  upPasList = new ArrayList<>();
+
+            shopGoodsSkuStorePoAddPaList.forEach(tblWarehouseGoodsSkuStorePoAddPa -> {
+                if(mapShopGoodsSkuStoreSumPo.get(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId())==null){
+                    TblShopGoodsSkuStoreSumPo.TblShopGoodsSkuStoreSumPoAddPa addPa = new TblShopGoodsSkuStoreSumPo.TblShopGoodsSkuStoreSumPoAddPa();
+                    addPa.setFkGoodsSkuId(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId());
+                    addPa.setFkShopId(shopId);
+                    addPa.setStore(tblWarehouseGoodsSkuStorePoAddPa.getStore());
+                    addPasList.add(addPa);
+                }
+                else {
+                    TblShopGoodsSkuStoreSumPo.TblShopGoodsSkuStoreSumPoUpPa upPa = new TblShopGoodsSkuStoreSumPo.TblShopGoodsSkuStoreSumPoUpPa();
+                    upPa.setId(mapShopGoodsSkuStoreSumPo.get(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId()).getId());
+                    upPa.setStore(mapShopGoodsSkuStoreSumPo.get(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId()).getStore()+tblWarehouseGoodsSkuStorePoAddPa.getStore());
+                    upPasList.add(upPa);
+                }
+            });
+
+            System.out.println("addPasList====="+JSON.toJSON(addPasList));
+            System.out.println("upPasList====="+JSON.toJSON(upPasList));
+
+            if(!addPasList.isEmpty()){
+                isAdd.set(shopGoodsSkuStoreSumMapper.addBatchInfo(addPasList));
+            }
+            if(!upPasList.isEmpty()){
+                isAdd.set(shopGoodsSkuStoreSumMapper.updateStoreBatchInfo(upPasList));
+            }
+
         }
 
-        List<TblGoodsSkuPo> goodsSkuPoList = goodsSkuMapper.getListByGoodsSkuIds(ids);
 
-//        System.out.println("mapInfo==="+JSON.toJSON(mapInfo));
-//        System.out.println("goodsSkuPoList==="+JSON.toJSON(goodsSkuPoList));
 
-        goodsSkuPoList.forEach(tblGoodsSkuPo -> {
-            Integer store = tblGoodsSkuPo.getStore()+mapInfo.get(tblGoodsSkuPo.getId());
-            tblGoodsSkuPo.setStore(store);
-        });
+        //修改sku表的库存
+        if(isAdd.get()){
+            //要查询的skuId
+            List<Integer> ids = new ArrayList<>();
+            Map<Integer,Integer> mapInfo = new HashMap<>();
 
-        //修改库存
-        Boolean goodsSkuMapperUpdateStoreBatch = goodsSkuMapper.updateStoreBatchInfo(goodsSkuPoList);
-        System.out.println("修改库存===="+goodsSkuMapperUpdateStoreBatch);
+            //仓库
+            if(warehouseGoodsSkuStorePoAddPaList!=null){
+                warehouseGoodsSkuStorePoAddPaList.forEach(tblWarehouseGoodsSkuStorePoAddPa -> {
+                    ids.add(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId());
+                    mapInfo.put(tblWarehouseGoodsSkuStorePoAddPa.getFkGoodsSkuId(),tblWarehouseGoodsSkuStorePoAddPa.getStore());
+                });
+            }
+            //门店
+            else if(shopGoodsSkuStorePoAddPaList!=null){
+                shopGoodsSkuStorePoAddPaList.forEach(tblShopGoodsSkuStorePoAddPa -> {
+                    ids.add(tblShopGoodsSkuStorePoAddPa.getFkGoodsSkuId());
+                    mapInfo.put(tblShopGoodsSkuStorePoAddPa.getFkGoodsSkuId(),tblShopGoodsSkuStorePoAddPa.getStore());
+                });
+            }
+
+            List<TblGoodsSkuPo> goodsSkuPoList = goodsSkuMapper.getListByGoodsSkuIds(ids);
+            goodsSkuPoList.forEach(tblGoodsSkuPo -> {
+                Integer store = tblGoodsSkuPo.getStore()+mapInfo.get(tblGoodsSkuPo.getId());
+                tblGoodsSkuPo.setStore(store);
+            });
+            //修改库存
+            isAdd.set(goodsSkuMapper.updateStoreBatchInfo(goodsSkuPoList));
+
+        }
+        System.out.println("修改库存===="+isAdd.get());
+
+        return isAdd.get();
     }
 
 
@@ -334,10 +456,14 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
 
         //商品价格表
         List<TblGoodsPricePo.TblGoodsPricePoAddPa> goodsPricePoAddPaList = new ArrayList<>();
-        //仓库库存表
+        //仓库库存记录表
         List<TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa> warehouseGoodsstoreList = new ArrayList<>();
-        //门店库存表
+        //仓库库存表
+        List<TblWarehouseGoodsSkuStoreSumPo.TblWarehouseGoodsSkuStoreSumPoAddPa> warehouseGoodsSkuStoreSumPoAddPaList = new ArrayList<>();
+        //门店库存记录表
         List<TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa> shopGoodsstoreList = new ArrayList<>();
+        //门店库存表
+        List<TblShopGoodsSkuStoreSumPo.TblShopGoodsSkuStoreSumPoAddPa> shopGoodsSkuStoreSumPoAddPaList  = new ArrayList<>();
 
         info.getGoodsSkuList().forEach(new Consumer<TblGoodsSkuPo.TblGoodsSkuPoAddPa>() {
             @Override
@@ -389,6 +515,13 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
                             tblWarehouseGoodsSkuStorePoAddPa.setAddTime(System.currentTimeMillis());
                             tblWarehouseGoodsSkuStorePoAddPa.setFkGoodsSkuId(tblGoodsSkuPoAddPa.getId());
                             tblWarehouseGoodsSkuStorePoAddPa.setStore(tblWarehouseGoodsSkuStorePoAddPa.getStore() == null ? 0 : tblWarehouseGoodsSkuStorePoAddPa.getStore());
+
+                            //库存表
+                            TblWarehouseGoodsSkuStoreSumPo.TblWarehouseGoodsSkuStoreSumPoAddPa warehouseGoodsSkuStoreSumPoAddPa = new  TblWarehouseGoodsSkuStoreSumPo.TblWarehouseGoodsSkuStoreSumPoAddPa();
+                            warehouseGoodsSkuStoreSumPoAddPa.setFkGoodsSkuId(tblGoodsSkuPoAddPa.getId());
+                            warehouseGoodsSkuStoreSumPoAddPa.setFkWarehouseId(tblWarehouseGoodsSkuStorePoAddPa.getFkWarehouseId());
+                            warehouseGoodsSkuStoreSumPoAddPa.setStore(tblWarehouseGoodsSkuStorePoAddPa.getStore());
+                            warehouseGoodsSkuStoreSumPoAddPaList.add(warehouseGoodsSkuStoreSumPoAddPa);
                         }
                     });
                     warehouseGoodsstoreList.addAll(tblGoodsSkuPoAddPa.getWarehouseGoodsstoreList());
@@ -402,6 +535,13 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
                     shopGoodsSkuStorePoAddPa.setAddTime(System.currentTimeMillis());
                     shopGoodsSkuStorePoAddPa.setFkGoodsSkuId(tblGoodsSkuPoAddPa.getId());
                     shopGoodsstoreList.add(shopGoodsSkuStorePoAddPa);
+
+                    //库存表
+                    TblShopGoodsSkuStoreSumPo.TblShopGoodsSkuStoreSumPoAddPa shopGoodsSkuStoreSumPoAddPa = new  TblShopGoodsSkuStoreSumPo.TblShopGoodsSkuStoreSumPoAddPa();
+                    shopGoodsSkuStoreSumPoAddPa.setFkGoodsSkuId(tblGoodsSkuPoAddPa.getId());
+                    shopGoodsSkuStoreSumPoAddPa.setFkGoodsSkuId(info.getFkShopId());
+                    shopGoodsSkuStoreSumPoAddPa.setStore(shopGoodsSkuStorePoAddPa.getStore());
+                    shopGoodsSkuStoreSumPoAddPaList.add(shopGoodsSkuStoreSumPoAddPa);
                 }
 
             }
@@ -421,6 +561,12 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
             if (!warehouseGoodsSkuStoreMapperAddBatchInfo) {
                 throw new IllegalArgumentException(StrUtil.format("新增商品仓库库存出错了.."));
             }
+            //新增库存
+            Boolean warehouseGoodsSkuStoreSumMapperAddBatchInfo = warehouseGoodsSkuStoreSumMapper.addBatchInfo(warehouseGoodsSkuStoreSumPoAddPaList);
+            if (!warehouseGoodsSkuStoreSumMapperAddBatchInfo) {
+                throw new IllegalArgumentException(StrUtil.format("新增商品仓库库存出错了."));
+            }
+
         }
 
         //门店库存表
@@ -429,7 +575,15 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
             if (!shopGoodsSkuStoreMapperAddBatchInfo) {
                 throw new IllegalArgumentException(StrUtil.format("新增商品门店库存出错了.."));
             }
+
+            //新增库存
+            Boolean shopGoodsSkuStoreSumMapperAddBatchInfo = shopGoodsSkuStoreSumMapper.addBatchInfo(shopGoodsSkuStoreSumPoAddPaList);
+            if (!shopGoodsSkuStoreSumMapperAddBatchInfo) {
+                throw new IllegalArgumentException(StrUtil.format("新增商品门店库存出错了."));
+            }
         }
+
+
 
     }
 
@@ -451,6 +605,9 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
 
         String token = request.getHeader("token");
         Integer shopId = HttpUtil.getShopId(token);
+
+//        info.setFkMemberPriceShopId(getDefaFkMemberPriceShopId(info.getFkMemberPriceShopId(),shopId));
+
 
         List<TblGoodsSkuPo> goodsSkuPoList =  getGoodsSkuList(info.getFkMemberPriceShopId(),info.getFkGoodsSpuId(),shopId);
 
@@ -594,8 +751,6 @@ public class TblGoodsSpuServiceImpl extends ServiceImpl<TblGoodsSpuMapper, TblGo
         //根据价格类型填充最高价和最低价
         fkMemberPriceShopId = getDefaFkMemberPriceShopId(fkMemberPriceShopId,fkShopId);
 
-        System.out.println("fkMemberPriceShopId===="+fkMemberPriceShopId);
-        System.out.println("fkGoodsSpuId===="+fkGoodsSpuId);
 
         //获取sku 信息
         TblGoodsSkuPo.TblGoodsSkuPoGetListPa goodsSkuPoGetListPa = new TblGoodsSkuPo.TblGoodsSkuPoGetListPa();

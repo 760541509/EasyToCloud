@@ -31,7 +31,7 @@
         tbl_goods_sku.id = #{id}
     </update>
 
-    <!-- 批量修改库存 -->
+    <!-- 批量修改库存  废弃 -->
     <update id="updateStoreBatchInfo" parameterType="java.util.List">
         update tbl_goods_sku
         <trim prefix="set" suffixOverrides=",">

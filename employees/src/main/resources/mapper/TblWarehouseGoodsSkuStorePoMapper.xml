@@ -7,18 +7,22 @@
     <!-- 添加 -->
     <insert id="addInfo"  useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tbl_warehouse_goods_sku_store
-        (tbl_warehouse_goods_sku_store.fk_goods_sku_id,tbl_warehouse_goods_sku_store.store,tbl_warehouse_goods_sku_store.add_time,tbl_warehouse_goods_sku_store.production_time,tbl_warehouse_goods_sku_store.expiration_date,tbl_warehouse_goods_sku_store.cost_price,tbl_warehouse_goods_sku_store.fk_id_staff,tbl_warehouse_goods_sku_store.fk_warehouse_id)
+        (tbl_warehouse_goods_sku_store.fk_goods_sku_id,tbl_warehouse_goods_sku_store.store,tbl_warehouse_goods_sku_store.add_time,tbl_warehouse_goods_sku_store.production_time,
+        tbl_warehouse_goods_sku_store.expiration_date,tbl_warehouse_goods_sku_store.cost_price,tbl_warehouse_goods_sku_store.fk_id_staff,tbl_warehouse_goods_sku_store.fk_warehouse_id,
+        tbl_warehouse_goods_sku_store.type,tbl_warehouse_goods_sku_store.outbound_order_no)
         VALUES
-        (#{fkGoodsSkuId},#{store},#{addTime},#{productionTime},#{expirationDate},#{costPrice},#{fkIdStaff},#{fkWarehouseId})
+        (#{fkGoodsSkuId},#{store},#{addTime},#{productionTime},#{expirationDate},#{costPrice},#{fkIdStaff},#{fkWarehouseId},#{type},#{outboundOrderNo})
     </insert>
 
     <!-- 批量添加 -->
     <insert id="addBatchInfo" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tbl_warehouse_goods_sku_store
-        (tbl_warehouse_goods_sku_store.fk_goods_sku_id,tbl_warehouse_goods_sku_store.store,tbl_warehouse_goods_sku_store.add_time,tbl_warehouse_goods_sku_store.production_time,tbl_warehouse_goods_sku_store.expiration_date,tbl_warehouse_goods_sku_store.cost_price,tbl_warehouse_goods_sku_store.fk_id_staff,tbl_warehouse_goods_sku_store.fk_warehouse_id)
+        (tbl_warehouse_goods_sku_store.fk_goods_sku_id,tbl_warehouse_goods_sku_store.store,tbl_warehouse_goods_sku_store.add_time,tbl_warehouse_goods_sku_store.production_time,
+        tbl_warehouse_goods_sku_store.expiration_date,tbl_warehouse_goods_sku_store.cost_price,tbl_warehouse_goods_sku_store.fk_id_staff,tbl_warehouse_goods_sku_store.fk_warehouse_id,
+        tbl_warehouse_goods_sku_store.type,tbl_warehouse_goods_sku_store.outbound_order_no)
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.fkGoodsSkuId},#{item.store},#{item.addTime},#{item.productionTime},#{item.expirationDate},#{item.costPrice},#{item.fkIdStaff},#{item.fkWarehouseId})
+            (#{item.fkGoodsSkuId},#{item.store},#{item.addTime},#{item.productionTime},#{item.expirationDate},#{item.costPrice},#{item.fkIdStaff},#{item.fkWarehouseId},#{item.type},#{item.outboundOrderNo})
         </foreach>
     </insert>
 
@@ -41,7 +45,10 @@
     <!-- 条件获取一条数据 -->
     <select id="getByInfo" resultType="com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo" >
         SELECT
-        tbl_warehouse_goods_sku_store.id  as id,tbl_warehouse_goods_sku_store.fk_goods_sku_id  as fkGoodsSkuId,tbl_warehouse_goods_sku_store.store  as store,tbl_warehouse_goods_sku_store.add_time  as addTime,tbl_warehouse_goods_sku_store.production_time  as productionTime,tbl_warehouse_goods_sku_store.expiration_date  as expirationDate,tbl_warehouse_goods_sku_store.cost_price  as costPrice,tbl_warehouse_goods_sku_store.fk_id_staff  as fkIdStaff,tbl_warehouse_goods_sku_store.fk_warehouse_id  as fkWarehouseId
+        tbl_warehouse_goods_sku_store.id  as id,tbl_warehouse_goods_sku_store.fk_goods_sku_id  as fkGoodsSkuId,tbl_warehouse_goods_sku_store.store  as store,
+        tbl_warehouse_goods_sku_store.add_time  as addTime,tbl_warehouse_goods_sku_store.production_time  as productionTime,tbl_warehouse_goods_sku_store.expiration_date  as expirationDate,
+        tbl_warehouse_goods_sku_store.cost_price  as costPrice,tbl_warehouse_goods_sku_store.fk_id_staff  as fkIdStaff,tbl_warehouse_goods_sku_store.fk_warehouse_id  as fkWarehouseId,
+        tbl_shop_goods_sku_store.type,tbl_shop_goods_sku_store.outbound_order_no
         FROM tbl_warehouse_goods_sku_store
         WHERE
         1=1
@@ -53,7 +60,10 @@
     <!-- 条件获取多条数据 -->
     <select id="getListByInfo" resultType="com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo" >
         SELECT
-        tbl_warehouse_goods_sku_store.id as id,tbl_warehouse_goods_sku_store.fk_goods_sku_id as fkGoodsSkuId,tbl_warehouse_goods_sku_store.store as store,tbl_warehouse_goods_sku_store.add_time as addTime,tbl_warehouse_goods_sku_store.production_time as productionTime,tbl_warehouse_goods_sku_store.expiration_date as expirationDate,tbl_warehouse_goods_sku_store.cost_price as costPrice,tbl_warehouse_goods_sku_store.fk_id_staff as fkIdStaff,tbl_warehouse_goods_sku_store.fk_warehouse_id as fkWarehouseId
+        tbl_warehouse_goods_sku_store.id as id,tbl_warehouse_goods_sku_store.fk_goods_sku_id as fkGoodsSkuId,tbl_warehouse_goods_sku_store.store as store,
+        tbl_warehouse_goods_sku_store.add_time as addTime,tbl_warehouse_goods_sku_store.production_time as productionTime,tbl_warehouse_goods_sku_store.expiration_date as expirationDate,
+        tbl_warehouse_goods_sku_store.cost_price as costPrice,tbl_warehouse_goods_sku_store.fk_id_staff as fkIdStaff,tbl_warehouse_goods_sku_store.fk_warehouse_id as fkWarehouseId,
+        tbl_shop_goods_sku_store.type,tbl_shop_goods_sku_store.outbound_order_no
         FROM tbl_warehouse_goods_sku_store
         WHERE
         id > #{currentPageMaxId}

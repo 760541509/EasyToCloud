@@ -78,6 +78,6 @@ public class TblStaffController {
     @ApiOperation(value = "员工按照状态查询订单")
     @PostMapping("/theEmployeeQueriesTheOrderByStatus")
     public ResultVo theEmployeeQueriesTheOrderByStatus(@RequestBody InquireOrderInfor inquireOrderInfor) {
-        return ResultVo.successResult(staffService.theEmployeeQueriesTheOrderByStatus(inquireOrderInfor.getStatus()));
+        return ResultVo.successResult(staffService.theEmployeeQueriesTheOrderByStatus(inquireOrderInfor));
     }
 }

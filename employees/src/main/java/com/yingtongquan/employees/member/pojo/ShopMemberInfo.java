@@ -3,8 +3,10 @@ package com.yingtongquan.employees.member.pojo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MemberInformation implements Serializable {
+public class ShopMemberInfo implements Serializable {
 
     @ApiModelProperty(value = "会员ID")
     private Integer id;
@@ -18,14 +20,11 @@ public class MemberInformation implements Serializable {
     @ApiModelProperty(value = "会员头像")
     private String headPortrait;
 
-    @ApiModelProperty(hidden = true)
-    private Integer userId;
-
-    @ApiModelProperty(value = "最近一次下单时间")
+    @ApiModelProperty(value = "注册时间")
     private Long addTime;
 
-    @ApiModelProperty(value = "是否绑定微信")
-    private Boolean bindWeChat;
+    @ApiModelProperty(value = "收货地址详细")
+    private List<MemberAddress> memberAddresses = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -59,14 +58,6 @@ public class MemberInformation implements Serializable {
         this.headPortrait = headPortrait;
     }
 
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
     public Long getAddTime() {
         return addTime;
     }
@@ -75,24 +66,23 @@ public class MemberInformation implements Serializable {
         this.addTime = addTime;
     }
 
-    public Boolean getBindWeChat() {
-        return bindWeChat;
+    public List<MemberAddress> getMemberAddresses() {
+        return memberAddresses;
     }
 
-    public void setBindWeChat(Boolean bindWeChat) {
-        this.bindWeChat = bindWeChat;
+    public void setMemberAddresses(List<MemberAddress> memberAddresses) {
+        this.memberAddresses = memberAddresses;
     }
 
     @Override
     public String toString() {
-        return "MemberInformation{" +
+        return "ShopMemberInfo{" +
                 "id=" + id +
                 ", memberName='" + memberName + '\'' +
                 ", phone='" + phone + '\'' +
                 ", headPortrait='" + headPortrait + '\'' +
-                ", userId=" + userId +
                 ", addTime=" + addTime +
-                ", bindWeChat=" + bindWeChat +
+                ", memberAddresses=" + memberAddresses +
                 '}';
     }
 }

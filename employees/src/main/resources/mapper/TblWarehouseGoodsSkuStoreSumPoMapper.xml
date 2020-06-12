@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.employees.goods.mapper.TblWarehouseGoodsSkuStoreSumMapper">
+
+
+
+    <!-- 添加 -->
+    <insert id="addInfo"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_warehouse_goods_sku_store_sum
+        (tbl_warehouse_goods_sku_store_sum.fk_goods_sku_id,tbl_warehouse_goods_sku_store_sum.store,tbl_warehouse_goods_sku_store_sum.fk_warehouse_id)
+        VALUES
+        (#{fkGoodsSkuId},#{store},#{fkWarehouseId})
+    </insert>
+
+    <!-- 批量添加 -->
+    <insert id="addBatchInfo" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tbl_warehouse_goods_sku_store_sum
+        (tbl_warehouse_goods_sku_store_sum.fk_goods_sku_id,tbl_warehouse_goods_sku_store_sum.store,tbl_warehouse_goods_sku_store_sum.fk_warehouse_id)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.fkGoodsSkuId},#{item.store},#{item.fkWarehouseId})
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="updateInfo"  >
+        UPDATE tbl_warehouse_goods_sku_store_sum
+        SET
+        tbl_warehouse_goods_sku_store_sum.fk_goods_sku_id=#{fkGoodsSkuId},tbl_warehouse_goods_sku_store_sum.store=#{store},tbl_warehouse_goods_sku_store_sum.fk_warehouse_id=#{fkWarehouseId}
+        WHERE
+        tbl_warehouse_goods_sku_store_sum.id = #{id}
+    </update>
+
+
+    <!-- 批量修改库存 -->
+    <update id="updateStoreBatchInfo" parameterType="java.util.List">
+        update tbl_warehouse_goods_sku_store_sum
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="store = case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.store}
+                </foreach>
+            </trim>
+        </trim>
+        where
+        tbl_warehouse_goods_sku_store_sum.id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByInfo" >
+        DELETE FROM tbl_warehouse_goods_sku_store_sum
+        WHEN
+        tbl_warehouse_goods_sku_store_sum.id=#{id}
+    </delete>
+
+    <!-- 条件获取一条数据 -->
+    <select id="getByInfo" resultType="com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStoreSumPo" >
+        SELECT
+        tbl_warehouse_goods_sku_store_sum.id  as id,tbl_warehouse_goods_sku_store_sum.fk_goods_sku_id  as fkGoodsSkuId,tbl_warehouse_goods_sku_store_sum.store  as store,tbl_warehouse_goods_sku_store_sum.fk_warehouse_id  as fkWarehouseId
+        FROM tbl_warehouse_goods_sku_store_sum
+        WHERE
+        1=1
+        <if test="id!=null and id!='' and id!=0">
+        AND tbl_warehouse_goods_sku_store_sum.id=#{id}
+        </if>
+    </select>
+
+    <!-- 条件获取多条数据 -->
+    <select id="getListByInfo" resultType="com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStoreSumPo" >
+        SELECT
+        tbl_warehouse_goods_sku_store_sum.id as id,tbl_warehouse_goods_sku_store_sum.fk_goods_sku_id as fkGoodsSkuId,tbl_warehouse_goods_sku_store_sum.store as store,tbl_warehouse_goods_sku_store_sum.fk_warehouse_id as fkWarehouseId
+        FROM tbl_warehouse_goods_sku_store_sum
+        WHERE
+        id > #{currentPageMaxId}
+        <if test="keyword!=null and keyword!=''">
+            AND tbl_warehouse_goods_sku_store_sum.keyword=#{keyword}
+        </if>
+        LIMIT #{pagePumber}
+    </select>
+
+
+    <select id="getListByGoodsSkuIds" resultType="com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStoreSumPo">
+        SELECT
+        tbl_warehouse_goods_sku_store_sum.id as id,tbl_warehouse_goods_sku_store_sum.fk_goods_sku_id as fkGoodsSkuId,tbl_warehouse_goods_sku_store_sum.store as store,tbl_warehouse_goods_sku_store_sum.fk_warehouse_id as fkWarehouseId
+        FROM tbl_warehouse_goods_sku_store_sum
+        WHERE
+        tbl_warehouse_goods_sku_store_sum.fk_warehouse_id = #{fkWarehouseId}
+        AND
+        tbl_warehouse_goods_sku_store_sum.fk_goods_sku_id
+        IN
+        <foreach collection="info" item="item" index="index" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

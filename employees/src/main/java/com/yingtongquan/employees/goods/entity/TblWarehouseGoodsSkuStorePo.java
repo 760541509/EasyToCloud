@@ -51,6 +51,28 @@ public class TblWarehouseGoodsSkuStorePo implements Serializable {
     @ApiModelProperty(value = "仓库id")
     private Integer fkWarehouseId;
 
+    @ApiModelProperty(value = "类型（0 员工入库或出库，1 出库单入库或出库 ）")
+    private Integer type;
+
+    @ApiModelProperty(value = "出库单号",hidden = true)
+    private String outboundOrderNo;
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public String getOutboundOrderNo() {
+        return outboundOrderNo;
+    }
+
+    public void setOutboundOrderNo(String outboundOrderNo) {
+        this.outboundOrderNo = outboundOrderNo;
+    }
+
     public Integer getId() {
     return id;
     }
@@ -119,7 +141,7 @@ public class TblWarehouseGoodsSkuStorePo implements Serializable {
         @ApiModelProperty(value = "商品sku的id")
         private Integer fkGoodsSkuId;
 
-        @ApiModelProperty(value = "库存")
+        @ApiModelProperty(value = "该次入库的数量，可为负数")
         private Integer store;
 
         @ApiModelProperty(value = "入库时间",hidden = true)
@@ -139,6 +161,29 @@ public class TblWarehouseGoodsSkuStorePo implements Serializable {
 
         @ApiModelProperty(value = "仓库id")
         private Integer fkWarehouseId;
+
+
+        @ApiModelProperty(value = "类型（0 员工入库或出库，1 出库单入库或出库 ）")
+        private Integer type;
+
+        @ApiModelProperty(value = "出库单号",hidden = true)
+        private String outboundOrderNo;
+
+        public Integer getType() {
+            return type;
+        }
+
+        public void setType(Integer type) {
+            this.type = type;
+        }
+
+        public String getOutboundOrderNo() {
+            return outboundOrderNo;
+        }
+
+        public void setOutboundOrderNo(String outboundOrderNo) {
+            this.outboundOrderNo = outboundOrderNo;
+        }
 
         public Integer getId() {
         return id;
@@ -195,6 +240,7 @@ public class TblWarehouseGoodsSkuStorePo implements Serializable {
         this.fkWarehouseId = fkWarehouseId;
         }
 
+
     }
 
 
@@ -221,6 +267,27 @@ public class TblWarehouseGoodsSkuStorePo implements Serializable {
         private Integer fkIdStaff;
         @ApiModelProperty(value = "仓库id")
         private Integer fkWarehouseId;
+        @ApiModelProperty(value = "类型（0 员工入库或出库，1 出库单入库或出库 ）")
+        private Integer type;
+
+        @ApiModelProperty(value = "出库单号",hidden = true)
+        private String outboundOrderNo;
+
+        public Integer getType() {
+            return type;
+        }
+
+        public void setType(Integer type) {
+            this.type = type;
+        }
+
+        public String getOutboundOrderNo() {
+            return outboundOrderNo;
+        }
+
+        public void setOutboundOrderNo(String outboundOrderNo) {
+            this.outboundOrderNo = outboundOrderNo;
+        }
 
         public Integer getId() {
         return id;

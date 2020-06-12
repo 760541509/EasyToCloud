@@ -1,10 +1,13 @@
 package com.yingtongquan.employees.member.service.impl;
 
 import cn.hutool.core.lang.Assert;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import com.yingtongquan.employees.member.entity.TblMemberPriceShopPo;
 import com.yingtongquan.employees.member.mapper.TblMemberPriceShopMapper;
+import com.yingtongquan.employees.member.pojo.MemberInformation;
+import com.yingtongquan.employees.member.pojo.ShopPrice;
 import com.yingtongquan.employees.member.service.TblMemberPriceShopService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yingtongquan.startcommon.util.HttpUtil;
 import org.springframework.stereotype.Service;
 
@@ -92,14 +95,18 @@ public class TblMemberPriceShopServiceImpl extends ServiceImpl<TblMemberPriceSho
     }
 
     @Override
-    public List<TblMemberPriceShopPo> queryShopAllMember() {
+    public List<ShopPrice> queryShopAllMember() {
         String token = request.getHeader("token");
         Integer shopId = HttpUtil.getShopId(token);
-        return memberPriceShopMapper.queryAllMembershipPricesInTheStore(shopId);
+        List<ShopPrice> shopPrics = Lists.newArrayList();
+        shopPrics.add(new ShopPrice(memberPriceShopMapper.checkAllRetailMembers(shopId), memberPriceShopMapper.checkAllWholesaleMembers(shopId)));
+        return shopPrics;
     }
 
     @Override
     public Boolean updateShopAllMemberprice(Integer id) {
+        List<MemberInformation> memberInformations = memberPriceShopMapper.queryMemberPrice(id);
+        Assert.isTrue(memberInformations.size() == 0, "还有用户在使用改价格，请修改相关用户");
         return memberPriceShopMapper.updateShopMember(id);
     }
 }

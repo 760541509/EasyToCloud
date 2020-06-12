@@ -1,13 +1,9 @@
 package com.yingtongquan.employees.goods.service;
 
-import com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo;
-import com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa;
-import com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoUpPa;
-import com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoDelPa;
-import com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoGetPa;
-import com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoGetListPa;
 import com.baomidou.mybatisplus.extension.service.IService;
-import java.util.Map;
+import com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo;
+import com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo.*;
+
 import java.util.List;
 /**
 * <p>

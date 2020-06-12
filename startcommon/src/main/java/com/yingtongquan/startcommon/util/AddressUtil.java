@@ -35,8 +35,13 @@ public class AddressUtil {
         return coordinate;
     }
 
-    public static LatAndLon getAnAddressBasedOnLatitudeAndLongitude(LatAndLon latAndLon){
-        String url = "http://api.map.baidu.com/reverse_geocoding/v3/?ak="+BAIDU_API_AK+"&output=json&coordtype=wgs84ll&location="+latAndLon.getLat()+","+latAndLon.getLon();
+    /**
+     * @Date 2020/6/11 12:07
+     * @Author 胖
+     * 根据经纬度获取地址
+     **/
+    public static LatAndLon getAnAddressBasedOnLatitudeAndLongitude(LatAndLon latAndLon) {
+        String url = "http://api.map.baidu.com/reverse_geocoding/v3/?ak=" + BAIDU_API_AK + "&output=json&coordtype=wgs84ll&location=" + latAndLon.getLat() + "," + latAndLon.getLon();
         System.out.println(url);
         String body = HttpRequest.get(url)
                 .timeout(20000)//超时，毫秒

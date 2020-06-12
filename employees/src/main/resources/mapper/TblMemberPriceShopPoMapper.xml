@@ -35,9 +35,16 @@
             resultType="com.yingtongquan.employees.member.entity.TblMemberPriceShopPo">
         select id,price_name,shop_id,status,type,sup_id from tbl_member_price_shop where status = 1 and shop_id = #{shopId}
     </select>
-    <select id="queryAllMembershipPricesInTheStore"
+    <select id="checkAllRetailMembers"
             resultType="com.yingtongquan.employees.member.entity.TblMemberPriceShopPo">
-       select id,price_name,shop_id,status,type,sup_id from tbl_member_price_shop where shop_id = #{shopId}
+        select id,price_name,shop_id,status,type,sup_id from tbl_member_price_shop where shop_id = #{shopId} and type = 0
+    </select>
+    <select id="checkAllWholesaleMembers"
+            resultType="com.yingtongquan.employees.member.entity.TblMemberPriceShopPo">
+        select id,price_name,shop_id,status,type,sup_id from tbl_member_price_shop where shop_id = #{shopId} and type = 1
+    </select>
+    <select id="queryMemberPrice" resultType="com.yingtongquan.employees.member.pojo.MemberInformation">
+        select id,member_name,phone from tbl_member_shop where member_id = #{memberId}
     </select>
 
 

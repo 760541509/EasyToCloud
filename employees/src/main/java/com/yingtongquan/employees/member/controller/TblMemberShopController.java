@@ -2,8 +2,8 @@ package com.yingtongquan.employees.member.controller;
 
 
 import com.yingtongquan.employees.member.entity.TblMemberPriceShopPo;
-import com.yingtongquan.employees.member.pojo.AddShopMember;
-import com.yingtongquan.employees.member.pojo.UserInformation;
+import com.yingtongquan.employees.member.pojo.*;
+import com.yingtongquan.employees.member.service.TblMemberDeliveryAddressShopService;
 import com.yingtongquan.employees.member.service.TblMemberPriceShopService;
 import com.yingtongquan.employees.member.service.TblMemberShopService;
 import com.yingtongquan.startcommon.base.ResultVo;
@@ -30,11 +30,13 @@ public class TblMemberShopController {
     private TblMemberShopService memberShopService;
     @Resource
     private TblMemberPriceShopService memberPriceShopService;
+    @Resource
+    private TblMemberDeliveryAddressShopService memberDeliveryAddressShopService;
 
     @ApiOperation("查询所有的会员")
     @PostMapping("/queryAllShopMember")
-    public ResultVo queryAllShopMember() {
-        return ResultVo.successResult(memberShopService.queryAllShopMember());
+    public ResultVo queryAllShopMember(@RequestBody UseTheQuery useTheQuery) {
+        return ResultVo.successResult(memberShopService.queryAllShopMember(useTheQuery));
     }
 
     @ApiOperation("店铺添加会员")
@@ -43,17 +45,17 @@ public class TblMemberShopController {
         return ResultVo.successResult(memberShopService.addShopMember(addShopMember));
     }
 
-//    @ApiOperation("修改会员")
-//    @PostMapping("/updateShopMember")
-//    public ResultVo updateShopMember(@RequestBody UseTheQuery useTheQuery) {
-//        return ResultVo.successResult(memberShopService.queryAllShopMember(useTheQuery.getShopId()));
-//    }
-//
-//    @ApiOperation("删除会员")
-//    @PostMapping("/deleteShopMember")
-//    public ResultVo deleteShopMember(@RequestBody UseTheQuery useTheQuery) {
-//        return ResultVo.successResult(memberShopService.queryAllShopMember(useTheQuery.getShopId()));
-//    }
+    @ApiOperation("添加会员收货地址")
+    @PostMapping("/addMemberShippingAddress")
+    public ResultVo addMemberShippingAddress(@RequestBody MemberAddress memberAddress) {
+        return ResultVo.successResult(memberDeliveryAddressShopService.addMemberAddress(memberAddress));
+    }
+
+    @ApiOperation("查询会员详细")
+    @PostMapping("/queryMemberInfromation")
+    public ResultVo queryMemberInfromation(@RequestBody QueryMemberInformation memberInformation) {
+        return ResultVo.successResult(memberShopService.queryMemberInformation(memberInformation));
+    }
 
     @ApiOperation("修改门店会员价格表")
     @PostMapping("/updateStoreMemberPrice")
