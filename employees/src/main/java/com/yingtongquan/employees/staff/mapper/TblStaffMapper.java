@@ -2,22 +2,20 @@ package com.yingtongquan.employees.staff.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yingtongquan.employees.staff.entity.TblStaffPo;
-import com.yingtongquan.employees.staff.pojo.InquireOrderInfor;
-import com.yingtongquan.employees.staff.pojo.OrderInfromation;
-import com.yingtongquan.employees.staff.pojo.UserInformation;
+import com.yingtongquan.employees.staff.pojo.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
-* <p>
-    *  Mapper 接口
-    * </p>
-*
-* @author ML
-* @since 2020-05-21
-*/
+ * <p>
+ * Mapper 接口
+ * </p>
+ *
+ * @author ML
+ * @since 2020-05-21
+ */
 @Mapper
 @Repository
 public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
@@ -57,4 +55,80 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
      **/
     Integer queryOrderPayAmount(String orderNo);
 
+    /**
+     * @Date 2020/6/12 15:09
+     * @Author 胖
+     * 查询订单详细的一部分
+     **/
+    StaffOrderInformation queryOrderInformation(String orderNo);
+
+    /**
+     * @Date 2020/6/12 16:43
+     * @Author 胖
+     * 统计已支付的金额
+     **/
+    List<Integer> countMoney(String orderNo);
+
+    /**
+     * @Date 2020/6/12 15:26
+     * @Author 胖
+     * 查询订单会员信息
+     **/
+    MemberInformation queryMemberInformation(String orderNo);
+
+    /**
+     * @Date 2020/6/12 15:50
+     * @Author 胖
+     * 查询商品信息
+     **/
+    List<StaffOrderGoods> queryGoods(String orderNo);
+
+    /**
+     * @Date 2020/6/12 15:55
+     * @Author 胖
+     * 查询规格描述
+     **/
+    String querySkuName(Integer skuId);
+
+    /**
+     * @Date 2020/6/12 16:06
+     * @Author 胖
+     * 查询商品出货数量
+     **/
+    List<Goods> queryOutboundGoodsNumber(String orderNo);
+
+    /**
+     * @Date 2020/6/12 16:28
+     * @Author 胖
+     * 查询支付明细
+     **/
+    List<StaffOrderPayment> queryPaymentInformation(String orderNo);
+
+    /**
+     * @Date 2020/6/12 16:38
+     * @Author 胖
+     * 查询出库单信息
+     **/
+    List<StaffOutboundOrder> queryOutboundInformation(String orderNo);
+
+    /**
+     * @Date 2020/6/12 17:34
+     * @Author 胖
+     * 查询订单ID
+     **/
+    Integer queryOrderId(String orderNo);
+
+    /**
+     * @Date 2020/6/12 17:41
+     * @Author 胖
+     * 通过UserId查询员工ID
+     **/
+    Integer queryStaffId(Integer userId);
+
+    /**
+     * @Date 2020/6/12 17:37
+     * @Author 胖
+     * 添加收款单
+     **/
+    Boolean addOrderDeal(OrderDeal orderDeal);
 }

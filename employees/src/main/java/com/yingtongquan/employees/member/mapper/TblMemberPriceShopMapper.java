@@ -67,7 +67,7 @@ public interface TblMemberPriceShopMapper extends BaseMapper<TblMemberPriceShopP
      * @Author 胖
      * 关闭门店已开启的会员
      **/
-    Boolean updateShopMember(Integer id);
+    Boolean updateShopMember(Integer id,Integer status);
 
     /**
      * @Date 2020/6/11 16:38

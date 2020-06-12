@@ -14,6 +14,38 @@
         <result column="user_id" property="userId"/>
     </resultMap>
 
+    <resultMap id="ResultOrderMap" type="com.yingtongquan.employees.staff.pojo.StaffOrderInformation">
+        <result column="order_no" property="orderNo"/>
+        <result column="order_status" property="status"/>
+        <result column="order_status_vice" property="statusVice"/>
+        <result column="name" property="consignee"/>
+        <result column="phone" property="phone"/>
+        <result column="area" property="area"/>
+        <result column="city" property="city"/>
+        <result column="province" property="province"/>
+        <result column="address" property="address"/>
+        <result column="is_since" property="isSince"/>
+        <result column="note" property="note"/>
+        <result column="store_name" property="storeName"/>
+        <result column="store_icon" property="storeHeadPortrait"/>
+        <result column="goods_count" property="amountGoods"/>
+        <result column="goods_amount_total" property="goodsTotalPrice"/>
+        <result column="order_amount_total" property="orderPrice"/>
+    </resultMap>
+
+    <resultMap id="ResultOutboundMap" type="com.yingtongquan.employees.staff.pojo.StaffOutboundOrder">
+        <result column="staff_name" property="leadSingleName"/>
+        <result column="head_portrait" property="leadSingleNameHeadPortrait"/>
+        <result column="outbound_order_status" property="outboundType"/>
+        <result column="outbound_order_no" property="outboundNo"/>
+    </resultMap>
+
+    <resultMap id="ResultPaymentMap" type="com.yingtongquan.employees.staff.pojo.StaffOrderPayment">
+        <result column="add_time" property="payTime"/>
+        <result column="pay_amount" property="payTheAmount"/>
+        <result column="pay_way" property="payType"/>
+        <result column="serial_no" property="paySerialNumber"/>
+    </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
@@ -22,6 +54,10 @@
     <insert id="addShopStaff" parameterType="com.yingtongquan.employees.staff.entity.TblStaffPo">
         insert into tbl_staff(staff_name, staff_phone, area_id, address, shop_id, staff_role_id, user_id)
         values (#{staffName},#{staffPhone},#{areaId},#{address},#{shopId},#{staffRoleId},#{userId})
+    </insert>
+    <insert id="addOrderDeal" parameterType="com.yingtongquan.employees.staff.pojo.OrderDeal">
+        insert into tbl_order_deal(order_id,add_time,pay_amount,pay_way,serial_no,staff_id)
+        values (#{orderId},#{addTime},#{payAmount},#{payWay},#{serialNo},#{staffId})
     </insert>
 
     <select id="queryUser" resultType="com.yingtongquan.employees.staff.pojo.UserInformation">
@@ -95,5 +131,127 @@
 	        INNER JOIN tbl_order_deal ON tbl_order_deal.order_id = tbl_order.id
         WHERE
 	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="queryOrderInformation" resultMap="ResultOrderMap">
+        SELECT
+	        tbl_order.order_no,
+	        tbl_order.order_status,
+        	tbl_order.order_status_vice,
+        	address.name,
+        	address.phone,
+        	t1.area_name area,
+        	t2.area_name city,
+        	t3.area_name province,
+        	address.address,
+        	address.is_since,
+	        tbl_order.note,
+        	tbl_shop.store_name,
+        	tbl_shop.store_icon,
+        	tbl_order.goods_count,
+	        tbl_order.goods_amount_total,
+	        tbl_order.order_amount_total
+        FROM
+	        tbl_order
+	        INNER JOIN tbl_order_delivery_address address ON tbl_order.id = address.order_id
+	        INNER JOIN tbl_area t1 ON address.area_id = t1.area_id
+	        INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
+	        INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
+	        INNER JOIN tbl_shop ON tbl_shop.id = tbl_order.shop_id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="queryMemberInformation" resultType="com.yingtongquan.employees.staff.pojo.MemberInformation">
+        SELECT
+	        tbl_member_shop.member_name,
+	        tbl_user.head_portrait,
+	        tbl_member_shop.id
+        FROM
+	        tbl_order
+	        INNER JOIN tbl_member_shop ON tbl_order.member_shop_id = tbl_member_shop.id
+	        INNER JOIN tbl_user ON tbl_member_shop.user_id = tbl_user.id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="queryGoods" resultType="com.yingtongquan.employees.staff.pojo.StaffOrderGoods">
+        SELECT
+	        tbl_order_goods.image,
+	        tbl_order_goods.order_goods_name,
+	        tbl_order_goods.goods_sku_id,
+	        unit.name,
+	        tbl_order_goods.amount,
+	        tbl_order_goods.price,
+	        tbl_order_goods.id,
+	        tbl_order_goods.original_price
+        FROM
+	        tbl_order
+	        INNER JOIN tbl_order_goods ON tbl_order.id = tbl_order_goods.order_id
+	        INNER JOIN tbl_goods_spu_unit unit ON unit.id = tbl_order_goods.goods_sku_unit_id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="querySkuName" resultType="java.lang.String">
+        SELECT
+	        GROUP_CONCAT( tbl.specValue SEPARATOR ';' ) AS specValue
+        FROM
+        	(
+        SELECT
+	        tbl_goods_spec_value.NAME AS specValue
+        FROM
+	        ( SELECT tbl_goods_sku.id, tbl_goods_sku.fk_goods_spu_id FROM tbl_goods_sku WHERE tbl_goods_sku.id = #{skuId} ) AS tbl_goods_sku
+	        INNER JOIN tbl_goods_sku_spec_value ON tbl_goods_sku.id = tbl_goods_sku_spec_value.fk_goods_sku_id
+	        INNER JOIN tbl_goods_spec_value ON tbl_goods_sku_spec_value.fk_spec_value_id = tbl_goods_spec_value.id
+	        INNER JOIN tbl_goods_spec_name ON tbl_goods_spec_value.fk_goods_spec_name_id = tbl_goods_spec_name.id
+	        ) AS tbl
+    </select>
+    <select id="queryOutboundGoodsNumber" resultType="com.yingtongquan.employees.staff.pojo.Goods">
+        SELECT
+	        tbl_outbound_order_goods.order_goods_id,
+	        tbl_outbound_order_goods.amount
+        FROM
+	        tbl_outbound_order
+	        INNER JOIN tbl_outbound_order_goods ON tbl_outbound_order.id = tbl_outbound_order_goods.outbound_order_id
+        WHERE
+	        tbl_outbound_order.order_no = #{orderNo}
+    </select>
+    <select id="queryPaymentInformation" resultMap="ResultPaymentMap">
+        SELECT
+	        tbl_order_deal.add_time,
+	        tbl_order_deal.pay_amount,
+	        tbl_order_deal.pay_way,
+        	tbl_order_deal.serial_no
+        FROM
+        	tbl_order_deal
+        	INNER JOIN tbl_order ON tbl_order.id = tbl_order_deal.order_id
+        WHERE
+        	tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="queryOutboundInformation" resultMap="ResultOutboundMap">
+        SELECT
+	        tbl_staff.staff_name,
+	        tbl_user.head_portrait,
+	        tbl_outbound_order.outbound_order_status,
+	        tbl_outbound_order.outbound_order_no
+        FROM
+	        tbl_outbound_order
+	        INNER JOIN tbl_outbound_order_staff staff ON tbl_outbound_order.id = staff.outbound_order_id
+	        INNER JOIN tbl_staff ON tbl_staff.id = staff.staff_id
+	        INNER JOIN tbl_user ON tbl_staff.user_id = tbl_user.id
+        WHERE
+	        tbl_outbound_order.order_no = #{orderNo}
+    </select>
+    <select id="countMoney" resultType="java.lang.Integer">
+        SELECT
+	        tbl_order_deal.pay_amount
+        FROM
+	        tbl_order
+	        INNER JOIN  tbl_order_deal ON tbl_order.id = tbl_order_deal.order_id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="queryOrderId" resultType="java.lang.Integer">
+        select id from tbl_order where order_no = #{orderNo}
+    </select>
+    <select id="queryStaffId" resultType="java.lang.Integer">
+        select id from tbl_staff where user_id = #{userId}
     </select>
 </mapper>

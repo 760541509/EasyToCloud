@@ -13,7 +13,7 @@ public class StaffOrderPayment implements Serializable {
     private Integer payType;
 
     @ApiModelProperty(value = "支付时间")
-    private Integer payTime;
+    private Long payTime;
 
     @ApiModelProperty(value = "支付的流水号")
     private String paySerialNumber;
@@ -34,11 +34,11 @@ public class StaffOrderPayment implements Serializable {
         this.payType = payType;
     }
 
-    public Integer getPayTime() {
+    public Long getPayTime() {
         return payTime;
     }
 
-    public void setPayTime(Integer payTime) {
+    public void setPayTime(Long payTime) {
         this.payTime = payTime;
     }
 

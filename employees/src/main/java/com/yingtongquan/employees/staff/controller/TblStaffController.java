@@ -3,6 +3,8 @@ package com.yingtongquan.employees.staff.controller;
 
 import com.yingtongquan.employees.staff.entity.TblStaffRolePo;
 import com.yingtongquan.employees.staff.pojo.InquireOrderInfor;
+import com.yingtongquan.employees.staff.pojo.Order;
+import com.yingtongquan.employees.staff.pojo.StaffCollection;
 import com.yingtongquan.employees.staff.pojo.StaffInforamtion;
 import com.yingtongquan.employees.staff.service.TblStaffRoleService;
 import com.yingtongquan.employees.staff.service.TblStaffService;
@@ -79,5 +81,23 @@ public class TblStaffController {
     @PostMapping("/theEmployeeQueriesTheOrderByStatus")
     public ResultVo theEmployeeQueriesTheOrderByStatus(@RequestBody InquireOrderInfor inquireOrderInfor) {
         return ResultVo.successResult(staffService.theEmployeeQueriesTheOrderByStatus(inquireOrderInfor));
+    }
+
+    @ApiOperation(value = "员工查询订单详细")
+    @PostMapping("/queryStaffOrderInformation")
+    public ResultVo queryStaffOrderInformation(@RequestBody Order order) {
+        return ResultVo.successResult(staffService.queryStaffOrderInformation(order));
+    }
+
+    @ApiOperation(value = "员工收款")
+    @PostMapping("/employeesCollection")
+    public ResultVo employeesCollection(@RequestBody StaffCollection staffCollection) {
+        return ResultVo.successResult(staffService.employeesCollection(staffCollection));
+    }
+
+    @ApiOperation(value = "员工查询需要发货的商品")
+    @PostMapping("/queryGoodsInformation")
+    public ResultVo queryGoodsInformation(@RequestBody Order order) {
+        return ResultVo.successResult(staffService.queryGoodsInformation(order));
     }
 }

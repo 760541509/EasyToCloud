@@ -1,5 +1,6 @@
 package com.yingtongquan.employees.staff.service.impl;
 
+import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yingtongquan.employees.staff.entity.TblStaffPo;
 import com.yingtongquan.employees.staff.mapper.TblStaffMapper;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * <p>
@@ -67,43 +69,66 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
 
     @Override
     public StaffOrderInformation queryStaffOrderInformation(Order order) {
+        //已支付金额
+        Integer price = 0;
+        //查询订单信息的一部分
+        StaffOrderInformation staffOrderInformation = staffMapper.queryOrderInformation(order.getOrderNo());
+        //统计已支付的金额
+        List<Integer> moneys = staffMapper.countMoney(order.getOrderNo());
+        for (Integer money : moneys) {
+            price = money + price;
+        }
+        staffOrderInformation.setAmountPaid(price);
+        //查询订单中的会员并赋值
+        MemberInformation memberInformation = staffMapper.queryMemberInformation(order.getOrderNo());
+        staffOrderInformation.setMemberId(memberInformation.getId());
+        staffOrderInformation.setMemberName(memberInformation.getMemberName());
+        staffOrderInformation.setHeadPortrait(memberInformation.getHeadPortrait());
+        //查询订单中的商品信息
+        List<StaffOrderGoods> staffOrderGoods = staffMapper.queryGoods(order.getOrderNo());
+        //查询出货数量
+        List<Goods> goods = staffMapper.queryOutboundGoodsNumber(order.getOrderNo());
+        for (StaffOrderGoods staffOrderGood : staffOrderGoods) {
+            //单位名字
+            staffOrderGood.setSkuName(staffMapper.querySkuName(staffOrderGood.getGoodsSkuId()));
+            for (Goods good : goods) {
+                //如果出货商品不为空则复制
+                if (good != null) {
+                    //商品ID相同则添加出库数量
+                    if (good.getOrderGoodsId().equals(staffOrderGood.getId())) {
+                        staffOrderGood.setQuantityShipped(good.getAmount());
+                    }
+                }
+            }
+        }
+        staffOrderInformation.setStaffOrderGoods(staffOrderGoods);
+        //查询支付明细
+        staffOrderInformation.setStaffOrderPayments(staffMapper.queryPaymentInformation(order.getOrderNo()));
+        //出库单信息
+        staffOrderInformation.setStaffOutboundOrders(staffMapper.queryOutboundInformation(order.getOrderNo()));
+        System.out.println(new JSONObject(staffOrderInformation));
+        return staffOrderInformation;
+    }
 
+    @Override
+    public Boolean employeesCollection(StaffCollection staffCollection) {
+        Integer staffId = staffMapper.queryStaffId(HttpUtil.getCurUserId(request.getHeader("token")));
+        OrderDeal orderDeal = new OrderDeal();
+        orderDeal.setAddTime(System.currentTimeMillis());
+        orderDeal.setOrderId(staffMapper.queryOrderId(staffCollection.getOrderNo()));
+        orderDeal.setPayAmount(staffCollection.getMoeny());
+        orderDeal.setPayWay(staffCollection.getPayType());
+        orderDeal.setSerialNo(UUID.randomUUID().toString().replace("-", "").substring(0, 14).toUpperCase());
+        orderDeal.setStaffId(staffId);
+        return staffMapper.addOrderDeal(orderDeal);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        return null;
+    @Override
+    public List<StaffOrderGoods> queryGoodsInformation(Order order) {
+        List<StaffOrderGoods> staffOrderGoods = staffMapper.queryGoods(order.getOrderNo());
+        for (StaffOrderGoods staffOrderGood : staffOrderGoods) {
+            staffOrderGood.setSkuName(staffMapper.querySkuName(staffOrderGood.getGoodsSkuId()));
+        }
+        return staffOrderGoods;
     }
 }

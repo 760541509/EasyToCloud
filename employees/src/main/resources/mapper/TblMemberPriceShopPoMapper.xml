@@ -25,7 +25,7 @@
         update tbl_member_price_shop set price_name = #{priceName},shop_id = #{shopId}, status = #{status},type = #{type},sup_id = #{supId} where id = #{id}
     </update>
     <update id="updateShopMember">
-        update tbl_member_price_shop set status = 0
+        update tbl_member_price_shop set status = #{status}
     </update>
     <select id="queryMemberPriceShop"
             resultType="com.yingtongquan.employees.member.entity.TblMemberPriceShopPo">

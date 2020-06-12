@@ -7,19 +7,25 @@ import java.io.Serializable;
 public class StaffOrderGoods implements Serializable {
 
     @ApiModelProperty(value = "商品图片")
-    private String goodsImg;
+    private String image;
+
+    @ApiModelProperty(hidden = true)
+    private Integer id;
 
     @ApiModelProperty(value = "商品名字")
-    private String goodsName;
+    private String orderGoodsName;
+
+    @ApiModelProperty(hidden = true)
+    private Integer goodsSkuId;
 
     @ApiModelProperty(value = "规格描述")
     private String skuName;
 
     @ApiModelProperty(value = "单位名字")
-    private String skuUnitName;
+    private String name;
 
     @ApiModelProperty(value = "购买数量")
-    private Integer goodsNumber;
+    private Integer amount;
 
     @ApiModelProperty(value = "购买价格")
     private Integer price;
@@ -30,20 +36,36 @@ public class StaffOrderGoods implements Serializable {
     @ApiModelProperty(value = "已发货数量")
     private Integer quantityShipped;
 
-    public String getGoodsImg() {
-        return goodsImg;
+    public String getImage() {
+        return image;
     }
 
-    public void setGoodsImg(String goodsImg) {
-        this.goodsImg = goodsImg;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public String getGoodsName() {
-        return goodsName;
+    public Integer getId() {
+        return id;
     }
 
-    public void setGoodsName(String goodsName) {
-        this.goodsName = goodsName;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getOrderGoodsName() {
+        return orderGoodsName;
+    }
+
+    public void setOrderGoodsName(String orderGoodsName) {
+        this.orderGoodsName = orderGoodsName;
+    }
+
+    public Integer getGoodsSkuId() {
+        return goodsSkuId;
+    }
+
+    public void setGoodsSkuId(Integer goodsSkuId) {
+        this.goodsSkuId = goodsSkuId;
     }
 
     public String getSkuName() {
@@ -54,20 +76,20 @@ public class StaffOrderGoods implements Serializable {
         this.skuName = skuName;
     }
 
-    public String getSkuUnitName() {
-        return skuUnitName;
+    public String getName() {
+        return name;
     }
 
-    public void setSkuUnitName(String skuUnitName) {
-        this.skuUnitName = skuUnitName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Integer getGoodsNumber() {
-        return goodsNumber;
+    public Integer getAmount() {
+        return amount;
     }
 
-    public void setGoodsNumber(Integer goodsNumber) {
-        this.goodsNumber = goodsNumber;
+    public void setAmount(Integer amount) {
+        this.amount = amount;
     }
 
     public Integer getPrice() {
@@ -97,11 +119,13 @@ public class StaffOrderGoods implements Serializable {
     @Override
     public String toString() {
         return "StaffOrderGoods{" +
-                "goodsImg='" + goodsImg + '\'' +
-                ", goodsName='" + goodsName + '\'' +
+                "image='" + image + '\'' +
+                ", id=" + id +
+                ", orderGoodsName='" + orderGoodsName + '\'' +
+                ", goodsSkuId=" + goodsSkuId +
                 ", skuName='" + skuName + '\'' +
-                ", skuUnitName='" + skuUnitName + '\'' +
-                ", goodsNumber=" + goodsNumber +
+                ", name='" + name + '\'' +
+                ", amount=" + amount +
                 ", price=" + price +
                 ", originalPrice=" + originalPrice +
                 ", quantityShipped=" + quantityShipped +

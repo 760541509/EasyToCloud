@@ -49,5 +49,5 @@ public interface TblMemberPriceShopService extends IService<TblMemberPriceShopPo
      * @Author 胖
      * 关闭门店会员价格表
      **/
-    Boolean updateShopAllMemberprice(Integer id);
+    Boolean updateShopAllMemberprice(Integer id,Integer status);
 }

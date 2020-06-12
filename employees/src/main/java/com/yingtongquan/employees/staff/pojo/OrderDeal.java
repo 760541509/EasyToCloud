@@ -1,29 +1,10 @@
-package com.yingtongquan.order.order.entity;
+package com.yingtongquan.employees.staff.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
-/**
- * <p>
- *
- * </p>
- *
- * @author Pang
- * @since 2020-05-12
- */
-@TableName("tbl_order_deal")
-@ApiModel(value = "TblOrderDealPo对象", description = "")
-public class TblOrderDealPo implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+public class OrderDeal implements Serializable {
 
     @ApiModelProperty(value = "订单的id")
     private Integer orderId;
@@ -42,14 +23,6 @@ public class TblOrderDealPo implements Serializable {
 
     @ApiModelProperty(value = "员工ID")
     private Integer staffId;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getOrderId() {
         return orderId;
@@ -101,9 +74,8 @@ public class TblOrderDealPo implements Serializable {
 
     @Override
     public String toString() {
-        return "TblOrderDealPo{" +
-                "id=" + id +
-                ", orderId=" + orderId +
+        return "OrderDeal{" +
+                "orderId=" + orderId +
                 ", addTime=" + addTime +
                 ", payAmount=" + payAmount +
                 ", payWay=" + payWay +

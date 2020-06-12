@@ -104,9 +104,11 @@ public class TblMemberPriceShopServiceImpl extends ServiceImpl<TblMemberPriceSho
     }
 
     @Override
-    public Boolean updateShopAllMemberprice(Integer id) {
-        List<MemberInformation> memberInformations = memberPriceShopMapper.queryMemberPrice(id);
-        Assert.isTrue(memberInformations.size() == 0, "还有用户在使用改价格，请修改相关用户");
-        return memberPriceShopMapper.updateShopMember(id);
+    public Boolean updateShopAllMemberprice(Integer id,Integer status) {
+        if(status == 0){
+            List<MemberInformation> memberInformations = memberPriceShopMapper.queryMemberPrice(id);
+            Assert.isTrue(memberInformations.size() == 0, "还有用户在使用改价格，请修改相关用户");
+        }
+        return memberPriceShopMapper.updateShopMember(id,status);
     }
 }

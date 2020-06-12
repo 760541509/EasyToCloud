@@ -78,7 +78,8 @@ public class TblMemberShopController {
     @ApiOperation("关闭门店会员价格表")
     @PostMapping("/shutShopMember")
     public ResultVo shutShopMember(@RequestBody UserInformation userInformation) {
-        return ResultVo.successResult(memberPriceShopService.updateShopAllMemberprice(userInformation.getId()));
+        //userInformation.getAreaId()   此处传的这个AreaId为开启或者关闭的状态码。。。。为啥这样写   因为懒
+        return ResultVo.successResult(memberPriceShopService.updateShopAllMemberprice(userInformation.getId(), userInformation.getAreaId()));
     }
 
 //    @ApiOperation("按条件查询会员")
@@ -102,6 +103,6 @@ public class TblMemberShopController {
     @ApiOperation("删除会员")
     @PostMapping("/deleteShopMember")
     public ResultVo deleteShopMember(@RequestBody ShopMemberInfo ShopMemberInfo) {
-        return ResultVo.successResult(memberShopService.deleteShopMember(ShopMemberInfo.getPhone()));
+        return ResultVo.successResult(memberShopService.deleteShopMember(ShopMemberInfo.getAccount()));
     }
 }

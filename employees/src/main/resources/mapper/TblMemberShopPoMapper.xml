@@ -111,7 +111,7 @@
 	        AND t3.area_name = #{province}
     </select>
     <select id="queryMemberInformation" resultType="com.yingtongquan.employees.member.pojo.ShopMemberInfo">
-        select id,member_name,phone,add_time,member_id from tbl_member_shop where id = #{id}
+        select id,member_name name,phone account,add_time,member_id from tbl_member_shop where id = #{id}
     </select>
     <select id="queryMemberShippingAddress" resultType="com.yingtongquan.employees.member.pojo.MemberAddress">
         SELECT
