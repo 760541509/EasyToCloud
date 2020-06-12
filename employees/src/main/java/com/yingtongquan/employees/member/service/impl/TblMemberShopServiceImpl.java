@@ -35,8 +35,8 @@ public class TblMemberShopServiceImpl extends ServiceImpl<TblMemberShopMapper, T
 
     @Override
     public List<MemberInformation> queryAllShopMember(UseTheQuery useTheQuery) {
-        Integer shopId = HttpUtil.getShopId(request.getHeader("token"));
-        useTheQuery.setShopId(shopId);
+//        Integer shopId = HttpUtil.getShopId(request.getHeader("token"));
+        useTheQuery.setShopId(10003);
         useTheQuery.setPageStart((useTheQuery.getPage() - 1) * useTheQuery.getPageEnd());
         List<MemberInformation> memberInformations = memberShopMapper.queryAllShopMember(useTheQuery);
         for (MemberInformation memberInformation : memberInformations) {
@@ -45,7 +45,7 @@ public class TblMemberShopServiceImpl extends ServiceImpl<TblMemberShopMapper, T
                 memberInformation.setAddTime(time.get(0));
             }
             Integer weChat = memberShopMapper.bindWeChat(memberInformation.getUserId());
-            if (weChat == 0 || weChat == null) {
+            if (weChat == null) {
                 memberInformation.setBindWeChat(false);
             } else {
                 memberInformation.setBindWeChat(true);
