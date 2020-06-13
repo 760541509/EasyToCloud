@@ -50,9 +50,9 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
 
     @Override
     public List<OrderInfromation> theEmployeeQueriesTheOrderByStatus(InquireOrderInfor inquireOrderInfor) {
-        String token = request.getHeader("token");
-        Integer shopId = HttpUtil.getShopId(token);
-        inquireOrderInfor.setShopId(shopId);
+//        String token = request.getHeader("token");
+//        Integer shopId = HttpUtil.getShopId(token);
+        inquireOrderInfor.setShopId(10003);
         inquireOrderInfor.setPageStart((inquireOrderInfor.getPage() - 1) * inquireOrderInfor.getPageEnd());
         List<OrderInfromation> orderInfromations = staffMapper.theEmployeeQueriesTheOrderByStatus(inquireOrderInfor);
         for (int i = 0; i < orderInfromations.size(); i++) {
@@ -134,9 +134,8 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
 
     @Override
     public Boolean distributingOrder(DistributeOrder distributeOrder) {
-        //todo 明天继续
         Integer goodsCount = 0;
-        Integer outboundID = 0;
+        Integer outboundID;
         for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
             goodsCount = goodsCount + distributeOrderGood.getStoreAmount();
         }
@@ -145,16 +144,23 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
             for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
                 addOutboundGoods(distributeOrderGood, outboundID);
             }
+            return true;
         } else {
+            //创建出库单
             outboundID = addOutboundOrder(distributeOrder.getAutomaticLedSingle(), goodsCount, distributeOrder.getOrderNo());
             for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
+                //添加出库商品
                 addOutboundGoods(distributeOrderGood, outboundID);
             }
-
+            if (outboundID != 0) {
+                //填写员工出库单
+                addOutboundStaff(outboundID);
+                //出库单收货地址
+                addShipingAddress(outboundID);
+                return true;
+            }
+            return false;
         }
-
-
-        return null;
     }
 
     /**
@@ -184,6 +190,41 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
     private Boolean addOutboundGoods(DistributeOrderGoods distributeOrderGoods, Integer outboundId) {
         distributeOrderGoods.setOutboundId(outboundId);
         return staffMapper.addOutboundGoods(distributeOrderGoods);
+    }
+
+    /**
+     * @Date 2020/6/13 10:59
+     * @Author 胖
+     * 填写员工出库单
+     **/
+    private Boolean addOutboundStaff(Integer outboundId) {
+        Integer userId = HttpUtil.getCurUserId(request.getHeader("token"));
+        Integer staffId = staffMapper.queryStaffId(userId);
+        OutboundStaff outboundStaff = new OutboundStaff();
+        outboundStaff.setAddTime(System.currentTimeMillis());
+        outboundStaff.setCommissionAmount(0);
+        outboundStaff.setOutboundOrderId(outboundId);
+        outboundStaff.setStaffId(staffId);
+        return staffMapper.addOutboundStaff(outboundStaff);
+    }
+
+    /**
+     * @Date 2020/6/13 11:50
+     * @Author 胖
+     * 出库单收货地址
+     **/
+    private Boolean addShipingAddress(Integer outboundId) {
+        ShippingAddress shippingAddress = staffMapper.queryOrderShippingAddress(outboundId);
+        OutboundShippingAddress outboundShippingAddress = new OutboundShippingAddress();
+        outboundShippingAddress.setAddress(shippingAddress.getAddress());
+        outboundShippingAddress.setAddTime(System.currentTimeMillis());
+        outboundShippingAddress.setAreaId(shippingAddress.getAreaId());
+        outboundShippingAddress.setIsSince(shippingAddress.getIsSince());
+        outboundShippingAddress.setMemberShopId(shippingAddress.getMemberId());
+        outboundShippingAddress.setName(shippingAddress.getConsignee());
+        outboundShippingAddress.setOutboundOrderId(outboundId);
+        outboundShippingAddress.setPhone(shippingAddress.getPhone());
+        return staffMapper.addOutboundShippingAddress(outboundShippingAddress);
     }
 
 }

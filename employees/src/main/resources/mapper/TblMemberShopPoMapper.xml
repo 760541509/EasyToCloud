@@ -122,6 +122,7 @@
 	        shop.latitude,
 	        shop.longitude,
 	        shop.member_shop_id memberId,
+	        shop.area_id,
 	        t1.area_name area,
 	        t2.area_name city,
 	        t3.area_name province

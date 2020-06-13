@@ -71,6 +71,13 @@
     <insert id="addOutboundGoods" parameterType="com.yingtongquan.employees.staff.pojo.DistributeOrderGoods">
         insert into tbl_outbound_order_goods (order_goods_id,amount,outbound_order_id) values (#{id},#{storeAmount},#{outboundId})
     </insert>
+    <insert id="addOutboundStaff" parameterType="com.yingtongquan.employees.staff.pojo.OutboundStaff">
+        insert into tbl_outbound_order_staff (staff_id,outbound_order_id,add_time,commission_amount) values (#{staffId},#{outboundOrderId},#{addTime},#{commissionAmount})
+    </insert>
+    <insert id="addOutboundShippingAddress">
+        insert into tbl_outbound_order_delivery_address (outbound_order_id,add_time,member_shop_id,phone,name,area_id,address,is_since)
+        values (#{outboundOrderId},#{addTime},#{memberShopId},#{phone},#{name},#{areaId},#{address},#{isSince})
+    </insert>
 
     <select id="queryUser" resultType="com.yingtongquan.employees.staff.pojo.UserInformation">
         select * from tbl_user where id = #{userId}
@@ -106,10 +113,10 @@
         INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
         INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
         <where>
-            <if test="status!=0 and status!=null">
+            <if test="status >= 0 and status != null">
                 tbl_order.order_status = #{status}
             </if>
-            <if test="statusVice!=0 and statusVice!=null">
+            <if test="statusVice >= 0 and statusVice != null">
                 and tbl_order.order_status_vice = #{statusVice}
             </if>
             AND tbl_order.shop_id = #{shopId}
@@ -138,7 +145,7 @@
 
     <select id="queryOrderPayAmount" resultType="java.lang.Integer">
         SELECT
-	        tbl_order_deal.pay_amount
+	        SUM(tbl_order_deal.pay_amount) pay_amount
         FROM
 	        tbl_order
 	        INNER JOIN tbl_order_deal ON tbl_order_deal.order_id = tbl_order.id
@@ -276,5 +283,20 @@
 
     <select id="queryStaffId" resultType="java.lang.Integer">
         select id from tbl_staff where user_id = #{userId}
+    </select>
+    <select id="queryOrderShippingAddress" resultType="com.yingtongquan.employees.staff.pojo.ShippingAddress">
+        SELECT
+	        address.area_id,
+	        address.address,
+	        address.NAME consignee,
+	        address.phone,
+	        tbl_order.member_shop_id memberId,
+	        address.is_since
+        FROM
+	        tbl_outbound_order
+	        INNER JOIN tbl_order ON tbl_outbound_order.order_no = tbl_order.order_no
+	        INNER JOIN tbl_order_delivery_address address ON tbl_order.id = address.order_id
+        WHERE
+	        tbl_outbound_order.id = #{outboundId}
     </select>
 </mapper>
