@@ -15,7 +15,7 @@ public class ShopMemberInfo implements Serializable {
     private String name;
 
     @ApiModelProperty(value = "会员电话")
-    private String account;
+    private String phone;
 
     @ApiModelProperty(value = "会员头像")
     private String headPortrait;
@@ -42,12 +42,12 @@ public class ShopMemberInfo implements Serializable {
         this.name = name;
     }
 
-    public String getAccount() {
-        return account;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getHeadPortrait() {
@@ -79,7 +79,7 @@ public class ShopMemberInfo implements Serializable {
         return "ShopMemberInfo{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", account='" + account + '\'' +
+                ", phone='" + phone + '\'' +
                 ", headPortrait='" + headPortrait + '\'' +
                 ", addTime=" + addTime +
                 ", memberAddresses=" + memberAddresses +

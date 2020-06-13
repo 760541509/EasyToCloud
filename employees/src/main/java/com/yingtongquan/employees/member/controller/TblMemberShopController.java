@@ -96,7 +96,7 @@ public class TblMemberShopController {
 
     @ApiOperation("删除会员")
     @PostMapping("/deleteShopMember")
-    public ResultVo deleteShopMember(@RequestBody ShopMemberInfo ShopMemberInfo) {
-        return ResultVo.successResult(memberShopService.deleteShopMember(ShopMemberInfo.getAccount()));
+    public ResultVo deleteShopMember(@RequestBody ShopMemberInfo shopMemberInfo) {
+        return ResultVo.successResult(memberShopService.deleteShopMember(shopMemberInfo.getPhone()));
     }
 }
