@@ -82,12 +82,6 @@ public class TblMemberShopController {
         return ResultVo.successResult(memberPriceShopService.updateShopAllMemberprice(userInformation.getId(), userInformation.getAreaId()));
     }
 
-//    @ApiOperation("按条件查询会员")
-//    @PostMapping("/queryByConditionMember")
-//    public ResultVo queryByConditionMember(@RequestBody UseTheQuery useTheQuery) {
-//        return ResultVo.successResult(memberShopService.queryByConditionMember(useTheQuery));
-//    }
-
     @ApiOperation("修改会员")
     @PostMapping("/updateShopMember")
     public ResultVo updateShopMember(@RequestBody UpdateMemberInformation memberInformation) {

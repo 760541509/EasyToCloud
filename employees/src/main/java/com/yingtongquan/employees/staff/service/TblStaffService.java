@@ -56,5 +56,5 @@ public interface TblStaffService extends IService<TblStaffPo> {
      * @Author 胖
      * 派发订单
      **/
-
+    Boolean distributingOrder(DistributeOrder distributeOrder);
 }

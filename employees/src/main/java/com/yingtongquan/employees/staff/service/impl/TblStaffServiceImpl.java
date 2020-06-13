@@ -131,4 +131,80 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
         }
         return staffOrderGoods;
     }
+
+    @Override
+    public Boolean distributingOrder(DistributeOrder distributeOrder) {
+        //todo 明天继续
+        Integer goodsCount = 0;
+        for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
+            goodsCount = goodsCount + distributeOrderGood.getStoreAmount();
+        }
+        if (distributeOrder.getAutomaticLedSingle() == 0) {
+            addOutboundOrder(distributeOrder.getAutomaticLedSingle(),goodsCount,distributeOrder.getOrderNo());
+        } else {
+            addOutboundOrder(distributeOrder.getAutomaticLedSingle(),goodsCount,distributeOrder.getOrderNo());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+        return null;
+    }
+
+    /**
+     * @Date 2020/6/13 9:18
+     * @Author 胖
+     * 创建出库单
+     **/
+    private Boolean addOutboundOrder(Integer automaticLedSingle, Integer goodsCount, String orderNo) {
+        String outboundNo = UUID.randomUUID().toString().replace("-", "").substring(0, 14);
+        OutboundOrder outboundOrder = new OutboundOrder();
+        outboundOrder.setAddTime(System.currentTimeMillis());
+        outboundOrder.setGoodsCount(goodsCount);
+        outboundOrder.setOrderNo(orderNo);
+        outboundOrder.setOutboundOrderChannel(automaticLedSingle);
+        outboundOrder.setOutboundOrderNo(outboundNo);
+        outboundOrder.setOutboundOrderStatus(0);
+        outboundOrder.setOutboundOrderType(0);
+        return staffMapper.addOutboundOrder(outboundOrder);
+    }
+
+    /**
+     * @Date 2020/6/13 10:12
+     * @Author 胖
+     * 添加出库商品
+     **/
+    private Boolean addOutboundGoods(DistributeOrderGoods distributeOrderGoods){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        return null;
+    }
+
 }

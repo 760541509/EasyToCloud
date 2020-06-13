@@ -52,13 +52,6 @@ public interface TblMemberShopService extends IService<TblMemberShopPo> {
     Boolean deleteShopMember(String account);
 
     /**
-     * @Date 2020/6/10 17:33
-     * @Author 胖
-     * 按条件查询会员
-     **/
-//    List<MemberInformation> queryByConditionMember(UseTheQuery useTheQuery);
-
-    /**
      * @Date 2020/6/11 14:42
      * @Author 胖
      * 查询会员详细

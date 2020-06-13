@@ -131,4 +131,11 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
      * 添加收款单
      **/
     Boolean addOrderDeal(OrderDeal orderDeal);
+
+    /**
+     * 2020/6/12  20:23
+     * @Author 胖
+     * 添加出库单
+     **/
+    Boolean addOutboundOrder(OutboundOrder outboundOrder);
 }

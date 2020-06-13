@@ -59,6 +59,10 @@
         insert into tbl_order_deal(order_id,add_time,pay_amount,pay_way,serial_no,staff_id)
         values (#{orderId},#{addTime},#{payAmount},#{payWay},#{serialNo},#{staffId})
     </insert>
+    <insert id="addOutboundOrder" parameterType="com.yingtongquan.employees.staff.pojo.OutboundOrder">
+        insert into tbl_outbound_order (outbound_order_no,outbound_order_status,goods_count,outbound_order_type,outbound_order_channel,add_time,order_no)
+        values (#{outboundOrderNo},#{outboundOrderStatus},#{goodsCount},#{outboundOrderType},#{outboundOrderChannel},#{addTime},#{orderNo})
+    </insert>
 
     <select id="queryUser" resultType="com.yingtongquan.employees.staff.pojo.UserInformation">
         select * from tbl_user where id = #{userId}
