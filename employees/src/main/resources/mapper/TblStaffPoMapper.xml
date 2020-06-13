@@ -51,22 +51,31 @@
     <sql id="Base_Column_List">
         id, staff_name, staff_phone, area_id, address, shop_id, staff_role_id, user_id
     </sql>
+
     <insert id="addShopStaff" parameterType="com.yingtongquan.employees.staff.entity.TblStaffPo">
         insert into tbl_staff(staff_name, staff_phone, area_id, address, shop_id, staff_role_id, user_id)
         values (#{staffName},#{staffPhone},#{areaId},#{address},#{shopId},#{staffRoleId},#{userId})
     </insert>
+
     <insert id="addOrderDeal" parameterType="com.yingtongquan.employees.staff.pojo.OrderDeal">
         insert into tbl_order_deal(order_id,add_time,pay_amount,pay_way,serial_no,staff_id)
         values (#{orderId},#{addTime},#{payAmount},#{payWay},#{serialNo},#{staffId})
     </insert>
-    <insert id="addOutboundOrder" parameterType="com.yingtongquan.employees.staff.pojo.OutboundOrder">
+
+    <insert id="addOutboundOrder" parameterType="com.yingtongquan.employees.staff.pojo.OutboundOrder" keyProperty="id"
+            useGeneratedKeys="true">
         insert into tbl_outbound_order (outbound_order_no,outbound_order_status,goods_count,outbound_order_type,outbound_order_channel,add_time,order_no)
         values (#{outboundOrderNo},#{outboundOrderStatus},#{goodsCount},#{outboundOrderType},#{outboundOrderChannel},#{addTime},#{orderNo})
+    </insert>
+
+    <insert id="addOutboundGoods" parameterType="com.yingtongquan.employees.staff.pojo.DistributeOrderGoods">
+        insert into tbl_outbound_order_goods (order_goods_id,amount,outbound_order_id) values (#{id},#{storeAmount},#{outboundId})
     </insert>
 
     <select id="queryUser" resultType="com.yingtongquan.employees.staff.pojo.UserInformation">
         select * from tbl_user where id = #{userId}
     </select>
+
     <select id="theEmployeeQueriesTheOrderByStatus"
             resultType="com.yingtongquan.employees.staff.pojo.OrderInfromation">
         SELECT
@@ -136,6 +145,7 @@
         WHERE
 	        tbl_order.order_no = #{orderNo}
     </select>
+
     <select id="queryOrderInformation" resultMap="ResultOrderMap">
         SELECT
 	        tbl_order.order_no,
@@ -164,6 +174,7 @@
         WHERE
 	        tbl_order.order_no = #{orderNo}
     </select>
+
     <select id="queryMemberInformation" resultType="com.yingtongquan.employees.staff.pojo.MemberInformation">
         SELECT
 	        tbl_member_shop.member_name,
@@ -176,6 +187,7 @@
         WHERE
 	        tbl_order.order_no = #{orderNo}
     </select>
+
     <select id="queryGoods" resultType="com.yingtongquan.employees.staff.pojo.StaffOrderGoods">
         SELECT
 	        tbl_order_goods.image,
@@ -193,6 +205,7 @@
         WHERE
 	        tbl_order.order_no = #{orderNo}
     </select>
+
     <select id="querySkuName" resultType="java.lang.String">
         SELECT
 	        GROUP_CONCAT( tbl.specValue SEPARATOR ';' ) AS specValue
@@ -207,6 +220,7 @@
 	        INNER JOIN tbl_goods_spec_name ON tbl_goods_spec_value.fk_goods_spec_name_id = tbl_goods_spec_name.id
 	        ) AS tbl
     </select>
+
     <select id="queryOutboundGoodsNumber" resultType="com.yingtongquan.employees.staff.pojo.Goods">
         SELECT
 	        tbl_outbound_order_goods.order_goods_id,
@@ -217,6 +231,7 @@
         WHERE
 	        tbl_outbound_order.order_no = #{orderNo}
     </select>
+
     <select id="queryPaymentInformation" resultMap="ResultPaymentMap">
         SELECT
 	        tbl_order_deal.add_time,
@@ -229,6 +244,7 @@
         WHERE
         	tbl_order.order_no = #{orderNo}
     </select>
+
     <select id="queryOutboundInformation" resultMap="ResultOutboundMap">
         SELECT
 	        tbl_staff.staff_name,
@@ -243,6 +259,7 @@
         WHERE
 	        tbl_outbound_order.order_no = #{orderNo}
     </select>
+
     <select id="countMoney" resultType="java.lang.Integer">
         SELECT
 	        tbl_order_deal.pay_amount
@@ -252,9 +269,11 @@
         WHERE
 	        tbl_order.order_no = #{orderNo}
     </select>
+
     <select id="queryOrderId" resultType="java.lang.Integer">
         select id from tbl_order where order_no = #{orderNo}
     </select>
+
     <select id="queryStaffId" resultType="java.lang.Integer">
         select id from tbl_staff where user_id = #{userId}
     </select>

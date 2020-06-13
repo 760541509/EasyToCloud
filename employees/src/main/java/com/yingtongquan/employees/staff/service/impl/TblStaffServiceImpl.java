@@ -136,29 +136,20 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
     public Boolean distributingOrder(DistributeOrder distributeOrder) {
         //todo 明天继续
         Integer goodsCount = 0;
+        Integer outboundID = 0;
         for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
             goodsCount = goodsCount + distributeOrderGood.getStoreAmount();
         }
         if (distributeOrder.getAutomaticLedSingle() == 0) {
-            addOutboundOrder(distributeOrder.getAutomaticLedSingle(),goodsCount,distributeOrder.getOrderNo());
+            outboundID = addOutboundOrder(distributeOrder.getAutomaticLedSingle(), goodsCount, distributeOrder.getOrderNo());
+            for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
+                addOutboundGoods(distributeOrderGood, outboundID);
+            }
         } else {
-            addOutboundOrder(distributeOrder.getAutomaticLedSingle(),goodsCount,distributeOrder.getOrderNo());
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            outboundID = addOutboundOrder(distributeOrder.getAutomaticLedSingle(), goodsCount, distributeOrder.getOrderNo());
+            for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
+                addOutboundGoods(distributeOrderGood, outboundID);
+            }
 
         }
 
@@ -171,7 +162,7 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
      * @Author 胖
      * 创建出库单
      **/
-    private Boolean addOutboundOrder(Integer automaticLedSingle, Integer goodsCount, String orderNo) {
+    private Integer addOutboundOrder(Integer automaticLedSingle, Integer goodsCount, String orderNo) {
         String outboundNo = UUID.randomUUID().toString().replace("-", "").substring(0, 14);
         OutboundOrder outboundOrder = new OutboundOrder();
         outboundOrder.setAddTime(System.currentTimeMillis());
@@ -181,7 +172,8 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
         outboundOrder.setOutboundOrderNo(outboundNo);
         outboundOrder.setOutboundOrderStatus(0);
         outboundOrder.setOutboundOrderType(0);
-        return staffMapper.addOutboundOrder(outboundOrder);
+        staffMapper.addOutboundOrder(outboundOrder);
+        return outboundOrder.getId();
     }
 
     /**
@@ -189,22 +181,9 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
      * @Author 胖
      * 添加出库商品
      **/
-    private Boolean addOutboundGoods(DistributeOrderGoods distributeOrderGoods){
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        return null;
+    private Boolean addOutboundGoods(DistributeOrderGoods distributeOrderGoods, Integer outboundId) {
+        distributeOrderGoods.setOutboundId(outboundId);
+        return staffMapper.addOutboundGoods(distributeOrderGoods);
     }
 
 }

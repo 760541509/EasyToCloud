@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 public class DistributeOrderGoods implements Serializable {
 
+    @ApiModelProperty(value = "订单中商品表的ID")
     private Integer id;
 
     @ApiModelProperty(value = "订单商品名称")
@@ -25,6 +26,9 @@ public class DistributeOrderGoods implements Serializable {
 
     @ApiModelProperty(value = "门店ID")
     private Integer storeId;
+
+    @ApiModelProperty(hidden = true)
+    private Integer outboundId;
 
     public Integer getId() {
         return id;
@@ -82,6 +86,14 @@ public class DistributeOrderGoods implements Serializable {
         this.storeId = storeId;
     }
 
+    public Integer getOutboundId() {
+        return outboundId;
+    }
+
+    public void setOutboundId(Integer outboundId) {
+        this.outboundId = outboundId;
+    }
+
     @Override
     public String toString() {
         return "DistributeOrderGoods{" +
@@ -92,6 +104,7 @@ public class DistributeOrderGoods implements Serializable {
                 ", storeAmount=" + storeAmount +
                 ", warehouseId=" + warehouseId +
                 ", storeId=" + storeId +
+                ", outboundId=" + outboundId +
                 '}';
     }
 }
