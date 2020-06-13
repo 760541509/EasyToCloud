@@ -10,14 +10,14 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Pang
  * @since 2020-05-12
  */
 @TableName("tbl_outbound_order_goods")
-@ApiModel(value="TblOutboundOrderGoodsPo对象", description="")
+@ApiModel(value = "TblOutboundOrderGoodsPo对象", description = "")
 public class TblOutboundOrderGoodsPo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,6 +34,12 @@ public class TblOutboundOrderGoodsPo implements Serializable {
     @ApiModelProperty(value = "出库单id")
     private Integer outboundOrderId;
 
+    @ApiModelProperty(value = "出货的店铺ID")
+    private Integer shopId;
+
+    @ApiModelProperty(value = "出货的仓库ID")
+    private Integer warehouseId;
+
     public Integer getId() {
         return id;
     }
@@ -41,6 +47,7 @@ public class TblOutboundOrderGoodsPo implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
+
     public Integer getOrderGoodsId() {
         return orderGoodsId;
     }
@@ -48,6 +55,7 @@ public class TblOutboundOrderGoodsPo implements Serializable {
     public void setOrderGoodsId(Integer orderGoodsId) {
         this.orderGoodsId = orderGoodsId;
     }
+
     public Integer getAmount() {
         return amount;
     }
@@ -55,6 +63,7 @@ public class TblOutboundOrderGoodsPo implements Serializable {
     public void setAmount(Integer amount) {
         this.amount = amount;
     }
+
     public Integer getOutboundOrderId() {
         return outboundOrderId;
     }
@@ -63,13 +72,31 @@ public class TblOutboundOrderGoodsPo implements Serializable {
         this.outboundOrderId = outboundOrderId;
     }
 
+    public Integer getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(Integer shopId) {
+        this.shopId = shopId;
+    }
+
+    public Integer getWarehouseId() {
+        return warehouseId;
+    }
+
+    public void setWarehouseId(Integer warehouseId) {
+        this.warehouseId = warehouseId;
+    }
+
     @Override
     public String toString() {
         return "TblOutboundOrderGoodsPo{" +
-        "id=" + id +
-        ", orderGoodsId=" + orderGoodsId +
-        ", amount=" + amount +
-        ", outboundOrderId=" + outboundOrderId +
-        "}";
+                "id=" + id +
+                ", orderGoodsId=" + orderGoodsId +
+                ", amount=" + amount +
+                ", outboundOrderId=" + outboundOrderId +
+                ", shopId=" + shopId +
+                ", warehouseId=" + warehouseId +
+                '}';
     }
 }

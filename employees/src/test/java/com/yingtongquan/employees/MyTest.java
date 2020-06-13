@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 public class MyTest {
     @Test
     public void Test() {
+        Integer i;
+        System.out.println();
+
     }
 
 

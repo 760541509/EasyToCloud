@@ -2,16 +2,21 @@ package com.yingtongquan.employees.staff.service.impl;
 
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yingtongquan.employees.goods.entity.TblShopGoodsSkuStorePo;
+import com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo;
+import com.yingtongquan.employees.goods.service.TblGoodsSpuService;
 import com.yingtongquan.employees.staff.entity.TblStaffPo;
 import com.yingtongquan.employees.staff.mapper.TblStaffMapper;
 import com.yingtongquan.employees.staff.pojo.*;
 import com.yingtongquan.employees.staff.service.TblStaffRoleService;
 import com.yingtongquan.employees.staff.service.TblStaffService;
+import com.yingtongquan.startcommon.base.ResultVo;
 import com.yingtongquan.startcommon.util.HttpUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +35,8 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
     private TblStaffMapper staffMapper;
     @Resource
     private TblStaffRoleService staffRoleService;
+    @Resource
+    private TblGoodsSpuService goodsSpuService;
     @Resource
     private HttpServletRequest request;
 
@@ -134,9 +141,17 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
 
     @Override
     public Boolean distributingOrder(DistributeOrder distributeOrder) {
+        Integer curUserId = HttpUtil.getCurUserId(request.getHeader("token"));
+        Integer staffId = staffMapper.queryStaffId(curUserId);
         Integer goodsCount = 0;
         Integer outboundID;
+        List<TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa> shopGoodsSkuStore = new ArrayList<>();
+        List<TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa> warehouseGoodsSkuStore = new ArrayList<>();
+        TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa goodsSkuStore = new TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa();
+        TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa warehouseGoods = new TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa();
         for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
+            Integer unit = staffMapper.queryGoodsSpuUnit(distributeOrderGood.getGoodsSkuUnitId());
+            distributeOrderGood.setStoreAmount(distributeOrderGood.getStoreAmount() * unit);
             goodsCount = goodsCount + distributeOrderGood.getStoreAmount();
         }
         if (distributeOrder.getAutomaticLedSingle() == 0) {
@@ -148,10 +163,39 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
         } else {
             //创建出库单
             outboundID = addOutboundOrder(distributeOrder.getAutomaticLedSingle(), goodsCount, distributeOrder.getOrderNo());
+            String outboundNo = staffMapper.queryOutboundNo(outboundID);
             for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
+                //查询基本单位
+                Integer unit = staffMapper.queryGoodsSpuUnit(distributeOrderGood.getGoodsSkuUnitId());
+                //计算基本单位
+                distributeOrderGood.setStoreAmount(distributeOrderGood.getStoreAmount() * unit);
                 //添加出库商品
                 addOutboundGoods(distributeOrderGood, outboundID);
+                //出库
+                if (distributeOrderGood.getStoreId() != null) {
+                    goodsSkuStore.setOutboundOrderNo(outboundNo);
+                    goodsSkuStore.setFkIdStaff(staffId);
+                    goodsSkuStore.setFkGoodsSkuId(distributeOrderGood.getGoodsSkuId());
+                    goodsSkuStore.setFkShopId(distributeOrderGood.getStoreId());
+                    goodsSkuStore.setType(1);
+                    goodsSkuStore.setStore(distributeOrderGood.getStoreAmount() * -1);
+                    shopGoodsSkuStore.add(goodsSkuStore);
+                } else if (distributeOrderGood.getWarehouseId() != null) {
+                    warehouseGoods.setOutboundOrderNo(outboundNo);
+                    warehouseGoods.setFkIdStaff(staffId);
+                    warehouseGoods.setFkGoodsSkuId(distributeOrderGood.getGoodsSkuId());
+                    warehouseGoods.setFkWarehouseId(distributeOrderGood.getWarehouseId());
+                    warehouseGoods.setType(1);
+                    warehouseGoods.setStore(distributeOrderGood.getStoreAmount() * -1);
+                    warehouseGoodsSkuStore.add(warehouseGoods);
+                }
             }
+            if (shopGoodsSkuStore.size() > 0) {
+                goodsSpuService.addShopGoodsSkuStore(shopGoodsSkuStore);
+            } else if (warehouseGoodsSkuStore.size() > 0) {
+                goodsSpuService.addWarehouseGoodsSkuStore(warehouseGoodsSkuStore);
+            }
+
             if (outboundID != 0) {
                 //填写员工出库单
                 addOutboundStaff(outboundID);
@@ -161,6 +205,84 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
             }
             return false;
         }
+    }
+
+    @Override
+    public ResultVo cancelTheOrder(Order order) {
+        List<Outbound> outbounds = staffMapper.queryOutboundOrderStatus(order.getOrderNo());
+        for (Outbound outbound : outbounds) {
+            if (outbound.getOutboundOrderStatus() != 4) {
+                return ResultVo.errorResult("还有出库单尚未取消，出库单号是:" + outbound.getOutboundOrderNO());
+            }
+        }
+        return ResultVo.successResult(staffMapper.updateOrderStatus(order.getOrderNo()));
+    }
+
+    @Override
+    public void cancelTheDelivery(Outbound outbound) {
+        Integer curUserId = HttpUtil.getCurUserId(request.getHeader("token"));
+        Integer staffId = staffMapper.queryStaffId(curUserId);
+        List<IncomingGoods> incomingGoods = staffMapper.queryGoodsInfo(outbound.getOutboundOrderNO());
+        List<TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa> shopGoodsSkuStore = new ArrayList<>();
+        List<TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa> warehouseGoodsSkuStore = new ArrayList<>();
+        TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa goodsSkuStore = new TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa();
+        TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa warehouseGoods = new TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa();
+        for (IncomingGoods incomingGood : incomingGoods) {
+            if (incomingGood.getShopId() != null) {
+                goodsSkuStore.setOutboundOrderNo(incomingGood.getOutboundOrderNo());
+                goodsSkuStore.setFkIdStaff(staffId);
+                goodsSkuStore.setFkGoodsSkuId(incomingGood.getGoodsSkuId());
+                goodsSkuStore.setFkShopId(incomingGood.getShopId());
+                goodsSkuStore.setType(1);
+                goodsSkuStore.setStore(incomingGood.getAmount());
+                shopGoodsSkuStore.add(goodsSkuStore);
+            } else {
+                warehouseGoods.setOutboundOrderNo(incomingGood.getOutboundOrderNo());
+                warehouseGoods.setFkIdStaff(staffId);
+                warehouseGoods.setFkGoodsSkuId(incomingGood.getGoodsSkuId());
+                warehouseGoods.setFkWarehouseId(incomingGood.getShopId());
+                warehouseGoods.setType(1);
+                warehouseGoods.setStore(incomingGood.getAmount());
+                warehouseGoodsSkuStore.add(warehouseGoods);
+            }
+        }
+        if (shopGoodsSkuStore.size() > 0) {
+            goodsSpuService.addShopGoodsSkuStore(shopGoodsSkuStore);
+        } else if (warehouseGoodsSkuStore.size() > 0) {
+            goodsSpuService.addWarehouseGoodsSkuStore(warehouseGoodsSkuStore);
+        }
+    }
+
+    @Override
+    public List<OutboundInformation> queryOutbound(Parment parment) {
+        String goodsName = null;
+        parment.setPageStart((parment.getPage() - 1) * parment.getPageEnd());
+        List<OutboundInformation> outboundInformations = staffMapper.queryOutboundInfo(parment);
+        for (OutboundInformation outboundInformation : outboundInformations) {
+            List<String> goods = staffMapper.queryOutboundGoods(outboundInformation.getOutboundOrderNo());
+            for (int i = 0; i < goods.size(); i++) {
+                goodsName = goods.get(0);
+            }
+            outboundInformation.setGoodsName(goodsName);
+        }
+        return outboundInformations;
+    }
+
+    @Override
+    public StaffOrderGoods queryOutboundInformation(Outbound outbound) {
+
+        //todo 继续
+
+
+
+
+
+
+
+
+
+
+        return null;
     }
 
     /**

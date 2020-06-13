@@ -3,12 +3,13 @@ package com.yingtongquan.employees.staff.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.yingtongquan.employees.staff.entity.TblStaffPo;
 import com.yingtongquan.employees.staff.pojo.*;
+import com.yingtongquan.startcommon.base.ResultVo;
 
 import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author ML
@@ -21,7 +22,7 @@ public interface TblStaffService extends IService<TblStaffPo> {
      * @Author 胖
      * 添加店铺员工角色表
      **/
-    Boolean addShopStaff(Integer shopId,Integer userId);
+    Boolean addShopStaff(Integer shopId, Integer userId);
 
     /**
      * @Date 2020/6/9 15:36
@@ -57,4 +58,32 @@ public interface TblStaffService extends IService<TblStaffPo> {
      * 派发订单
      **/
     Boolean distributingOrder(DistributeOrder distributeOrder);
+
+    /**
+     * @Date 2020/6/13 16:08
+     * @Author 胖
+     * 订单取消
+     **/
+    ResultVo cancelTheOrder(Order order);
+
+    /**
+     * @Date 2020/6/13 16:54
+     * @Author 胖
+     * 取消出库
+     **/
+    void cancelTheDelivery(Outbound outbound);
+
+    /**
+     * @Date 2020/6/13 17:24
+     * @Author 胖
+     * 查询出库单
+     **/
+    List<OutboundInformation> queryOutbound(Parment parment);
+
+    /**
+     * @Date 2020/6/13 17:54
+     * @Author 胖
+     * 出库单详情
+     **/
+    StaffOrderGoods queryOutboundInformation(Outbound outbound);
 }

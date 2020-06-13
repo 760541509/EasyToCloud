@@ -35,8 +35,8 @@ public class TblMemberShopServiceImpl extends ServiceImpl<TblMemberShopMapper, T
 
     @Override
     public List<MemberInformation> queryAllShopMember(UseTheQuery useTheQuery) {
-//        Integer shopId = HttpUtil.getShopId(request.getHeader("token"));
-        useTheQuery.setShopId(10003);
+        Integer shopId = HttpUtil.getShopId(request.getHeader("token"));
+        useTheQuery.setShopId(shopId);
         useTheQuery.setPageStart((useTheQuery.getPage() - 1) * useTheQuery.getPageEnd());
         List<MemberInformation> memberInformations = memberShopMapper.queryAllShopMember(useTheQuery);
         for (MemberInformation memberInformation : memberInformations) {

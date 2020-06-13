@@ -11,6 +11,9 @@ public class Outbound implements Serializable {
     @ApiModelProperty(value = "出库订单号")
     private String outboundOrderNO;
 
+    @ApiModelProperty(hidden = true)
+    private Integer outboundOrderStatus;
+
     @ApiModelProperty(value = "出库商品")
     private List<OutboundGoods> outboundGoods = new ArrayList<>();
 
@@ -20,6 +23,14 @@ public class Outbound implements Serializable {
 
     public void setOutboundOrderNO(String outboundOrderNO) {
         this.outboundOrderNO = outboundOrderNO;
+    }
+
+    public Integer getOutboundOrderStatus() {
+        return outboundOrderStatus;
+    }
+
+    public void setOutboundOrderStatus(Integer outboundOrderStatus) {
+        this.outboundOrderStatus = outboundOrderStatus;
     }
 
     public List<OutboundGoods> getOutboundGoods() {
@@ -34,6 +45,7 @@ public class Outbound implements Serializable {
     public String toString() {
         return "Outbound{" +
                 "outboundOrderNO='" + outboundOrderNO + '\'' +
+                ", outboundOrderStatus='" + outboundOrderStatus + '\'' +
                 ", outboundGoods=" + outboundGoods +
                 '}';
     }

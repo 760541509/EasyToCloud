@@ -69,15 +69,21 @@
     </insert>
 
     <insert id="addOutboundGoods" parameterType="com.yingtongquan.employees.staff.pojo.DistributeOrderGoods">
-        insert into tbl_outbound_order_goods (order_goods_id,amount,outbound_order_id) values (#{id},#{storeAmount},#{outboundId})
+        insert into tbl_outbound_order_goods (order_goods_id,amount,outbound_order_id,shop_id,warehouse_id) values (#{id},#{storeAmount},#{outboundId},#{storeId},#{warehouseId})
     </insert>
+
     <insert id="addOutboundStaff" parameterType="com.yingtongquan.employees.staff.pojo.OutboundStaff">
         insert into tbl_outbound_order_staff (staff_id,outbound_order_id,add_time,commission_amount) values (#{staffId},#{outboundOrderId},#{addTime},#{commissionAmount})
     </insert>
+
     <insert id="addOutboundShippingAddress">
         insert into tbl_outbound_order_delivery_address (outbound_order_id,add_time,member_shop_id,phone,name,area_id,address,is_since)
         values (#{outboundOrderId},#{addTime},#{memberShopId},#{phone},#{name},#{areaId},#{address},#{isSince})
     </insert>
+
+    <update id="updateOrderStatus">
+        UPDATE tbl_order SET order_status = 5 WHERE order_no = #{orderNo}
+    </update>
 
     <select id="queryUser" resultType="com.yingtongquan.employees.staff.pojo.UserInformation">
         select * from tbl_user where id = #{userId}
@@ -298,5 +304,68 @@
 	        INNER JOIN tbl_order_delivery_address address ON tbl_order.id = address.order_id
         WHERE
 	        tbl_outbound_order.id = #{outboundId}
+    </select>
+    <select id="queryOutboundNo" resultType="java.lang.String">
+        select outbound_order_no from tbl_outbound_order where id = #{outboundId}
+    </select>
+    <select id="queryGoodsSpuUnit" resultType="java.lang.Integer">
+        select amount from tbl_goods_spu_unit where id = #{id}
+    </select>
+    <select id="queryOutboundOrderStatus" resultType="com.yingtongquan.employees.staff.pojo.Outbound">
+        SELECT
+	        outbound_order_no,
+	        outbound_order_status
+        FROM
+	        tbl_outbound_order
+        WHERE
+	        order_no = #{orderNo}
+    </select>
+    <select id="queryGoodsInfo" resultType="com.yingtongquan.employees.staff.pojo.IncomingGoods">
+        SELECT
+	        tbl_outbound_order.outbound_order_no,
+	        tbl_outbound_order_goods.amount,
+	        tbl_outbound_order_goods.shop_id,
+	        tbl_outbound_order_goods.warehouse_id,
+	        tbl_order_goods.goods_sku_id
+        FROM
+	        tbl_outbound_order
+	        INNER JOIN tbl_outbound_order_goods ON tbl_outbound_order_goods.outbound_order_id = tbl_outbound_order.id
+	        INNER JOIN tbl_order_goods ON tbl_outbound_order_goods.order_goods_id = tbl_order_goods.id
+        WHERE
+	        tbl_outbound_order.outbound_order_no = #{outboundNo}
+    </select>
+    <select id="queryOutboundInfo" resultType="com.yingtongquan.employees.staff.pojo.OutboundInformation">
+        SELECT
+        tbl_user.head_portrait,
+        tbl_member_shop.member_name,
+        tbl_outbound_order.outbound_order_status,
+        tbl_outbound_order.add_time,
+        tbl_outbound_order.goods_count,
+        tbl_outbound_order.outbound_order_no
+        FROM
+        tbl_outbound_order
+        INNER JOIN tbl_order ON tbl_outbound_order.order_no = tbl_order.order_no
+        INNER JOIN tbl_member_shop ON tbl_order.member_shop_id = tbl_member_shop.id
+        INNER JOIN tbl_user ON tbl_member_shop.user_id = tbl_user.id
+        <where>
+            <if test="status!=null">
+                tbl_outbound_order.outbound_order_status = #{status}
+            </if>
+            <if test="keyword!=null">
+                AND CONCAT( tbl_member_shop.member_name, tbl_member_shop.phone, tbl_order.order_no ) LIKE
+                CONCAT("%",#{keyword},"%")
+            </if>
+        </where>
+        LIMIT #{pageStart},#{pageEnd}
+    </select>
+    <select id="queryOutboundGoods" resultType="java.lang.String">
+        SELECT
+	        tbl_order_goods.order_goods_name
+        FROM
+	        tbl_outbound_order_goods
+	        INNER JOIN tbl_order_goods ON tbl_outbound_order_goods.order_goods_id = tbl_order_goods.id
+	        INNER JOIN tbl_outbound_order ON tbl_outbound_order_goods.outbound_order_id = tbl_outbound_order.id
+        WHERE
+	        tbl_outbound_order.outbound_order_no = #{outboundNo}
     </select>
 </mapper>
