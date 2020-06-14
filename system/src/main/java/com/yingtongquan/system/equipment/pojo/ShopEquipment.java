@@ -1,4 +1,15 @@
 package com.yingtongquan.system.equipment.pojo;
 
-public class ShopEquipment {
+import java.io.Serializable;
+
+public class ShopEquipment implements Serializable {
+
+
+
+
+
+
+
+
+
 }

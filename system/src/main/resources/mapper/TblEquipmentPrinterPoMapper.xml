@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.system.equipment.mapper.TblEquipmentPrinterMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yingtongquan.system.equipment.entity.TblEquipmentPrinterPo">
+                <id column="id" property="id" />
+                <result column="equipment_id" property="equipmentId" />
+                <result column="mac1" property="mac1" />
+                <result column="mac2" property="mac2" />
+                <result column="mac3" property="mac3" />
+                <result column="mac4" property="mac4" />
+                <result column="model_id" property="modelId" />
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, equipment_id, mac1, mac2, mac3, mac4, model_id
+    </sql>
+
+
+</mapper>
