@@ -18,7 +18,6 @@ import javax.annotation.Resource;
 /**
 * ${table.comment!} 前端控制器
 * @author 胖
-* @since ${date} ${time}
 */
 @Api(value="${table.controllerName}",tags="")
 <#if restControllerStyle>

@@ -26,7 +26,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/outbound/tblOutboundOrderPo")
-@Api(tags = "员工商品出库")
+@Api(tags = "员工商品出库,暂时废弃,以后视情况修改启用")
 public class TblOutboundOrderController {
 
     @Resource

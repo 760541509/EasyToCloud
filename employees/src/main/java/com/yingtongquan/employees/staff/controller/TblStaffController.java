@@ -2,10 +2,7 @@ package com.yingtongquan.employees.staff.controller;
 
 
 import com.yingtongquan.employees.staff.entity.TblStaffRolePo;
-import com.yingtongquan.employees.staff.pojo.InquireOrderInfor;
-import com.yingtongquan.employees.staff.pojo.Order;
-import com.yingtongquan.employees.staff.pojo.StaffCollection;
-import com.yingtongquan.employees.staff.pojo.StaffInforamtion;
+import com.yingtongquan.employees.staff.pojo.*;
 import com.yingtongquan.employees.staff.service.TblStaffRoleService;
 import com.yingtongquan.employees.staff.service.TblStaffService;
 import com.yingtongquan.startcommon.base.ResultVo;
@@ -99,5 +96,48 @@ public class TblStaffController {
     @PostMapping("/queryGoodsInformation")
     public ResultVo queryGoodsInformation(@RequestBody Order order) {
         return ResultVo.successResult(staffService.queryGoodsInformation(order));
+    }
+
+    @ApiOperation(value = "派发订单")
+    @PostMapping("/distributingOrder")
+    public ResultVo distributingOrder(@RequestBody DistributeOrder distributeOrder) {
+        return ResultVo.successResult(staffService.distributingOrder(distributeOrder));
+    }
+
+    @ApiOperation(value = "订单取消")
+    @PostMapping("/cancelTheOrder")
+    public ResultVo cancelTheOrder(@RequestBody Order order) {
+        return ResultVo.successResult(staffService.cancelTheOrder(order));
+    }
+
+    @ApiOperation(value = "取消出库")
+    @PostMapping("/cancelTheDelivery")
+    public ResultVo cancelTheDelivery(@RequestBody Outbound outbound) {
+        staffService.cancelTheDelivery(outbound);
+        return ResultVo.successResult();
+    }
+
+    @ApiOperation(value = "查询出库单")
+    @PostMapping("/queryOutbound")
+    public ResultVo queryOutbound(@RequestBody Parment parment) {
+        return ResultVo.successResult(staffService.queryOutbound(parment));
+    }
+
+    @ApiOperation(value = "出库单详情")
+    @PostMapping("/queryOutboundInformation")
+    public ResultVo queryOutboundInformation(@RequestBody Outbound outbound) {
+        return ResultVo.successResult(staffService.queryOutboundInformation(outbound));
+    }
+
+    @ApiOperation(value = "员工领单")
+    @PostMapping("/staffGetASingle")
+    public ResultVo staffGetASingle(@RequestBody Outbound outbound) {
+        return ResultVo.successResult(staffService.staffGetASingle(outbound));
+    }
+
+    @ApiOperation(value = "员工发货")
+    @PostMapping("/staffDeliverGoods")
+    public ResultVo staffDeliverGoods(@RequestBody DeliveryInformation deliveryInformation) {
+        return ResultVo.successResult(staffService.staffDeliverGoods(deliveryInformation));
     }
 }

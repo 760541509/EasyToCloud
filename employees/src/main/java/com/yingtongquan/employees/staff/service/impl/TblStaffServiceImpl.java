@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yingtongquan.employees.goods.entity.TblShopGoodsSkuStorePo;
 import com.yingtongquan.employees.goods.entity.TblWarehouseGoodsSkuStorePo;
 import com.yingtongquan.employees.goods.service.TblGoodsSpuService;
+import com.yingtongquan.employees.member.entity.TblMemberDeliveryAddressShopPo;
 import com.yingtongquan.employees.staff.entity.TblStaffPo;
 import com.yingtongquan.employees.staff.mapper.TblStaffMapper;
 import com.yingtongquan.employees.staff.pojo.*;
@@ -80,6 +81,16 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
         Integer price = 0;
         //查询订单信息的一部分
         StaffOrderInformation staffOrderInformation = staffMapper.queryOrderInformation(order.getOrderNo());
+        StaffOrderInformation shippingAddress = staffMapper.queryOrderShipping(order.getOrderNo());
+        if (shippingAddress != null) {
+            staffOrderInformation.setAddress(shippingAddress.getAddress());
+            staffOrderInformation.setIsSince(shippingAddress.getIsSince());
+            staffOrderInformation.setPhone(shippingAddress.getPhone());
+            staffOrderInformation.setConsignee(shippingAddress.getConsignee());
+            staffOrderInformation.setProvince(shippingAddress.getProvince());
+            staffOrderInformation.setCity(shippingAddress.getCity());
+            staffOrderInformation.setArea(shippingAddress.getArea());
+        }
         //统计已支付的金额
         List<Integer> moneys = staffMapper.countMoney(order.getOrderNo());
         for (Integer money : moneys) {
@@ -199,8 +210,6 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
             if (outboundID != 0) {
                 //填写员工出库单
                 addOutboundStaff(outboundID);
-                //出库单收货地址
-                addShipingAddress(outboundID);
                 return true;
             }
             return false;
@@ -269,20 +278,43 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
     }
 
     @Override
-    public StaffOrderGoods queryOutboundInformation(Outbound outbound) {
+    public StaffOrderInformation queryOutboundInformation(Outbound outbound) {
+        StaffOrderInformation staffOrderInformation = staffMapper.queryStaffOutboundInformation(outbound.getOutboundOrderNO());
+        StaffOrderInformation shippingAddress = staffMapper.queryStaffOutboundShippingAddress(outbound.getOutboundOrderNO());
+        if (shippingAddress != null) {
+            staffOrderInformation.setArea(shippingAddress.getArea());
+            staffOrderInformation.setCity(shippingAddress.getCity());
+            staffOrderInformation.setProvince(shippingAddress.getProvince());
+            staffOrderInformation.setConsignee(shippingAddress.getConsignee());
+            staffOrderInformation.setPhone(shippingAddress.getPhone());
+            staffOrderInformation.setIsSince(shippingAddress.getIsSince());
+            staffOrderInformation.setAddress(shippingAddress.getAddress());
+        }
+        List<StaffOrderGoods> staffOrderGoods = staffMapper.queryOutbounGoodsInformation(outbound.getOutboundOrderNO());
+        for (StaffOrderGoods staffOrderGood : staffOrderGoods) {
+            staffOrderGood.setSkuName(staffMapper.querySkuName(staffOrderGood.getGoodsSkuId()));
+        }
+        staffOrderInformation.setStaffOrderGoods(staffOrderGoods);
+        return staffOrderInformation;
+    }
 
-        //todo 继续
+    @Override
+    public Boolean staffGetASingle(Outbound outbound) {
+        OutboundOrderPo outboundOrderPo = staffMapper.queryOutboundOrderInformation(outbound.getOutboundOrderNO());
+        addOutboundStaff(outboundOrderPo.getId());
+        return staffMapper.updateOutboundStatus(outbound.getOutboundOrderNO());
+    }
 
-
-
-
-
-
-
-
-
-
-        return null;
+    @Override
+    public Boolean staffDeliverGoods(DeliveryInformation deliveryInformation) {
+        OutboundOrderPo outboundOrderPo = staffMapper.queryOutboundOrderInformation(deliveryInformation.getOutboundNo());
+        addShipingAddress(outboundOrderPo.getId(), deliveryInformation.getAddressId());
+        OutboundOrderLogistics outboundOrderLogistics = new OutboundOrderLogistics();
+        outboundOrderLogistics.setAddTime(System.currentTimeMillis());
+        outboundOrderLogistics.setLogisticsNo(deliveryInformation.getLogisticsNo());
+        outboundOrderLogistics.setName(deliveryInformation.getName());
+        outboundOrderLogistics.setOutboundOrderId(outboundOrderPo.getId());
+        return staffMapper.addOutboundLogistics(outboundOrderLogistics);
     }
 
     /**
@@ -335,17 +367,18 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
      * @Author 胖
      * 出库单收货地址
      **/
-    private Boolean addShipingAddress(Integer outboundId) {
+    private Boolean addShipingAddress(Integer outboundId, Integer addressId) {
+        TblMemberDeliveryAddressShopPo memberDeliveryAddress = staffMapper.queryShippingAddress(addressId);
         ShippingAddress shippingAddress = staffMapper.queryOrderShippingAddress(outboundId);
         OutboundShippingAddress outboundShippingAddress = new OutboundShippingAddress();
-        outboundShippingAddress.setAddress(shippingAddress.getAddress());
+        outboundShippingAddress.setAddress(memberDeliveryAddress.getAddress());
         outboundShippingAddress.setAddTime(System.currentTimeMillis());
-        outboundShippingAddress.setAreaId(shippingAddress.getAreaId());
+        outboundShippingAddress.setAreaId(memberDeliveryAddress.getAreaId());
         outboundShippingAddress.setIsSince(shippingAddress.getIsSince());
         outboundShippingAddress.setMemberShopId(shippingAddress.getMemberId());
-        outboundShippingAddress.setName(shippingAddress.getConsignee());
+        outboundShippingAddress.setName(memberDeliveryAddress.getName());
         outboundShippingAddress.setOutboundOrderId(outboundId);
-        outboundShippingAddress.setPhone(shippingAddress.getPhone());
+        outboundShippingAddress.setPhone(memberDeliveryAddress.getPhone());
         return staffMapper.addOutboundShippingAddress(outboundShippingAddress);
     }
 

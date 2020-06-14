@@ -85,5 +85,19 @@ public interface TblStaffService extends IService<TblStaffPo> {
      * @Author 胖
      * 出库单详情
      **/
-    StaffOrderGoods queryOutboundInformation(Outbound outbound);
+    StaffOrderInformation queryOutboundInformation(Outbound outbound);
+
+    /**
+     * @Date 2020/6/14 10:00
+     * @Author 胖
+     * 员工领单
+     **/
+    Boolean staffGetASingle(Outbound outbound);
+
+    /**
+     * @Date 2020/6/14 10:39
+     * @Author 胖
+     * 员工发货
+     **/
+    Boolean staffDeliverGoods(DeliveryInformation deliveryInformation);
 }

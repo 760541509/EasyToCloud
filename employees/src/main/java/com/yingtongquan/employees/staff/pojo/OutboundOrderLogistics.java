@@ -1,28 +1,11 @@
-package com.yingtongquan.order.outbound.entity;
+package com.yingtongquan.employees.staff.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
-/**
- * <p>
- *
- * </p>
- *
- * @author Pang
- * @since 2020-05-12
- */
-@TableName("tbl_outbound_order_logistics")
-@ApiModel(value = "TblOutboundOrderLogisticsPo对象", description = "")
-public class TblOutboundOrderLogisticsPo implements Serializable {
+public class OutboundOrderLogistics implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     @ApiModelProperty(value = "出库单的id")
@@ -79,12 +62,12 @@ public class TblOutboundOrderLogisticsPo implements Serializable {
 
     @Override
     public String toString() {
-        return "TblOutboundOrderLogisticsPo{" +
+        return "OutboundOrderLogistics{" +
                 "id=" + id +
                 ", outboundOrderId=" + outboundOrderId +
                 ", addTime=" + addTime +
-                ", name=" + name +
-                ", logisticsNo=" + logisticsNo +
-                "}";
+                ", name='" + name + '\'' +
+                ", logisticsNo='" + logisticsNo + '\'' +
+                '}';
     }
 }

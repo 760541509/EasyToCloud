@@ -18,6 +18,15 @@
         <result column="order_no" property="orderNo"/>
         <result column="order_status" property="status"/>
         <result column="order_status_vice" property="statusVice"/>
+        <result column="note" property="note"/>
+        <result column="store_name" property="storeName"/>
+        <result column="store_icon" property="storeHeadPortrait"/>
+        <result column="goods_count" property="amountGoods"/>
+        <result column="goods_amount_total" property="goodsTotalPrice"/>
+        <result column="order_amount_total" property="orderPrice"/>
+    </resultMap>
+
+    <resultMap id="ResultAddressMap" type="com.yingtongquan.employees.staff.pojo.StaffOrderInformation">
         <result column="name" property="consignee"/>
         <result column="phone" property="phone"/>
         <result column="area" property="area"/>
@@ -25,12 +34,6 @@
         <result column="province" property="province"/>
         <result column="address" property="address"/>
         <result column="is_since" property="isSince"/>
-        <result column="note" property="note"/>
-        <result column="store_name" property="storeName"/>
-        <result column="store_icon" property="storeHeadPortrait"/>
-        <result column="goods_count" property="amountGoods"/>
-        <result column="goods_amount_total" property="goodsTotalPrice"/>
-        <result column="order_amount_total" property="orderPrice"/>
     </resultMap>
 
     <resultMap id="ResultOutboundMap" type="com.yingtongquan.employees.staff.pojo.StaffOutboundOrder">
@@ -45,6 +48,35 @@
         <result column="pay_amount" property="payTheAmount"/>
         <result column="pay_way" property="payType"/>
         <result column="serial_no" property="paySerialNumber"/>
+    </resultMap>
+
+    <resultMap id="ResultStaffMap" type="com.yingtongquan.employees.staff.pojo.StaffOrderInformation">
+        <result column="outbound_order_status" property="status"/>
+        <result column="note" property="note"/>
+        <result column="member_name" property="memberName"/>
+        <result column="id" property="memberId"/>
+        <result column="head_portrait" property="headPortrait"/>
+        <result column="store_icon" property="storeHeadPortrait"/>
+        <result column="store_name" property="storeName"/>
+        <result column="goods_count" property="amountGoods"/>
+    </resultMap>
+
+    <resultMap id="ResultShippingAddressMap" type="com.yingtongquan.employees.staff.pojo.StaffOrderInformation">
+        <result column="name" property="consignee"/>
+        <result column="phone" property="phone"/>
+        <result column="area" property="area"/>
+        <result column="city" property="city"/>
+        <result column="province" property="province"/>
+        <result column="address" property="address"/>
+        <result column="is_since" property="isSince"/>
+    </resultMap>
+
+    <resultMap id="ResultGoodsMap" type="com.yingtongquan.employees.staff.pojo.StaffOrderGoods">
+        <result column="image" property="image"/>
+        <result column="order_goods_name" property="orderGoodsName"/>
+        <result column="name" property="name"/>
+        <result column="goods_sku_id" property="goodsSkuId"/>
+        <result column="amount" property="quantityShipped"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -80,9 +112,16 @@
         insert into tbl_outbound_order_delivery_address (outbound_order_id,add_time,member_shop_id,phone,name,area_id,address,is_since)
         values (#{outboundOrderId},#{addTime},#{memberShopId},#{phone},#{name},#{areaId},#{address},#{isSince})
     </insert>
+    <insert id="addOutboundLogistics" parameterType="com.yingtongquan.employees.staff.pojo.OutboundOrderLogistics" keyProperty="id" useGeneratedKeys="true">
+        insert into tbl_outbound_order_logistics (outbound_order_id,add_time,name,logistics_no) values (#{outboundOrderId},#{addTime},#{name},#{logisticsNo})
+    </insert>
 
     <update id="updateOrderStatus">
         UPDATE tbl_order SET order_status = 5 WHERE order_no = #{orderNo}
+    </update>
+
+    <update id="updateOutboundStatus">
+        UPDATE tbl_outbound_order SET outbound_order_status = 1 WHERE outbound_order_no = #{outboundNo}
     </update>
 
     <select id="queryUser" resultType="com.yingtongquan.employees.staff.pojo.UserInformation">
@@ -163,27 +202,35 @@
         SELECT
 	        tbl_order.order_no,
 	        tbl_order.order_status,
-        	tbl_order.order_status_vice,
-        	address.name,
-        	address.phone,
-        	t1.area_name area,
-        	t2.area_name city,
-        	t3.area_name province,
-        	address.address,
-        	address.is_since,
+	        tbl_order.order_status_vice,
 	        tbl_order.note,
-        	tbl_shop.store_name,
-        	tbl_shop.store_icon,
-        	tbl_order.goods_count,
+	        tbl_shop.store_name,
+	        tbl_shop.store_icon,
+	        tbl_order.goods_count,
 	        tbl_order.goods_amount_total,
 	        tbl_order.order_amount_total
+        FROM
+	        tbl_order
+	        INNER JOIN tbl_shop ON tbl_shop.id = tbl_order.shop_id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+
+    <select id="queryOrderShipping" resultMap="ResultAddressMap">
+        SELECT
+	        address.NAME,
+	        address.phone,
+	        t1.area_name area,
+	        t2.area_name city,
+	        t3.area_name province,
+	        address.address,
+	        address.is_since
         FROM
 	        tbl_order
 	        INNER JOIN tbl_order_delivery_address address ON tbl_order.id = address.order_id
 	        INNER JOIN tbl_area t1 ON address.area_id = t1.area_id
 	        INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
 	        INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
-	        INNER JOIN tbl_shop ON tbl_shop.id = tbl_order.shop_id
         WHERE
 	        tbl_order.order_no = #{orderNo}
     </select>
@@ -367,5 +414,65 @@
 	        INNER JOIN tbl_outbound_order ON tbl_outbound_order_goods.outbound_order_id = tbl_outbound_order.id
         WHERE
 	        tbl_outbound_order.outbound_order_no = #{outboundNo}
+    </select>
+    <select id="queryStaffOutboundInformation" resultMap="ResultStaffMap">
+        SELECT
+	        tbl_outbound_order.outbound_order_status,
+	        tbl_order.note,
+	        tbl_member_shop.member_name,
+	        tbl_member_shop.id,
+	        tbl_user.head_portrait,
+	        tbl_shop.store_icon,
+	        tbl_shop.store_name,
+	        tbl_outbound_order.goods_count
+        FROM
+	        tbl_outbound_order
+	        INNER JOIN tbl_order ON tbl_order.order_no = tbl_outbound_order.order_no
+	        INNER JOIN tbl_shop ON tbl_order.shop_id = tbl_shop.id
+	        INNER JOIN tbl_member_shop ON tbl_order.member_shop_id = tbl_member_shop.id
+	        INNER JOIN tbl_user ON tbl_member_shop.user_id = tbl_user.id
+        WHERE
+	        tbl_outbound_order.order_no = #{outboundNo}
+    </select>
+    <select id="queryOutbounGoodsInformation" resultMap="ResultGoodsMap">
+        SELECT
+	        tbl_order_goods.image,
+	        tbl_order_goods.order_goods_name,
+	        tbl_goods_spu_unit.name,
+	        tbl_order_goods.goods_sku_id,
+	        tbl_outbound_order_goods.amount
+        FROM
+	        tbl_outbound_order
+	        INNER JOIN tbl_outbound_order_goods ON tbl_outbound_order.id = tbl_outbound_order_goods.outbound_order_id
+	        INNER JOIN tbl_order_goods ON tbl_outbound_order_goods.order_goods_id = tbl_order_goods.id
+	        INNER JOIN tbl_goods_spu_unit ON tbl_order_goods.goods_sku_unit_id = tbl_goods_spu_unit.id
+        WHERE
+	        tbl_outbound_order.outbound_order_no = #{outboundNo}
+    </select>
+    <select id="queryStaffOutboundShippingAddress" resultMap="ResultShippingAddressMap">
+        SELECT
+	        address.`name`,
+	        address.phone,
+	        t1.area_name area,
+	        t2.area_name city,
+	        t3.area_name province,
+	        address.address,
+	        address.is_since
+        FROM
+	        tbl_outbound_order
+	        INNER JOIN tbl_outbound_order_delivery_address address ON address.outbound_order_id = tbl_outbound_order.id
+	        INNER JOIN tbl_area t1 ON t1.area_id = address.area_id
+	        INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
+	        INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
+        WHERE
+	        tbl_outbound_order.order_no = #{outboundNo}
+    </select>
+    <select id="queryOutboundOrderInformation"
+            resultType="com.yingtongquan.employees.staff.pojo.OutboundOrderPo">
+        select id,outbound_order_no,outbound_order_status,goods_count,outbound_order_type,outbound_order_channel,add_time,order_no from tbl_outbound_order where outbound_order_no = #{outboundNo}
+    </select>
+    <select id="queryShippingAddress"
+            resultType="com.yingtongquan.employees.member.entity.TblMemberDeliveryAddressShopPo">
+        select name,phone,area_id,address from tbl_member_delivery_address_shop where id = #{id}
     </select>
 </mapper>

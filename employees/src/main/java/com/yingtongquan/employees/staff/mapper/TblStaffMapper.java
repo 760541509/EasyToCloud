@@ -1,6 +1,7 @@
 package com.yingtongquan.employees.staff.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.yingtongquan.employees.member.entity.TblMemberDeliveryAddressShopPo;
 import com.yingtongquan.employees.staff.entity.TblStaffPo;
 import com.yingtongquan.employees.staff.pojo.*;
 import org.apache.ibatis.annotations.Mapper;
@@ -61,6 +62,13 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
      * 查询订单详细的一部分
      **/
     StaffOrderInformation queryOrderInformation(String orderNo);
+
+    /**
+     * @Date 2020/6/14 10:26
+     * @Author 胖
+     * 查询订单收货地址
+     **/
+    StaffOrderInformation queryOrderShipping(String orderNo);
 
     /**
      * @Date 2020/6/12 16:43
@@ -161,6 +169,13 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
     ShippingAddress queryOrderShippingAddress(Integer outboundId);
 
     /**
+     * @Date 2020/6/14 11:59
+     * @Author 胖
+     * 查询收货地址
+     **/
+    TblMemberDeliveryAddressShopPo queryShippingAddress(Integer id);
+
+    /**
      * @Date 2020/6/13 14:20
      * @Author 胖
      * 添加出库收货地址
@@ -215,4 +230,46 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
      * 查询出库商品名称
      **/
     List<String> queryOutboundGoods(String outboundNo);
+
+    /**
+     * 2020/6/13  20:14
+     * @Author 胖
+     * 查询出库单的一部分信息
+     **/
+    StaffOrderInformation queryStaffOutboundInformation(String outboundNo);
+
+    /**
+     * @Date 2020/6/14 9:53
+     * @Author 胖
+     * 出库单商品信息
+     **/
+    List<StaffOrderGoods> queryOutbounGoodsInformation(String outboundNo);
+
+    /**
+     * 2020/6/13  20:14
+     * @Author 胖
+     * 查询出库单的收货地址
+     **/
+    StaffOrderInformation queryStaffOutboundShippingAddress(String outboundNo);
+
+    /**
+     * @Date 2020/6/14 10:33
+     * @Author 胖
+     * 查询出库单信息
+     **/
+    OutboundOrderPo queryOutboundOrderInformation(String outboundNo);
+
+    /**
+     * @Date 2020/6/14 10:37
+     * @Author 胖
+     * 修改出库单状态
+     **/
+    Boolean updateOutboundStatus(String outboundNo);
+
+    /**
+     * @Date 2020/6/14 13:59
+     * @Author 胖
+     * 添加出库物流单
+     **/
+    Boolean addOutboundLogistics(OutboundOrderLogistics outboundOrderLogistics);
 }
