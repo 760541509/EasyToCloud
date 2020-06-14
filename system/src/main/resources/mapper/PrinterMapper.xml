@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtongquan.system.printer.dao.PrinterDao">
+
+    <insert id="addPrinterToken" parameterType="com.yingtongquan.system.printer.entity.PrinterPo">
+        insert into tbl_printer_token(token,add_time) values (#{token},#{addTime})
+    </insert>
+    <update id="updateToken">
+        update tbl_printer_token set token = #{token},add_time = #{addTime} where id = 1
+    </update>
+    <select id="queryToken" resultType="com.yingtongquan.system.printer.entity.PrinterPo">
+        select token,add_time from tbl_printer_token
+    </select>
+
+</mapper>

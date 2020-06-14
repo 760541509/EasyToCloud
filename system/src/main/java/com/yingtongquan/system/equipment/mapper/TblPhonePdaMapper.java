@@ -15,4 +15,24 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TblPhonePdaMapper extends BaseMapper<TblPhonePdaPo> {
 
+    /**
+     * @Date 2020/6/14 15:48
+     * @Author 胖
+     * 添加手机
+     **/
+    Boolean addShopPhoneEquipment(TblPhonePdaPo phonePdaPo);
+
+    /**
+     * @Date 2020/6/14 17:25
+     * @Author 胖
+     * 修改手机设备
+     **/
+    Boolean updatePhoneEquipment(Integer state,Integer id);
+
+    /**
+     * @Date 2020/6/14 17:56
+     * @Author 胖
+     * 删除手机设备
+     **/
+    Boolean deletePhoneEquipment(Integer equipmentId);
 }

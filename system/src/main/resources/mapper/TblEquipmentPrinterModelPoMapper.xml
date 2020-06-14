@@ -4,10 +4,10 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.yingtongquan.system.equipment.entity.TblEquipmentPrinterModelPo">
-                <id column="id" property="id" />
-                <result column="name" property="name" />
-                <result column="paper_size" property="paperSize" />
-                <result column="state" property="state" />
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="paper_size" property="paperSize"/>
+        <result column="state" property="state"/>
     </resultMap>
 
 
@@ -15,6 +15,16 @@
     <sql id="Base_Column_List">
         id, name, paper_size, state
     </sql>
+    <insert id="addPrinterModel" parameterType="com.yingtongquan.system.equipment.entity.TblEquipmentPrinterModelPo"
+            keyProperty="id" useGeneratedKeys="true">
+        insert into tbl_equipment_printer_model(name, paper_size, state) values (#{name},#{paperSize},#{state})
+    </insert>
+    <update id="updateShopPrinter">
+        update tbl_equipment_printer_model set name = #{printerName},paper_size = #{papeSize},state = #{state} where id = #{id}
+    </update>
+    <delete id="deleteShopPrinter">
+        delete from tbl_equipment_printer_model where id = #{modelId}
+    </delete>
 
 
 </mapper>

@@ -2,6 +2,7 @@ package com.yingtongquan.system;
 
 import com.yingtongquan.startcommon.pojo.LatAndLon;
 import com.yingtongquan.startcommon.util.AddressUtil;
+import com.yingtongquan.startcommon.util.TimeUtil;
 import com.yingtongquan.system.user.mapper.UserAndShopMapper;
 import com.yingtongquan.system.user.pojo.AddressInformation;
 import org.apache.commons.lang.RandomStringUtils;
@@ -42,8 +43,7 @@ public class MyOneTest {
 
     @Test
     public void test2() {
-
-        System.out.println(RandomStringUtils.randomAlphanumeric(6));
+        System.out.println(TimeUtil.timeConversionMilliseconds("2020-06-01 17:51:37"));
     }
 
 }

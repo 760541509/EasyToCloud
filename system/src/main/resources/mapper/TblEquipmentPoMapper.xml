@@ -4,18 +4,30 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.yingtongquan.system.equipment.entity.TblEquipmentPo">
-                <id column="id" property="id" />
-                <result column="staff_id" property="staffId" />
-                <result column="shop_id" property="shopId" />
-                <result column="name" property="name" />
-                <result column="type" property="type" />
+        <id column="id" property="id"/>
+        <result column="staff_id" property="staffId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
     </resultMap>
-
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, staff_id, shop_id, name, type
     </sql>
+    <insert id="addShopEquipment" parameterType="com.yingtongquan.system.equipment.entity.TblEquipmentPo"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_equipment (staff_id,shop_id,name,type) values (#{staffId},#{shopId},#{name},#{type})
+    </insert>
+    <update id="updateShopEquipment" parameterType="com.yingtongquan.system.equipment.pojo.UpdateEquipment">
+        update tbl_equipment set name = #{name}<if test="staffId != null">,staff_id = #{staffId}</if> where id = #{id}
+    </update>
+    <delete id="deleteShopEquipment">
+        delete from tbl_equipment where id = #{equipmentId}
+    </delete>
+    <select id="queryStaffId" resultType="java.lang.Integer">
+        select id from tbl_staff where user_id = #{userId}
+    </select>
 
 
 </mapper>

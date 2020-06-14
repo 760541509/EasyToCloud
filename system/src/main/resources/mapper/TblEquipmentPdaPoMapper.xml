@@ -4,17 +4,26 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.yingtongquan.system.equipment.entity.TblEquipmentPdaPo">
-                <id column="id" property="id" />
-                <result column="equipment_id" property="equipmentId" />
-                <result column="mac" property="mac" />
-                <result column="status" property="status" />
+        <id column="id" property="id"/>
+        <result column="equipment_id" property="equipmentId"/>
+        <result column="mac" property="mac"/>
+        <result column="state" property="state"/>
     </resultMap>
 
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, equipment_id, mac, status
+        id, equipment_id, mac, state
     </sql>
+    <insert id="addShopPDA">
+        insert into tbl_equipment_pda(equipment_id, mac, state) values (#{equipmentId},#{mac},#{state})
+    </insert>
+    <update id="updateShopPDA">
+        update tbl_equipment_pda set state = #{state} where equipment_id = #{equipmentId}
+    </update>
+    <delete id="deleteShopPDA">
+        delete from tbl_equipment_pda where equipment_id = #{equipmentId}
+    </delete>
 
 
 </mapper>

@@ -10,7 +10,7 @@ public class TimeUtil {
      * @Date 2020/4/18 13:26
      * 时间转秒
      **/
-    public Long timeConversionMilliseconds(String time) {
+    public static Long timeConversionMilliseconds(String time) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = null;
         try {
@@ -18,7 +18,7 @@ public class TimeUtil {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return date.getTime() / 1000;
+        return date.getTime();
     }
 
 

@@ -2,6 +2,9 @@ package com.yingtongquan.system.equipment.service;
 
 import com.yingtongquan.system.equipment.entity.TblEquipmentPo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.yingtongquan.system.equipment.pojo.DeleteEquipment;
+import com.yingtongquan.system.equipment.pojo.ShopEquipment;
+import com.yingtongquan.system.equipment.pojo.UpdateEquipment;
 
 /**
  * <p>
@@ -18,5 +21,20 @@ public interface TblEquipmentService extends IService<TblEquipmentPo> {
      * @Author 胖
      * 添加设备
      **/
-    Boolean addShopEquipment();
+    Boolean addShopEquipment(ShopEquipment shopEquipment);
+
+    /**
+     * @Date 2020/6/14 17:15
+     * @Author 胖
+     * 修改设备
+     **/
+    Boolean updateShopEquipment(UpdateEquipment updateEquipment);
+
+    /**
+     * @Date 2020/6/14 17:38
+     * @Author 胖
+     * 删除设备
+     **/
+    Boolean deleteShopEquipment(DeleteEquipment deleteEquipment);
+
 }
