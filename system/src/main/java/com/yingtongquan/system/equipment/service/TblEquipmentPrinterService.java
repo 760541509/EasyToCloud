@@ -33,5 +33,5 @@ public interface TblEquipmentPrinterService extends IService<TblEquipmentPrinter
      * @Author 胖
      * 删除店铺打印机
      **/
-    Boolean deleteShopPrinter(Integer equipmentId, String printerCode);
+    Boolean deleteShopPrinter(Integer equipmentId);
 }

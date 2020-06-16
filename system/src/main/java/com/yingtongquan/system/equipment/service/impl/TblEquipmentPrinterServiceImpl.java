@@ -67,12 +67,12 @@ public class TblEquipmentPrinterServiceImpl extends ServiceImpl<TblEquipmentPrin
     }
 
     @Override
-    public Boolean deleteShopPrinter(Integer equipmentId,String printerCode) {
+    public Boolean deleteShopPrinter(Integer equipmentId) {
         TblEquipmentPrinterPo equipmentPrinterPo = equipmentPrinterMapper.queryEquipmentInformation(equipmentId);
         Boolean flag = equipmentPrinterModelService.deleteShopPrinter(equipmentPrinterPo.getModelId());
         if (flag) {
             equipmentPrinterMapper.deleteShopPrinter(equipmentId);
-            PrinterUtil.unbindPrinter(printerCode,getToken());
+            PrinterUtil.unbindPrinter(equipmentPrinterPo.getMakeCoding(), getToken());
             return true;
         }
         return false;
