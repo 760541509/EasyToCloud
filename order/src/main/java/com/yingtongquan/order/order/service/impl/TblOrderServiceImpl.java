@@ -329,8 +329,10 @@ public class TblOrderServiceImpl extends ServiceImpl<TblOrderMapper, TblOrderPo>
             orderGoodsService.addIndividualTravelerOrderGoodsInformation(orderGood, orderNumber, shopId, orderAndMemberInformation.getMemberShopPriceId(), orderAndMemberInformation.getMemberId());
         }
         //收货地址
-        if (orderAndMemberInformation.getIsSince() == 1) {
-            orderDeliveryAddressService.addIndividualShippingAddress(orderPo.getId(), orderAndMemberInformation.getMemberShopAddressId(), orderAndMemberInformation.getMemberId());
+        if (orderAndMemberInformation.getMemberId() != 0) {
+            if (orderAndMemberInformation.getIsSince() == 1) {
+                orderDeliveryAddressService.addIndividualShippingAddress(orderAndMemberInformation.getMemberShopAddressId(), orderPo.getId());
+            }
         }
         //订单员工表
         orderStaffService.addStaffAndOrder(orderNumber);

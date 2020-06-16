@@ -57,6 +57,12 @@ public class TblMemberShopServiceImpl extends ServiceImpl<TblMemberShopMapper, T
     @Override
     public ShopMemberInfo queryMemberInformation(QueryMemberInformation memberInformation) {
         ShopMemberInfo shopMemberInfo = memberShopMapper.queryMemberInformation(memberInformation.getId());
+        Integer weChat = memberShopMapper.bindWeChat(shopMemberInfo.getUserId());
+        if (weChat == null) {
+            shopMemberInfo.setBindWeChat(false);
+        } else {
+            shopMemberInfo.setBindWeChat(true);
+        }
         shopMemberInfo.setMemberAddresses(memberShopMapper.queryMemberShippingAddress(shopMemberInfo.getId()));
         return shopMemberInfo;
     }

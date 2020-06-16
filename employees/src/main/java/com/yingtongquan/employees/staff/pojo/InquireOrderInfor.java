@@ -18,12 +18,6 @@ public class InquireOrderInfor implements Serializable {
     @ApiModelProperty(value = "手机号、名字、订单号")
     private String phoneAndNameAndOrderNo;
 
-    @ApiModelProperty(value = "金额排序")
-    private String money;
-
-    @ApiModelProperty(value = "时间排序")
-    private String time;
-
     @ApiModelProperty(value = "第几页")
     private Integer page;
 
@@ -68,22 +62,6 @@ public class InquireOrderInfor implements Serializable {
         this.phoneAndNameAndOrderNo = phoneAndNameAndOrderNo;
     }
 
-    public String getMoney() {
-        return money;
-    }
-
-    public void setMoney(String money) {
-        this.money = money;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     public Integer getPage() {
         return page;
     }
@@ -123,8 +101,6 @@ public class InquireOrderInfor implements Serializable {
                 ", statusVice=" + statusVice +
                 ", shopId=" + shopId +
                 ", phoneAndNameAndOrderNo='" + phoneAndNameAndOrderNo + '\'' +
-                ", money='" + money + '\'' +
-                ", time='" + time + '\'' +
                 ", page=" + page +
                 ", pageStart=" + pageStart +
                 ", pageEnd=" + pageEnd +

@@ -29,6 +29,10 @@ public class UserAddress implements Serializable {
     @ApiModelProperty(value = "详细地址")
     private String address;
 
+    @ApiModelProperty(value = "会员ID")
+    private Integer memberId;
+
+    @ApiModelProperty(value = "地区ID")
     private Integer areaId;
 
     public Integer getId() {
@@ -95,6 +99,14 @@ public class UserAddress implements Serializable {
         this.address = address;
     }
 
+    public Integer getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Integer memberId) {
+        this.memberId = memberId;
+    }
+
     public Integer getAreaId() {
         return areaId;
     }
@@ -114,6 +126,7 @@ public class UserAddress implements Serializable {
                 ", city='" + city + '\'' +
                 ", province='" + province + '\'' +
                 ", address='" + address + '\'' +
+                ", memberId=" + memberId +
                 ", areaId=" + areaId +
                 '}';
     }

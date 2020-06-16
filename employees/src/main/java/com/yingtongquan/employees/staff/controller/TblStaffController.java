@@ -6,6 +6,8 @@ import com.yingtongquan.employees.staff.pojo.*;
 import com.yingtongquan.employees.staff.service.TblStaffRoleService;
 import com.yingtongquan.employees.staff.service.TblStaffService;
 import com.yingtongquan.startcommon.base.ResultVo;
+import com.yingtongquan.startcommon.util.ServiceIn;
+import com.yingtongquan.startcommon.util.ServiceUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -101,7 +103,12 @@ public class TblStaffController {
     @ApiOperation(value = "派发订单")
     @PostMapping("/distributingOrder")
     public ResultVo distributingOrder(@RequestBody DistributeOrder distributeOrder) {
-        return ResultVo.successResult(staffService.distributingOrder(distributeOrder));
+        return new ServiceUtil().execute(new ServiceIn() {
+            @Override
+            public Object dataOp() throws Exception {
+                return staffService.distributingOrder(distributeOrder);
+            }
+        });
     }
 
     @ApiOperation(value = "订单取消")

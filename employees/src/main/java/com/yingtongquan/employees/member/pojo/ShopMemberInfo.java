@@ -23,8 +23,14 @@ public class ShopMemberInfo implements Serializable {
     @ApiModelProperty(value = "注册时间")
     private Long addTime;
 
+    @ApiModelProperty(value = "用户ID")
+    private Integer userId;
+
     @ApiModelProperty(value = "收货地址详细")
     private List<MemberAddress> memberAddresses = new ArrayList<>();
+
+    @ApiModelProperty(value = "是否绑定微信")
+    private Boolean bindWeChat;
 
     public Integer getId() {
         return id;
@@ -66,12 +72,28 @@ public class ShopMemberInfo implements Serializable {
         this.addTime = addTime;
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     public List<MemberAddress> getMemberAddresses() {
         return memberAddresses;
     }
 
     public void setMemberAddresses(List<MemberAddress> memberAddresses) {
         this.memberAddresses = memberAddresses;
+    }
+
+    public Boolean getBindWeChat() {
+        return bindWeChat;
+    }
+
+    public void setBindWeChat(Boolean bindWeChat) {
+        this.bindWeChat = bindWeChat;
     }
 
     @Override
@@ -82,7 +104,9 @@ public class ShopMemberInfo implements Serializable {
                 ", phone='" + phone + '\'' +
                 ", headPortrait='" + headPortrait + '\'' +
                 ", addTime=" + addTime +
+                ", userId=" + userId +
                 ", memberAddresses=" + memberAddresses +
+                ", bindWeChat=" + bindWeChat +
                 '}';
     }
 }

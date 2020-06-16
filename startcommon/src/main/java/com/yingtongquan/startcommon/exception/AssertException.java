@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @ControllerAdvice
 @ResponseBody
-public class AssertException extends Throwable {
+public class AssertException extends RuntimeException {
 
     private static Logger logger = LoggerFactory.getLogger(AssertException.class);
 

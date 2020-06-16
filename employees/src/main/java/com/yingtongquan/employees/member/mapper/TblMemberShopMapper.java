@@ -59,7 +59,7 @@ public interface TblMemberShopMapper extends BaseMapper<TblMemberShopPo> {
     Boolean addMemberAddress(TblMemberDeliveryAddressShopPo memberDeliveryAddress);
 
     //查询会员信息
-    ShopMemberInfo queryMemberInformation(Integer id);
+    ShopMemberInfo  queryMemberInformation(Integer id);
 
     //查询收货地址
     List<MemberAddress> queryMemberShippingAddress(Integer memberId);

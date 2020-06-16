@@ -4,15 +4,15 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.yingtongquan.order.order.entity.TblOrderDeliveryAddressPo">
-        <id column="id" property="id" />
-        <result column="order_id" property="orderId" />
-        <result column="add_time" property="addTime" />
-        <result column="member_shop_id" property="memberShopId" />
-        <result column="phone" property="phone" />
-        <result column="name" property="name" />
-        <result column="area_id" property="areaId" />
-        <result column="address" property="address" />
-        <result column="is_since" property="isSince" />
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="add_time" property="addTime"/>
+        <result column="member_shop_id" property="memberShopId"/>
+        <result column="phone" property="phone"/>
+        <result column="name" property="name"/>
+        <result column="area_id" property="areaId"/>
+        <result column="address" property="address"/>
+        <result column="is_since" property="isSince"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -25,10 +25,11 @@
     </insert>
     <select id="queryUserShippingAddress" resultType="com.yingtongquan.order.order.pojo.UserAddress">
         SELECT
+            tbl_member_shop.id member_id,
         	address.id,
         	address.phone,
         	tbl_member_shop.member_name,
-        	tbl_member_shop.head_portrait,
+        	tbl_user.head_portrait,
         	address.area_id,
         	t1.area_name area,
 	        t2.area_name city,
@@ -37,6 +38,7 @@
         FROM
 	        tbl_member_delivery_address_shop address
 	        INNER JOIN tbl_member_shop ON address.member_shop_id = tbl_member_shop.id
+	        INNER JOIN tbl_user on tbl_member_shop.user_id = tbl_user.id
 	        INNER JOIN tbl_area t1 ON address.area_id = t1.area_id
 	        INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
 	        INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id

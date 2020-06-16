@@ -3,6 +3,8 @@ package com.yingtongquan.employees.staff.pojo;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StaffOrderGoods implements Serializable {
 
@@ -21,6 +23,12 @@ public class StaffOrderGoods implements Serializable {
     @ApiModelProperty(value = "规格描述")
     private String skuName;
 
+    @ApiModelProperty(hidden = true)
+    private Integer goodsSkuUnitId;
+
+    @ApiModelProperty(value = "对应的基本单位个数")
+    private Integer unitAmount;
+
     @ApiModelProperty(value = "单位名字")
     private String name;
 
@@ -35,6 +43,12 @@ public class StaffOrderGoods implements Serializable {
 
     @ApiModelProperty(value = "已发货数量")
     private Integer quantityShipped;
+
+    @ApiModelProperty(value = "店铺信息")
+    private List<StoresInformation> storesInformations = new ArrayList<>();
+
+    @ApiModelProperty(value = "仓库信息")
+    private List<WarehouseInformation> warehouseInformations = new ArrayList<>();
 
     public String getImage() {
         return image;
@@ -74,6 +88,22 @@ public class StaffOrderGoods implements Serializable {
 
     public void setSkuName(String skuName) {
         this.skuName = skuName;
+    }
+
+    public Integer getGoodsSkuUnitId() {
+        return goodsSkuUnitId;
+    }
+
+    public void setGoodsSkuUnitId(Integer goodsSkuUnitId) {
+        this.goodsSkuUnitId = goodsSkuUnitId;
+    }
+
+    public Integer getUnitAmount() {
+        return unitAmount;
+    }
+
+    public void setUnitAmount(Integer unitAmount) {
+        this.unitAmount = unitAmount;
     }
 
     public String getName() {
@@ -116,6 +146,22 @@ public class StaffOrderGoods implements Serializable {
         this.quantityShipped = quantityShipped;
     }
 
+    public List<StoresInformation> getStoresInformations() {
+        return storesInformations;
+    }
+
+    public void setStoresInformations(List<StoresInformation> storesInformations) {
+        this.storesInformations = storesInformations;
+    }
+
+    public List<WarehouseInformation> getWarehouseInformations() {
+        return warehouseInformations;
+    }
+
+    public void setWarehouseInformations(List<WarehouseInformation> warehouseInformations) {
+        this.warehouseInformations = warehouseInformations;
+    }
+
     @Override
     public String toString() {
         return "StaffOrderGoods{" +
@@ -124,11 +170,15 @@ public class StaffOrderGoods implements Serializable {
                 ", orderGoodsName='" + orderGoodsName + '\'' +
                 ", goodsSkuId=" + goodsSkuId +
                 ", skuName='" + skuName + '\'' +
+                ", goodsSkuUnitId=" + goodsSkuUnitId +
+                ", unitAmount=" + unitAmount +
                 ", name='" + name + '\'' +
                 ", amount=" + amount +
                 ", price=" + price +
                 ", originalPrice=" + originalPrice +
                 ", quantityShipped=" + quantityShipped +
+                ", storesInformations=" + storesInformations +
+                ", warehouseInformations=" + warehouseInformations +
                 '}';
     }
 }

@@ -1,5 +1,6 @@
 package com.yingtongquan.employees.staff.service.impl;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yingtongquan.employees.goods.entity.TblShopGoodsSkuStorePo;
@@ -12,14 +13,13 @@ import com.yingtongquan.employees.staff.pojo.*;
 import com.yingtongquan.employees.staff.service.TblStaffRoleService;
 import com.yingtongquan.employees.staff.service.TblStaffService;
 import com.yingtongquan.startcommon.base.ResultVo;
+import com.yingtongquan.startcommon.exception.AssertException;
 import com.yingtongquan.startcommon.util.HttpUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * <p>
@@ -58,6 +58,7 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
 
     @Override
     public List<OrderInfromation> theEmployeeQueriesTheOrderByStatus(InquireOrderInfor inquireOrderInfor) {
+        //todo 记得释放注释
 //        String token = request.getHeader("token");
 //        Integer shopId = HttpUtil.getShopId(token);
         inquireOrderInfor.setShopId(10003);
@@ -65,6 +66,19 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
         List<OrderInfromation> orderInfromations = staffMapper.theEmployeeQueriesTheOrderByStatus(inquireOrderInfor);
         for (int i = 0; i < orderInfromations.size(); i++) {
             String name = null;
+            if (orderInfromations.get(i).getMemberId() != 0) {
+                MemberInformation memberInformation = staffMapper.queryOrderMemberInfor(orderInfromations.get(i).getOrderNo());
+                OrderShippingAddress orderShippingAddress = staffMapper.shippingAddress(orderInfromations.get(i).getOrderNo());
+                orderInfromations.get(i).setMemberName(memberInformation.getMemberName());
+                orderInfromations.get(i).setHeadPortrait(memberInformation.getHeadPortrait());
+                orderInfromations.get(i).setMemberId(memberInformation.getId());
+                if (orderShippingAddress != null) {
+                    orderInfromations.get(i).setAddress(orderShippingAddress.getAddress());
+                    orderInfromations.get(i).setArea(orderShippingAddress.getArea());
+                    orderInfromations.get(i).setCity(orderShippingAddress.getCity());
+                    orderInfromations.get(i).setProvince(orderShippingAddress.getProvince());
+                }
+            }
             List<String> goodsName = staffMapper.queryOrderGoodsName(orderInfromations.get(i).getOrderNo());
             orderInfromations.get(i).setHaveToPay(staffMapper.queryOrderPayAmount(orderInfromations.get(i).getOrderNo()));
             for (int j = 0; j < goodsName.size(); j++) {
@@ -131,14 +145,18 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
     @Override
     public Boolean employeesCollection(StaffCollection staffCollection) {
         Integer staffId = staffMapper.queryStaffId(HttpUtil.getCurUserId(request.getHeader("token")));
-        OrderDeal orderDeal = new OrderDeal();
-        orderDeal.setAddTime(System.currentTimeMillis());
-        orderDeal.setOrderId(staffMapper.queryOrderId(staffCollection.getOrderNo()));
-        orderDeal.setPayAmount(staffCollection.getMoeny());
-        orderDeal.setPayWay(staffCollection.getPayType());
-        orderDeal.setSerialNo(UUID.randomUUID().toString().replace("-", "").substring(0, 14).toUpperCase());
-        orderDeal.setStaffId(staffId);
-        return staffMapper.addOrderDeal(orderDeal);
+        Boolean collection = staffMapper.orderCollection(staffCollection.getOrderNo());
+        if (collection) {
+            OrderDeal orderDeal = new OrderDeal();
+            orderDeal.setAddTime(System.currentTimeMillis());
+            orderDeal.setOrderId(staffMapper.queryOrderId(staffCollection.getOrderNo()));
+            orderDeal.setPayAmount(staffCollection.getMoeny());
+            orderDeal.setPayWay(staffCollection.getPayType());
+            orderDeal.setSerialNo(UUID.randomUUID().toString().replace("-", "").substring(0, 14).toUpperCase());
+            orderDeal.setStaffId(staffId);
+            return staffMapper.addOrderDeal(orderDeal);
+        }
+        return false;
     }
 
     @Override
@@ -146,74 +164,110 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
         List<StaffOrderGoods> staffOrderGoods = staffMapper.queryGoods(order.getOrderNo());
         for (StaffOrderGoods staffOrderGood : staffOrderGoods) {
             staffOrderGood.setSkuName(staffMapper.querySkuName(staffOrderGood.getGoodsSkuId()));
+            staffOrderGood.setWarehouseInformations(staffMapper.queryWarehouseInformation(staffOrderGood.getGoodsSkuId()));
+            staffOrderGood.setStoresInformations(staffMapper.queryStoresInformation(staffOrderGood.getGoodsSkuId()));
         }
         return staffOrderGoods;
     }
 
     @Override
     public Boolean distributingOrder(DistributeOrder distributeOrder) {
+
+        //todo 还有BUG
+
+        Map<Integer, Integer> orderMap = new HashMap<>();
+        Map<Integer, Integer> outboundMap = new HashMap<>();
+        //获取request中的token
         Integer curUserId = HttpUtil.getCurUserId(request.getHeader("token"));
+        //通过token中的用户ID获取到员工ID
         Integer staffId = staffMapper.queryStaffId(curUserId);
+        //发货的总数量
         Integer goodsCount = 0;
-        Integer outboundID;
+        Integer outboundID = 0;
+        //仓库出货或者店铺出货的对象
         List<TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa> shopGoodsSkuStore = new ArrayList<>();
         List<TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa> warehouseGoodsSkuStore = new ArrayList<>();
         TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa goodsSkuStore = new TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa();
         TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa warehouseGoods = new TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa();
-        for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
+        //订单中需要出库的商品集合
+        List<DistributeOrderGoods> distributeOrderGoods = distributeOrder.getDistributeOrderGoods();
+        //商品基本信息
+        List<StaffOrderGoods> staffOrderGoods = staffMapper.queryGoods(distributeOrder.getOrderNo());
+        //计算出出货的数量和统计总出货数量
+        for (DistributeOrderGoods distributeOrderGood : distributeOrderGoods) {
+            //基本单位数量
             Integer unit = staffMapper.queryGoodsSpuUnit(distributeOrderGood.getGoodsSkuUnitId());
+            //发货的基本数量（需要发送的数量 * 基本单位）
             distributeOrderGood.setStoreAmount(distributeOrderGood.getStoreAmount() * unit);
             goodsCount = goodsCount + distributeOrderGood.getStoreAmount();
+            orderMap.computeIfAbsent(distributeOrderGood.getId(), k -> 0);
+            orderMap.put(distributeOrderGood.getId(), orderMap.get(distributeOrderGood.getId()) + distributeOrderGood.getStoreAmount());
         }
-        if (distributeOrder.getAutomaticLedSingle() == 0) {
-            outboundID = addOutboundOrder(distributeOrder.getAutomaticLedSingle(), goodsCount, distributeOrder.getOrderNo());
-            for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
-                addOutboundGoods(distributeOrderGood, outboundID);
-            }
-            return true;
-        } else {
-            //创建出库单
-            outboundID = addOutboundOrder(distributeOrder.getAutomaticLedSingle(), goodsCount, distributeOrder.getOrderNo());
-            String outboundNo = staffMapper.queryOutboundNo(outboundID);
-            for (DistributeOrderGoods distributeOrderGood : distributeOrder.getDistributeOrderGoods()) {
-                //查询基本单位
-                Integer unit = staffMapper.queryGoodsSpuUnit(distributeOrderGood.getGoodsSkuUnitId());
-                //计算基本单位
-                distributeOrderGood.setStoreAmount(distributeOrderGood.getStoreAmount() * unit);
-                //添加出库商品
-                addOutboundGoods(distributeOrderGood, outboundID);
-                //出库
-                if (distributeOrderGood.getStoreId() != null) {
-                    goodsSkuStore.setOutboundOrderNo(outboundNo);
-                    goodsSkuStore.setFkIdStaff(staffId);
-                    goodsSkuStore.setFkGoodsSkuId(distributeOrderGood.getGoodsSkuId());
-                    goodsSkuStore.setFkShopId(distributeOrderGood.getStoreId());
-                    goodsSkuStore.setType(1);
-                    goodsSkuStore.setStore(distributeOrderGood.getStoreAmount() * -1);
-                    shopGoodsSkuStore.add(goodsSkuStore);
-                } else if (distributeOrderGood.getWarehouseId() != null) {
-                    warehouseGoods.setOutboundOrderNo(outboundNo);
-                    warehouseGoods.setFkIdStaff(staffId);
-                    warehouseGoods.setFkGoodsSkuId(distributeOrderGood.getGoodsSkuId());
-                    warehouseGoods.setFkWarehouseId(distributeOrderGood.getWarehouseId());
-                    warehouseGoods.setType(1);
-                    warehouseGoods.setStore(distributeOrderGood.getStoreAmount() * -1);
-                    warehouseGoodsSkuStore.add(warehouseGoods);
+        List<IncomingGoods> incomingGoods = staffMapper.queryGoodsInfo(null, distributeOrder.getOrderNo());
+        for (IncomingGoods incomingGood : incomingGoods) {
+            outboundMap.computeIfAbsent(incomingGood.getOrderGoodsId(), k -> 0);
+            outboundMap.put(incomingGood.getOrderGoodsId(), outboundMap.get(incomingGood.getOrderGoodsId()) + incomingGood.getAmount());
+        }
+        Set keySet = orderMap.keySet();
+        Iterator it1 = keySet.iterator();
+        while (it1.hasNext()) {
+            Integer id = (Integer) it1.next();
+            Integer goodsAmount = orderMap.get(id);
+            for (DistributeOrderGoods distributeOrderGood : distributeOrderGoods) {
+                for (StaffOrderGoods staffOrderGood : staffOrderGoods) {
+                    if (staffOrderGood.getId().equals(id)) {
+                        Integer outboundNumber = outboundMap.get(id);
+                        if (outboundNumber == null) {
+                            outboundNumber = 0;
+                        }
+                        Integer amount = (staffOrderGood.getAmount() * staffOrderGood.getUnitAmount()) - outboundNumber;
+                        if (goodsAmount <= amount) {
+                            if (distributeOrder.getAutomaticLedSingle() == 0) {
+                                //出库单号
+                                outboundID = addOutboundOrder(distributeOrder.getAutomaticLedSingle(), goodsCount, distributeOrder.getOrderNo());
+                                addOutboundGoods(distributeOrderGood, outboundID);
+                            } else {
+                                outboundID = addOutboundOrder(distributeOrder.getAutomaticLedSingle(), goodsCount, distributeOrder.getOrderNo());
+                                String outboundNo = staffMapper.queryOutboundNo(outboundID);
+                                //查询基本单位
+                                Integer unit = staffMapper.queryGoodsSpuUnit(distributeOrderGood.getGoodsSkuUnitId());
+                                //计算基本单位
+                                distributeOrderGood.setStoreAmount(distributeOrderGood.getStoreAmount() * unit);
+                                //添加出库商品
+                                addOutboundGoods(distributeOrderGood, outboundID);
+                                //出库
+                                if (distributeOrderGood.getStoreId() != null) {                                  //店铺出货
+                                    goodsSkuStore.setOutboundOrderNo(outboundNo);
+                                    goodsSkuStore.setFkIdStaff(staffId);
+                                    goodsSkuStore.setFkGoodsSkuId(distributeOrderGood.getGoodsSkuId());
+                                    goodsSkuStore.setFkShopId(distributeOrderGood.getStoreId());
+                                    goodsSkuStore.setType(1);
+                                    goodsSkuStore.setStore(distributeOrderGood.getStoreAmount() * -1);
+                                    shopGoodsSkuStore.add(goodsSkuStore);
+                                } else if (distributeOrderGood.getWarehouseId() != null) {                      //仓库出货
+                                    warehouseGoods.setOutboundOrderNo(outboundNo);
+                                    warehouseGoods.setFkIdStaff(staffId);
+                                    warehouseGoods.setFkGoodsSkuId(distributeOrderGood.getGoodsSkuId());
+                                    warehouseGoods.setFkWarehouseId(distributeOrderGood.getWarehouseId());
+                                    warehouseGoods.setType(1);
+                                    warehouseGoods.setStore(distributeOrderGood.getStoreAmount() * -1);
+                                    warehouseGoodsSkuStore.add(warehouseGoods);
+                                }
+                            }
+                        } else {
+                            throw new IllegalArgumentException("发货的数量超出实际订单所需要的数量");
+                        }
+
+                        if (outboundID != 0) {
+                            //填写员工出库单
+                            addOutboundStaff(outboundID);
+                            return true;
+                        }
+                    }
                 }
             }
-            if (shopGoodsSkuStore.size() > 0) {
-                goodsSpuService.addShopGoodsSkuStore(shopGoodsSkuStore);
-            } else if (warehouseGoodsSkuStore.size() > 0) {
-                goodsSpuService.addWarehouseGoodsSkuStore(warehouseGoodsSkuStore);
-            }
-
-            if (outboundID != 0) {
-                //填写员工出库单
-                addOutboundStaff(outboundID);
-                return true;
-            }
-            return false;
         }
+        return false;
     }
 
     @Override
@@ -231,7 +285,7 @@ public class TblStaffServiceImpl extends ServiceImpl<TblStaffMapper, TblStaffPo>
     public void cancelTheDelivery(Outbound outbound) {
         Integer curUserId = HttpUtil.getCurUserId(request.getHeader("token"));
         Integer staffId = staffMapper.queryStaffId(curUserId);
-        List<IncomingGoods> incomingGoods = staffMapper.queryGoodsInfo(outbound.getOutboundOrderNO());
+        List<IncomingGoods> incomingGoods = staffMapper.queryGoodsInfo(outbound.getOutboundOrderNO(), null);
         List<TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa> shopGoodsSkuStore = new ArrayList<>();
         List<TblWarehouseGoodsSkuStorePo.TblWarehouseGoodsSkuStorePoAddPa> warehouseGoodsSkuStore = new ArrayList<>();
         TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa goodsSkuStore = new TblShopGoodsSkuStorePo.TblShopGoodsSkuStorePoAddPa();

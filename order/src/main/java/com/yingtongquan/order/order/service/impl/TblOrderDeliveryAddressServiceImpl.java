@@ -46,15 +46,13 @@ public class TblOrderDeliveryAddressServiceImpl extends ServiceImpl<TblOrderDeli
     }
 
     @Override
-    public Boolean addIndividualShippingAddress(Integer orderId,Integer addressId,Integer memberId) {
-
-        UserAddress userAddress = orderDeliveryAddressMapper.queryUserShippingAddress(addressId);
-
+    public Boolean addIndividualShippingAddress(Integer shippingAddressId, Integer orderId) {
+        UserAddress userAddress = orderDeliveryAddressMapper.queryUserShippingAddress(shippingAddressId);
         TblOrderDeliveryAddressPo orderDeliveryAddressPo = new TblOrderDeliveryAddressPo();
         orderDeliveryAddressPo.setPhone(userAddress.getPhone());
         orderDeliveryAddressPo.setOrderId(orderId);
         orderDeliveryAddressPo.setName(userAddress.getMemberName());
-        orderDeliveryAddressPo.setMemberShopId(memberId);
+        orderDeliveryAddressPo.setMemberShopId(userAddress.getMemberId());
         orderDeliveryAddressPo.setIsSince(1);
         orderDeliveryAddressPo.setAreaId(userAddress.getAreaId());
         orderDeliveryAddressPo.setAddTime(System.currentTimeMillis());

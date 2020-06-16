@@ -79,6 +79,18 @@
         <result column="amount" property="quantityShipped"/>
     </resultMap>
 
+    <resultMap id="ResultWarehouseMap" type="com.yingtongquan.employees.staff.pojo.WarehouseInformation">
+        <result column="id" property="id"/>
+        <result column="store" property="goodsNumber"/>
+        <result column="warehouse_name" property="warehouseName"/>
+    </resultMap>
+
+    <resultMap id="ResultStoresMap" type="com.yingtongquan.employees.staff.pojo.StoresInformation">
+        <result column="id" property="id"/>
+        <result column="store" property="goodsNumber"/>
+        <result column="store_name" property="storesName"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, staff_name, staff_phone, area_id, address, shop_id, staff_role_id, user_id
@@ -112,7 +124,8 @@
         insert into tbl_outbound_order_delivery_address (outbound_order_id,add_time,member_shop_id,phone,name,area_id,address,is_since)
         values (#{outboundOrderId},#{addTime},#{memberShopId},#{phone},#{name},#{areaId},#{address},#{isSince})
     </insert>
-    <insert id="addOutboundLogistics" parameterType="com.yingtongquan.employees.staff.pojo.OutboundOrderLogistics" keyProperty="id" useGeneratedKeys="true">
+    <insert id="addOutboundLogistics" parameterType="com.yingtongquan.employees.staff.pojo.OutboundOrderLogistics"
+            keyProperty="id" useGeneratedKeys="true">
         insert into tbl_outbound_order_logistics (outbound_order_id,add_time,name,logistics_no) values (#{outboundOrderId},#{addTime},#{name},#{logisticsNo})
     </insert>
 
@@ -122,6 +135,9 @@
 
     <update id="updateOutboundStatus">
         UPDATE tbl_outbound_order SET outbound_order_status = 1 WHERE outbound_order_no = #{outboundNo}
+    </update>
+    <update id="orderCollection">
+        update tbl_order set order_status = 1 where order_no = #{orderNo}
     </update>
 
     <select id="queryUser" resultType="com.yingtongquan.employees.staff.pojo.UserInformation">
@@ -141,22 +157,9 @@
         tbl_order.order_channel,
         tbl_order.note,
         tbl_order.order_amount_total,
-        address.area_id,
-        address.address,
-        tbl_member_shop.member_name,
-        tbl_member_shop.id memberId,
-        tbl_user.head_portrait,
-        t1.area_name area,
-        t2.area_name city,
-        t3.area_name province
+        tbl_order.member_shop_id memberId
         FROM
         tbl_order
-        INNER JOIN tbl_order_delivery_address address ON address.order_id = tbl_order.id
-        INNER JOIN tbl_member_shop ON tbl_order.user_id = tbl_member_shop.user_id
-        INNER JOIN tbl_user ON tbl_order.user_id = tbl_user.id
-        INNER JOIN tbl_area t1 ON address.area_id = t1.area_id
-        INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
-        INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
         <where>
             <if test="status >= 0 and status != null">
                 tbl_order.order_status = #{status}
@@ -166,14 +169,17 @@
             </if>
             AND tbl_order.shop_id = #{shopId}
         </where>
-        <if test="time != null">
+        <if test="sorting == 0">
             ORDER BY tbl_order.add_time
         </if>
-        <if test="money !=  null">
+        <if test="sorting == 1">
+            ORDER BY tbl_order.add_time DESC
+        </if>
+        <if test="sorting == 2">
             ORDER BY tbl_order.order_amount_total
         </if>
-        <if test="sorting != null">
-            DESC
+        <if test="sorting == 3">
+            ORDER BY tbl_order.add_time DESC
         </if>
         LIMIT #{pageStart},#{pageEnd}
     </select>
@@ -253,7 +259,9 @@
 	        tbl_order_goods.image,
 	        tbl_order_goods.order_goods_name,
 	        tbl_order_goods.goods_sku_id,
+	        tbl_order_goods.goods_sku_unit_id,
 	        unit.name,
+	        unit.amount unitAmount,
 	        tbl_order_goods.amount,
 	        tbl_order_goods.price,
 	        tbl_order_goods.id,
@@ -369,17 +377,24 @@
     </select>
     <select id="queryGoodsInfo" resultType="com.yingtongquan.employees.staff.pojo.IncomingGoods">
         SELECT
-	        tbl_outbound_order.outbound_order_no,
-	        tbl_outbound_order_goods.amount,
-	        tbl_outbound_order_goods.shop_id,
-	        tbl_outbound_order_goods.warehouse_id,
-	        tbl_order_goods.goods_sku_id
+        tbl_outbound_order.outbound_order_no,
+        tbl_outbound_order_goods.amount,
+        tbl_outbound_order_goods.shop_id,
+        tbl_outbound_order_goods.warehouse_id,
+        tbl_order_goods.goods_sku_id,
+        tbl_outbound_order_goods.order_goods_id
         FROM
-	        tbl_outbound_order
-	        INNER JOIN tbl_outbound_order_goods ON tbl_outbound_order_goods.outbound_order_id = tbl_outbound_order.id
-	        INNER JOIN tbl_order_goods ON tbl_outbound_order_goods.order_goods_id = tbl_order_goods.id
-        WHERE
-	        tbl_outbound_order.outbound_order_no = #{outboundNo}
+        tbl_outbound_order
+        INNER JOIN tbl_outbound_order_goods ON tbl_outbound_order_goods.outbound_order_id = tbl_outbound_order.id
+        INNER JOIN tbl_order_goods ON tbl_outbound_order_goods.order_goods_id = tbl_order_goods.id
+        <where>
+            <if test="outboundNo!=null">
+                tbl_outbound_order.outbound_order_no = #{outboundNo}
+            </if>
+            <if test="orderNo!=null">
+                tbl_outbound_order.order_no = #{orderNo}
+            </if>
+        </where>
     </select>
     <select id="queryOutboundInfo" resultType="com.yingtongquan.employees.staff.pojo.OutboundInformation">
         SELECT
@@ -474,5 +489,55 @@
     <select id="queryShippingAddress"
             resultType="com.yingtongquan.employees.member.entity.TblMemberDeliveryAddressShopPo">
         select name,phone,area_id,address from tbl_member_delivery_address_shop where id = #{id}
+    </select>
+    <select id="queryOrderMemberInfor" resultType="com.yingtongquan.employees.staff.pojo.MemberInformation">
+        SELECT
+            tbl_member_shop.member_name,
+	        tbl_member_shop.id,
+	        tbl_user.head_portrait
+	    FROM
+	        tbl_order
+	        INNER JOIN tbl_member_shop ON tbl_order.member_shop_id = tbl_member_shop.id
+	        INNER JOIN tbl_user ON tbl_order.user_id = tbl_user.id
+	    WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="shippingAddress" resultType="com.yingtongquan.employees.staff.pojo.OrderShippingAddress">
+        SELECT
+	        address.area_id,
+	        address.address,
+	        t1.area_name area,
+	        t2.area_name city,
+	        t3.area_name province
+        FROM
+        	tbl_order
+        	INNER JOIN tbl_order_delivery_address address ON address.order_id = tbl_order.id
+        	INNER JOIN tbl_area t1 ON address.area_id = t1.area_id
+        	INNER JOIN tbl_area t2 ON t1.parent_id = t2.area_id
+        	INNER JOIN tbl_area t3 ON t2.parent_id = t3.area_id
+        WHERE
+	        tbl_order.order_no = #{orderNo}
+    </select>
+    <select id="queryWarehouseInformation" resultMap="ResultWarehouseMap">
+        SELECT
+	        tbl_warehouse.id,
+	        tbl_warehouse_goods_sku_store_sum.store,
+	        tbl_warehouse.warehouse_name
+        FROM
+	        tbl_warehouse_goods_sku_store_sum
+	        INNER JOIN tbl_warehouse ON tbl_warehouse_goods_sku_store_sum.fk_warehouse_id = tbl_warehouse.id
+        WHERE
+	        tbl_warehouse_goods_sku_store_sum.fk_goods_sku_id = #{skuId}
+    </select>
+    <select id="queryStoresInformation" resultMap="ResultStoresMap">
+        SELECT
+	        tbl_shop.id,
+	        tbl_shop.store_name,
+	        tbl_shop_goods_sku_store_sum.store
+        FROM
+	        tbl_shop
+	        INNER JOIN tbl_shop_goods_sku_store_sum ON tbl_shop_goods_sku_store_sum.fk_shop_id = tbl_shop.id
+        WHERE
+	        tbl_shop_goods_sku_store_sum.fk_goods_sku_id = #{skuId}
     </select>
 </mapper>

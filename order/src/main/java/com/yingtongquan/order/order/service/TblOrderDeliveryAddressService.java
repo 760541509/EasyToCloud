@@ -23,7 +23,7 @@ public interface TblOrderDeliveryAddressService extends IService<TblOrderDeliver
     /**
      * @Date 2020/6/2 16:57
      * @Author 胖
-     * 添加订单收货地址（散客类型）
+     * 添加订单收货地址
      **/
-    Boolean addIndividualShippingAddress(Integer orderId,Integer addressId,Integer memberId);
+    Boolean addIndividualShippingAddress(Integer shippingAddressId, Integer orderId);
 }

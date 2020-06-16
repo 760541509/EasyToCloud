@@ -43,6 +43,20 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
     List<OrderInfromation> theEmployeeQueriesTheOrderByStatus(InquireOrderInfor inquireOrderInfor);
 
     /**
+     * @Date 2020/6/16 10:38
+     * @Author 胖
+     * 查询店铺会员信息
+     **/
+    MemberInformation queryOrderMemberInfor(String orderNo);
+
+    /**
+     * @Date 2020/6/16 10:46
+     * @Author 胖
+     * 查询订单收货地址
+     **/
+    OrderShippingAddress shippingAddress(String orderNo);
+
+    /**
      * @Date 2020/6/9 17:22
      * @Author 胖
      * 返回商品名字
@@ -92,6 +106,20 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
     List<StaffOrderGoods> queryGoods(String orderNo);
 
     /**
+     * @Date 2020/6/16 14:34
+     * @Author 胖
+     * 查询店铺商品详细
+     **/
+    List<StoresInformation> queryStoresInformation(Integer skuId);
+
+    /**
+     * @Date 2020/6/16 14:27
+     * @Author 胖
+     * 查询仓库商品详细
+     **/
+    List<WarehouseInformation> queryWarehouseInformation(Integer skuId);
+
+    /**
      * @Date 2020/6/12 15:55
      * @Author 胖
      * 查询规格描述
@@ -125,6 +153,13 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
      * 查询订单ID
      **/
     Integer queryOrderId(String orderNo);
+
+    /**
+     * @Date 2020/6/16 11:23
+     * @Author 胖
+     * 订单收款成功
+     **/
+    Boolean orderCollection(String orderNo);
 
     /**
      * @Date 2020/6/12 17:41
@@ -215,7 +250,7 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
      * @Author 胖
      * 查询出库商品单的信息
      **/
-    List<IncomingGoods> queryGoodsInfo(String outboundNo);
+    List<IncomingGoods> queryGoodsInfo(String outboundNo,String orderNo);
 
     /**
      * @Date 2020/6/13 17:39
