@@ -44,6 +44,12 @@ public class StaffOrderGoods implements Serializable {
     @ApiModelProperty(value = "已发货数量")
     private Integer quantityShipped;
 
+    @ApiModelProperty(value = "条码")
+    private String barcode;
+
+    @ApiModelProperty(value = "货号")
+    private String artNo;
+
     @ApiModelProperty(value = "店铺信息")
     private List<StoresInformation> storesInformations = new ArrayList<>();
 
@@ -146,6 +152,22 @@ public class StaffOrderGoods implements Serializable {
         this.quantityShipped = quantityShipped;
     }
 
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public String getArtNo() {
+        return artNo;
+    }
+
+    public void setArtNo(String artNo) {
+        this.artNo = artNo;
+    }
+
     public List<StoresInformation> getStoresInformations() {
         return storesInformations;
     }
@@ -177,6 +199,8 @@ public class StaffOrderGoods implements Serializable {
                 ", price=" + price +
                 ", originalPrice=" + originalPrice +
                 ", quantityShipped=" + quantityShipped +
+                ", barcode='" + barcode + '\'' +
+                ", artNo='" + artNo + '\'' +
                 ", storesInformations=" + storesInformations +
                 ", warehouseInformations=" + warehouseInformations +
                 '}';

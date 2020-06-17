@@ -124,7 +124,7 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
      * @Author 胖
      * 查询规格描述
      **/
-    String querySkuName(Integer skuId);
+    SkuUnitInfo querySkuName(Integer skuId);
 
     /**
      * @Date 2020/6/12 16:06
@@ -201,7 +201,7 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
      * @Author 胖
      * 根据出库单号查询收货地址
      **/
-    ShippingAddress queryOrderShippingAddress(Integer outboundId);
+    ShippingAddress queryOrderShippingAddress(String orderNo);
 
     /**
      * @Date 2020/6/14 11:59
@@ -243,7 +243,7 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
      * @Author 胖
      * 修改订单状态
      **/
-    Boolean updateOrderStatus(String orderNo);
+    Boolean updateOrderStatus(String orderNo,Integer status);
 
     /**
      * @Date 2020/6/13 17:13
@@ -272,6 +272,13 @@ public interface TblStaffMapper extends BaseMapper<TblStaffPo> {
      * 查询出库单的一部分信息
      **/
     StaffOrderInformation queryStaffOutboundInformation(String outboundNo);
+
+    /**
+     * @Date 2020/6/17 14:30
+     * @Author 胖
+     * 查询领单员工ID和名字
+     **/
+    StaffInfo queryStaffIdAndName(String outboundOrderNo);
 
     /**
      * @Date 2020/6/14 9:53

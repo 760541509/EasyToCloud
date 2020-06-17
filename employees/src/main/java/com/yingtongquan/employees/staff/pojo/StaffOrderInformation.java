@@ -68,6 +68,15 @@ public class StaffOrderInformation implements Serializable {
     @ApiModelProperty(value = "已支付金额")
     private Integer amountPaid;
 
+    @ApiModelProperty(value = "时间")
+    private Long addTime;
+
+    @ApiModelProperty(value = "领单员工ID")
+    private Integer staffId;
+
+    @ApiModelProperty(value = "领单员工姓名")
+    private String staffName;
+
     @ApiModelProperty(value = "订单商品")
     private List<StaffOrderGoods> staffOrderGoods = new ArrayList<>();
 
@@ -237,6 +246,30 @@ public class StaffOrderInformation implements Serializable {
         this.amountPaid = amountPaid;
     }
 
+    public Long getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(Long addTime) {
+        this.addTime = addTime;
+    }
+
+    public Integer getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(Integer staffId) {
+        this.staffId = staffId;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
+    }
+
     public List<StaffOrderGoods> getStaffOrderGoods() {
         return staffOrderGoods;
     }
@@ -284,6 +317,9 @@ public class StaffOrderInformation implements Serializable {
                 ", goodsTotalPrice=" + goodsTotalPrice +
                 ", orderPrice=" + orderPrice +
                 ", amountPaid=" + amountPaid +
+                ", addTime=" + addTime +
+                ", staffId=" + staffId +
+                ", staffName='" + staffName + '\'' +
                 ", staffOrderGoods=" + staffOrderGoods +
                 ", staffOrderPayments=" + staffOrderPayments +
                 ", staffOutboundOrders=" + staffOutboundOrders +

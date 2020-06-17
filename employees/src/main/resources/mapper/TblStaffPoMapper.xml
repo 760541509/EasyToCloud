@@ -91,6 +91,15 @@
         <result column="store_name" property="storesName"/>
     </resultMap>
 
+    <resultMap id="ResultOutboundOrderMap" type="com.yingtongquan.employees.staff.pojo.OutboundInformation">
+        <result column="head_portrait" property="headPortrait"/>
+        <result column="member_name" property="name"/>
+        <result column="outbound_order_status" property="outboundStatus"/>
+        <result column="add_time" property="addTime"/>
+        <result column="goods_count" property="goodsAmount"/>
+        <result column="outbound_order_no" property="outboundOrderNo"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, staff_name, staff_phone, area_id, address, shop_id, staff_role_id, user_id
@@ -129,13 +138,16 @@
         insert into tbl_outbound_order_logistics (outbound_order_id,add_time,name,logistics_no) values (#{outboundOrderId},#{addTime},#{name},#{logisticsNo})
     </insert>
 
+
     <update id="updateOrderStatus">
-        UPDATE tbl_order SET order_status = 5 WHERE order_no = #{orderNo}
+        UPDATE tbl_order SET order_status = #{status} WHERE order_no = #{orderNo}
     </update>
 
     <update id="updateOutboundStatus">
         UPDATE tbl_outbound_order SET outbound_order_status = 1 WHERE outbound_order_no = #{outboundNo}
     </update>
+
+
     <update id="orderCollection">
         update tbl_order set order_status = 1 where order_no = #{orderNo}
     </update>
@@ -274,12 +286,23 @@
 	        tbl_order.order_no = #{orderNo}
     </select>
 
-    <select id="querySkuName" resultType="java.lang.String">
+    <select id="querySkuName" resultType="com.yingtongquan.employees.staff.pojo.SkuUnitInfo">
+	    SELECT
+	        tbl_goods_sku.bar_code AS barCode,
+	        tbl_goods_sku.art_no AS artNo,
+	        tbl.specValue
+        FROM
+	        tbl_goods_sku
+	        INNER JOIN (
         SELECT
+	        tbl.fkGoodsSkuId,
 	        GROUP_CONCAT( tbl.specValue SEPARATOR ';' ) AS specValue
         FROM
-        	(
+	        (
         SELECT
+	        tbl_goods_sku.id AS fkGoodsSkuId,
+	        tbl_goods_sku.fk_goods_spu_id AS fkGoodsSpuId,
+	        tbl_goods_spec_name.NAME AS specName,
 	        tbl_goods_spec_value.NAME AS specValue
         FROM
 	        ( SELECT tbl_goods_sku.id, tbl_goods_sku.fk_goods_spu_id FROM tbl_goods_sku WHERE tbl_goods_sku.id = #{skuId} ) AS tbl_goods_sku
@@ -287,6 +310,9 @@
 	        INNER JOIN tbl_goods_spec_value ON tbl_goods_sku_spec_value.fk_spec_value_id = tbl_goods_spec_value.id
 	        INNER JOIN tbl_goods_spec_name ON tbl_goods_spec_value.fk_goods_spec_name_id = tbl_goods_spec_name.id
 	        ) AS tbl
+        GROUP BY
+	        tbl.fkGoodsSkuId
+	        ) AS tbl ON tbl.fkGoodsSkuId = tbl_goods_sku.id
     </select>
 
     <select id="queryOutboundGoodsNumber" resultType="com.yingtongquan.employees.staff.pojo.Goods">
@@ -348,17 +374,16 @@
     <select id="queryOrderShippingAddress" resultType="com.yingtongquan.employees.staff.pojo.ShippingAddress">
         SELECT
 	        address.area_id,
-	        address.address,
 	        address.NAME consignee,
 	        address.phone,
+	        address.address,
 	        tbl_order.member_shop_id memberId,
 	        address.is_since
         FROM
-	        tbl_outbound_order
-	        INNER JOIN tbl_order ON tbl_outbound_order.order_no = tbl_order.order_no
-	        INNER JOIN tbl_order_delivery_address address ON tbl_order.id = address.order_id
+	        tbl_order
+	        INNER JOIN tbl_order_delivery_address address ON address.order_id = tbl_order.id
         WHERE
-	        tbl_outbound_order.id = #{outboundId}
+	        tbl_order.order_no = #{orderNo}
     </select>
     <select id="queryOutboundNo" resultType="java.lang.String">
         select outbound_order_no from tbl_outbound_order where id = #{outboundId}
@@ -396,7 +421,7 @@
             </if>
         </where>
     </select>
-    <select id="queryOutboundInfo" resultType="com.yingtongquan.employees.staff.pojo.OutboundInformation">
+    <select id="queryOutboundInfo" resultMap="ResultOutboundOrderMap">
         SELECT
         tbl_user.head_portrait,
         tbl_member_shop.member_name,
@@ -439,7 +464,8 @@
 	        tbl_user.head_portrait,
 	        tbl_shop.store_icon,
 	        tbl_shop.store_name,
-	        tbl_outbound_order.goods_count
+	        tbl_outbound_order.goods_count,
+	        tbl_outbound_order.add_time
         FROM
 	        tbl_outbound_order
 	        INNER JOIN tbl_order ON tbl_order.order_no = tbl_outbound_order.order_no
@@ -447,7 +473,7 @@
 	        INNER JOIN tbl_member_shop ON tbl_order.member_shop_id = tbl_member_shop.id
 	        INNER JOIN tbl_user ON tbl_member_shop.user_id = tbl_user.id
         WHERE
-	        tbl_outbound_order.order_no = #{outboundNo}
+	        tbl_outbound_order.outbound_order_no = #{outboundNo}
     </select>
     <select id="queryOutbounGoodsInformation" resultMap="ResultGoodsMap">
         SELECT
@@ -539,5 +565,16 @@
 	        INNER JOIN tbl_shop_goods_sku_store_sum ON tbl_shop_goods_sku_store_sum.fk_shop_id = tbl_shop.id
         WHERE
 	        tbl_shop_goods_sku_store_sum.fk_goods_sku_id = #{skuId}
+    </select>
+    <select id="queryStaffIdAndName" resultType="com.yingtongquan.employees.staff.pojo.StaffInfo">
+        SELECT
+	        tbl_staff.id,
+	        tbl_staff.staff_name
+        FROM
+	        tbl_outbound_order
+	        INNER JOIN tbl_outbound_order_staff staff ON tbl_outbound_order.id = staff.outbound_order_id
+	        INNER JOIN tbl_staff ON staff.staff_id = tbl_staff.id
+        WHERE
+	        tbl_outbound_order.outbound_order_no = #{outboundOrderNo}
     </select>
 </mapper>

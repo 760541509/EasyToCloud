@@ -37,7 +37,7 @@ public interface TblStaffRoleService extends IService<TblStaffRolePo> {
      * @Autho 胖
      * 查询员工信息
      **/
-    List<TblStaffPo> queryAllStaffInformation(Integer shopId);
+    List<TblStaffPo> queryAllStaffInformation();
 
     /**
      * 2020/5/25  17:41
@@ -72,7 +72,7 @@ public interface TblStaffRoleService extends IService<TblStaffRolePo> {
      * @Author 胖
      * 查询员工权限表
      **/
-    List<TblStaffRolePo> queryShopAllStaffRole(Integer shopId);
+    List<TblStaffRolePo> queryShopAllStaffRole();
 
     /**
      * @Date 2020/6/5 17:21

@@ -9,11 +9,13 @@ import com.yingtongquan.employees.staff.pojo.StaffInforamtion;
 import com.yingtongquan.employees.staff.pojo.UserInformation;
 import com.yingtongquan.employees.staff.service.TblStaffRoleService;
 import com.yingtongquan.startcommon.base.ResultVo;
+import com.yingtongquan.startcommon.util.HttpUtil;
 import com.yingtongquan.startcommon.util.MD5;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,8 @@ public class TblStaffRoleServiceImpl extends ServiceImpl<TblStaffRoleMapper, Tbl
 
     @Resource
     private TblStaffRoleMapper staffRoleMapper;
+    @Resource
+    private HttpServletRequest request;
 
     @Override
     public Boolean addDefaultRoles(Integer shopId) {
@@ -63,11 +67,11 @@ public class TblStaffRoleServiceImpl extends ServiceImpl<TblStaffRoleMapper, Tbl
 
     @Override
     public ResultVo addStaffInformation(StaffInforamtion staffInforamtion) {
-
+        Integer shopId = HttpUtil.getShopId(request.getHeader("token"));
         TblStaffPo staffPo = new TblStaffPo();
         staffPo.setAddress(staffInforamtion.getAddress());
         staffPo.setAreaId(staffInforamtion.getAreaId());
-        staffPo.setShopId(staffInforamtion.getShopId());
+        staffPo.setShopId(shopId);
         staffPo.setStaffName(staffInforamtion.getName());
         staffPo.setStaffPhone(staffInforamtion.getPhone());
         staffPo.setStaffRoleId(staffInforamtion.getStaffRoleId());
@@ -110,7 +114,8 @@ public class TblStaffRoleServiceImpl extends ServiceImpl<TblStaffRoleMapper, Tbl
     }
 
     @Override
-    public List<TblStaffPo> queryAllStaffInformation(Integer shopId) {
+    public List<TblStaffPo> queryAllStaffInformation() {
+        Integer shopId = HttpUtil.getShopId(request.getHeader("token"));
         return staffRoleMapper.queryAllStaffInformation(shopId);
     }
 
@@ -135,7 +140,8 @@ public class TblStaffRoleServiceImpl extends ServiceImpl<TblStaffRoleMapper, Tbl
     }
 
     @Override
-    public List<TblStaffRolePo> queryShopAllStaffRole(Integer shopId) {
+    public List<TblStaffRolePo> queryShopAllStaffRole() {
+        Integer shopId = HttpUtil.getShopId(request.getHeader("token"));
         return staffRoleMapper.queryShopAllStaffRole(shopId);
     }
 

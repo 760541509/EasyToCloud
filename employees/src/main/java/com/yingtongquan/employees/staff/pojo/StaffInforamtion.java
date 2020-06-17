@@ -18,9 +18,6 @@ public class StaffInforamtion implements Serializable {
     @ApiModelProperty(value = "详细地址")
     private String address;
 
-    @ApiModelProperty(value = "店铺ID")
-    private Integer shopId;
-
     @ApiModelProperty(value = "员工权限ID")
     private Integer staffRoleId;
 
@@ -56,19 +53,22 @@ public class StaffInforamtion implements Serializable {
         this.address = address;
     }
 
-    public Integer getShopId() {
-        return shopId;
-    }
-
-    public void setShopId(Integer shopId) {
-        this.shopId = shopId;
-    }
-
     public Integer getStaffRoleId() {
         return staffRoleId;
     }
 
     public void setStaffRoleId(Integer staffRoleId) {
         this.staffRoleId = staffRoleId;
+    }
+
+    @Override
+    public String toString() {
+        return "StaffInforamtion{" +
+                "name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", areaId=" + areaId +
+                ", address='" + address + '\'' +
+                ", staffRoleId=" + staffRoleId +
+                '}';
     }
 }

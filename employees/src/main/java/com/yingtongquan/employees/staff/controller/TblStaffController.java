@@ -41,39 +41,39 @@ public class TblStaffController {
 
     @ApiOperation(value = "查询员工信息")
     @PostMapping("queryEmployeeInformation")
-    public ResultVo queryEmployeeInformation(Integer shopId) {
-        return ResultVo.successResult(staffRoleService.queryAllStaffInformation(shopId));
+    public ResultVo queryEmployeeInformation() {
+        return ResultVo.successResult(staffRoleService.queryAllStaffInformation());
     }
 
     @ApiOperation(value = "删除员工信息")
     @PostMapping("/deleteEmployeeInformation")
-    public ResultVo deleteEmployeeInformation(Integer staffId) {
-        return ResultVo.successResult(staffRoleService.deleteStaffInformation(staffId));
+    public ResultVo deleteEmployeeInformation(@RequestBody Order order) {
+        return ResultVo.successResult(staffRoleService.deleteStaffInformation(order.getStaffId()));
     }
 
     @ApiOperation(value = "添加角色权限表")
     @PostMapping("/addRolePermissionTable")
-    public ResultVo addRolePermissionTable(TblStaffRolePo staffRolePo) {
+    public ResultVo addRolePermissionTable(@RequestBody TblStaffRolePo staffRolePo) {
         staffRoleService.addStaffRole(staffRolePo);
         return ResultVo.successResult();
     }
 
     @ApiOperation(value = "修改员工权限表")
     @PostMapping("/modifyEmployeePermissionTable")
-    public ResultVo modifyEmployeePermissionTable(TblStaffRolePo staffRolePo) {
+    public ResultVo modifyEmployeePermissionTable(@RequestBody TblStaffRolePo staffRolePo) {
         return ResultVo.successResult(staffRoleService.updateStaffRole(staffRolePo));
     }
 
     @ApiOperation(value = "删除员工权限表")
     @PostMapping("/deleteEmployeePermissionTable")
-    public ResultVo deleteEmployeePermissionTable(Integer roleId) {
-        return ResultVo.successResult(staffRoleService.deleteStaffRole(roleId));
+    public ResultVo deleteEmployeePermissionTable(@RequestBody Order order) {
+        return ResultVo.successResult(staffRoleService.deleteStaffRole(order.getRoleId()));
     }
 
     @ApiOperation(value = "查询员工权限表")
     @PostMapping("/queryEmployeePermissionTable")
-    public ResultVo queryEmployeePermissionTable(Integer shopId) {
-        return ResultVo.successResult(staffRoleService.queryShopAllStaffRole(shopId));
+    public ResultVo queryEmployeePermissionTable() {
+        return ResultVo.successResult(staffRoleService.queryShopAllStaffRole());
     }
 
     @ApiOperation(value = "员工按照状态查询订单")
@@ -142,7 +142,7 @@ public class TblStaffController {
         return ResultVo.successResult(staffService.staffGetASingle(outbound));
     }
 
-    @ApiOperation(value = "员工发货")
+    @ApiOperation(value = "员工发货(填写物流信息)")
     @PostMapping("/staffDeliverGoods")
     public ResultVo staffDeliverGoods(@RequestBody DeliveryInformation deliveryInformation) {
         return ResultVo.successResult(staffService.staffDeliverGoods(deliveryInformation));
